@@ -18,7 +18,7 @@ const ProjetReducer = (state = initStat, action) =>{
             }
 
 
-            case 'PROJET_ERROR' :
+            case 'ERROR_PROJET' :
                 return {
                     ...state,
                     error : action.payload

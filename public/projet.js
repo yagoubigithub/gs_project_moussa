@@ -5,8 +5,8 @@ const mainWindow = require("./mainWindow");
 const methode = Projet.prototype;
 
 function Projet() {
- //db.run('DROP TABLE projet');
- //db.run('DROP TABLE phase_projet');
+// db.run('DROP TABLE projet');
+
 
   db.run(`CREATE TABLE IF NOT EXISTS projet (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -17,10 +17,10 @@ function Projet() {
    status TEXT
 )`);
 
-db.run(`CREATE TABLE IF NOT EXISTS phase_projet (
+db.run(`CREATE TABLE IF NOT EXISTS phases_projets (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   projet_id INTEGER NOT NULL,
-  phase TEXT,
+  phases_projet_id INTEGER NOT NULL,
  status TEXT
 )`);
 
@@ -33,9 +33,9 @@ db.run(`CREATE TABLE IF NOT EXISTS phase_projet (
         mainWindow.webContents.send("projet", result);
       });
     }else{
-       db.all(`SELECT p.id id, p.nom nom , p.objet objet, p.adresse adresse , p.maitreDouvrage_id maitreDouvrage_id , m.nom maitre_douvrage_nom ,
-       m.prenom maitre_douvrage_prenom ,p.status status FROM projet p  JOIN maitre_douvrage m ON p.maitreDouvrage_id=m.id`, function (err, rows) {
+       db.all(`SELECT * FROM projet `, function (err, rows) {
       if (err) mainWindow.webContents.send("projet", err);
+      
       mainWindow.webContents.send("projet", rows);
     });
     }
@@ -44,8 +44,6 @@ db.run(`CREATE TABLE IF NOT EXISTS phase_projet (
 
   //AJOUTER
   ipcMain.on("projet:ajouter", (event, value) => {
-   
-   
       db.run(
         `
                INSERT INTO projet(nom , objet , adresse , maitreDouvrage_id , status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.maitreDouvrage_id} , 'undo') `,
@@ -55,18 +53,17 @@ db.run(`CREATE TABLE IF NOT EXISTS phase_projet (
 
           //add phase de projet
           const projet_id = this.lastID;
-          value.phase_du_projets.forEach(phase => {
+          value.phases_projets.forEach(phase => {
             db.run(
               `
-                     INSERT INTO phase_projet(projet_id , phase , status) VALUES (${projet_id},'${phase}' , 'undo') `,
+                     INSERT INTO phase_projet(projet_id , phases_projet_id , status) VALUES (${projet_id},'${phase.id}' , 'undo') `,
               function (err) {
                 if(err) mainWindow.webContents.send("projet:ajouter", err);
               })
           });
           
           
-          db.all( `SELECT p.id, p.nom, p.objet, p.adresse,p.maitreDouvrage_id,m.nom maitre_douvrage_nom,
-          p.prenom maitre_douvrage_prenom  FROM projet p  JOIN maitre_douvrage m ON p.maitreDouvrage_id=m.id`, function (err, rows) {
+          db.all( `SELECT *  FROM projet `, function (err, rows) {
             if (err) mainWindow.webContents.send("projet:ajouter", err);
             mainWindow.webContents.send("projet:ajouter", rows);
           });

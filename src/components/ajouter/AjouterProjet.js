@@ -11,6 +11,7 @@ import Grid from "@material-ui/core/Grid";
 
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import Select from "react-select";
 
 //icons
 
@@ -28,8 +29,11 @@ import {
   ajouterProjet,
 } from "../../store/actions/projetAction";
 
+import { getAllPhasesProjet } from "../../store/actions/pahsesProjetAction";
+
 //tables
 import MaitreDouvrageTable from "../tables/MaitreDouvrageTable";
+
 class AjouterProjet extends Component {
   state = {
     open: true,
@@ -39,14 +43,16 @@ class AjouterProjet extends Component {
     nom: "",
     objet: "",
     adresse: "",
-    textareas: [],
+    
     maitreDouvrages: [],
+    phasesProjetsSelected : []
   };
   componentDidMount() {
-    this.addTextArea();
+    
+    this.props.getAllPhasesProjet()
   }
-  componentWillUnmount(){
-    this.props.removeProjetCreated()
+  componentWillUnmount() {
+    this.props.removeProjetCreated();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -58,54 +64,36 @@ class AjouterProjet extends Component {
         objet: "",
         adresse: "",
         maitreDouvrage: undefined,
-        textareas: [],
         
+        phasesProjetsSelected : []
       });
-      Object.keys(this.state).map((key) => {
-        if (key.indexOf("textarea-") > -1) {
-          this.setState({ [key]: undefined });
-        }
-      });
+    
     }
-  
+    if(nextProps.phasesProjets){
+      this.setState({
+        phasesProjets : nextProps.phasesProjets
+      })
+    }
   }
 
-  addTextArea = () => {
-    const textareas = [...this.state.textareas];
-    const textarea = (
-      <div key={`textarea-${textareas.length}`}>
-        <IconButton onClick={() => this.removeTextArea(textareas.length)}>
-          <CloseIcon />
-        </IconButton>
-        <textarea
-          name={`textarea-${textareas.length}`}
-          id={`textarea-${textareas.length}`}
-          onChange={this.handleChange}
-        />
-      </div>
-    );
-    textareas.push(textarea);
-    this.setState({ textareas });
-  };
-  removeTextArea = (index) => {
-    const textareas = [...this.state.textareas];
-    textareas[index - 1] = [];
-    this.setState({ [`textarea-${index}`]: undefined });
-    this.setState({ textareas });
-  };
-
-  handleAjouterPhasesDuProjet = () => {
-    this.addTextArea();
-  };
+ 
+ 
+  
+  handleSelectChange = (phasesProjetsSelected) =>{
+   this.setState({phasesProjetsSelected})
+  }
   ajouter = () => {
     const d = { ...this.state };
     if (d.nom.trim().length === 0) {
       this.setState({ error: "le champ nom et obligatoire *" });
       return;
     }
-    if (d.maitreDouvrage=== undefined) {
+    if (d.maitreDouvrage === undefined) {
       this.setState({ error: "le champ Maitre d'ouvrage et obligatoire *" });
       return;
+    }
+    if(d.phasesProjetsSelected.length === 0){
+      this.setState({ error: "le champ Phase du projet et obligatoire *" });
     }
     const phase_du_projets = [];
     Object.keys(d).map((key) => {
@@ -143,6 +131,16 @@ class AjouterProjet extends Component {
       });
   };
   render() {
+    const options = [];
+    if(this.state.phasesProjets){
+      this.state.phasesProjets.map(phase=>{
+      options.push({
+        value : phase.id,
+        label : phase.titre
+      })
+    })
+    }
+    
     return (
       <Dialog fullScreen open={this.state.open}>
         <LoadingComponent
@@ -240,15 +238,11 @@ class AjouterProjet extends Component {
           </Grid>
 
           <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}>Phases du projet </h3>
-            <div>{this.state.textareas}</div>
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={this.handleAjouterPhasesDuProjet}
-            >
-              <AddIcon />
-            </Button>
+          <h3 style={{ margin: 0 }}>Phases du projet </h3>
+            <Select onChange={this.handleSelectChange} options={options} fullWidth isMulti />
+           
+           
+         
           </Grid>
 
           <Grid item xs={12}>
@@ -272,6 +266,7 @@ const mapActionToProps = (dispatch) => {
   return {
     ajouterProjet: (data) => dispatch(ajouterProjet(data)),
     removeProjetCreated: () => dispatch(removeProjetCreated()),
+    getAllPhasesProjet: () => dispatch(getAllPhasesProjet()),
   };
 };
 const mapStateToProps = (state) => {
@@ -279,6 +274,7 @@ const mapStateToProps = (state) => {
     loading: state.projet.loading,
     projetCreated: state.projet.projetCreated,
     maitreDouvrages: state.maitre_douvrage.maitreDouvrages,
+    phasesProjets: state.phases_projet.phasesProjets,
   };
 };
 export default connect(mapStateToProps, mapActionToProps)(AjouterProjet);

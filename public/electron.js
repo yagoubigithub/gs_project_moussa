@@ -25,10 +25,10 @@ app.on("ready", () => {
 
   const MaitreDouvrage = require('./maitreDouvrage');
   const maitreDouvrage = new MaitreDouvrage();
-  /*
+  
   const Projet = require('./projet');
   const projet = new Projet();
-  */
+  
   const PhasesProjet = require('./phasesProjet');
   const phasesProjet = new PhasesProjet();
 

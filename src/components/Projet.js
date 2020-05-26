@@ -32,7 +32,7 @@ class Projet extends Component {
     this.props.getAllProjet();
   }
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps)
+    
     if (nextProps.projets) {
       const projetCorebeille = [];
       const projets = [];
