@@ -23,16 +23,12 @@ db.run(`CREATE TABLE IF NOT EXISTS phases_projet (
   //get
   ipcMain.on("phases_projet", (event, value) => {
     if(value.id){
-      db.get(`SELECT ROW_NUMBER() OVER (
-        ORDER BY id
-       ) number,titre, description,id,duree,status FROM phases_projet WHERE id=${value.id}`, function (err, result) {
+      db.get(`SELECT * FROM phases_projet WHERE id=${value.id} ORDER BY id`, function (err, result) {
         if (err) mainWindow.webContents.send("phases_projet", err);
         mainWindow.webContents.send("phases_projet", result);
       });
     }else{
-       db.all(`SELECT ROW_NUMBER() OVER (
-        ORDER BY id
-       ) number,titre, description,id,duree,status FROM phases_projet`, function (err, rows) {
+       db.all(`SELECT * FROM phases_projet ORDER BY id`, function (err, rows) {
       if (err) mainWindow.webContents.send("phases_projet", err);
       mainWindow.webContents.send("phases_projet", rows);
     });
@@ -50,15 +46,14 @@ db.run(`CREATE TABLE IF NOT EXISTS phases_projet (
         function (err) {
          
           if (err) mainWindow.webContents.send("phases_projet:ajouter", err);
-
+          console.log(err)
          
         
           
-          db.all( `SELECT ROW_NUMBER() OVER (
-            ORDER BY id
-           ) number,titre, description,id,duree,status FROM phases_projet`, function (err, rows) {
+          db.all( `SELECT * FROM phases_projet ORDER BY id`, function (err, rows) {
             if (err) mainWindow.webContents.send("phases_projet:ajouter", err);
-            console.log(err,"gtrtgtget",rows)
+            console.log(err,rows)
+           
             mainWindow.webContents.send("phases_projet:ajouter", rows);
           });
         }
@@ -80,7 +75,7 @@ db.run(`CREATE TABLE IF NOT EXISTS phases_projet (
         function(err) {
           if (err) mainWindow.webContents.send("phases_projet:delete", err);
 
-          db.all("SELECT * FROM phases_projet ORDER BY id DESC", function(
+          db.all(`SELECT * FROM phases_projet ORDER BY id`, function(
             err,
             rows
           ) {
@@ -102,7 +97,7 @@ db.run(`CREATE TABLE IF NOT EXISTS phases_projet (
                UPDATE phases_projet SET titre='${value.titre}', description='${value.description}' duree=${value.duree}  WHERE id=${value.id} `,
         function (err) {
           if (err) mainWindow.webContents.send("phases_projet:modifier", err);
-          db.all("SELECT * FROM phases_projet ", function (err, rows) {
+          db.all(`SELECT * FROM phases_projet ORDER BY id`, function (err, rows) {
             if (err)
               mainWindow.webContents.send("phases_projet:modifier", err);
             mainWindow.webContents.send("phases_projet:modifier", {maitreDouvrages : rows, maitreDouvrage : value});

@@ -28,6 +28,7 @@ class MaitreDouvrage extends Component {
     tab: "maitreDouvrages",
     addToCorbeilleDialog : false
   };
+  
   componentDidMount() {
     this.props.getAllMaitreDouvrage();
   }

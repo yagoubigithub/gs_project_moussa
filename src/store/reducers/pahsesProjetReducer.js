@@ -23,7 +23,7 @@ const PhasesProjetReducer = (state = initStat, action) =>{
                     ...state,
                     error : action.payload
                 }
-            case "AJOUTER_PHASES_PROJET" :
+            case "AJOUTER_PAHSES_PROJET" :
                 return {
                     ...state,
                     error :null,
@@ -45,6 +45,17 @@ const PhasesProjetReducer = (state = initStat, action) =>{
                     }
                     case 'READ_ALL_PHASES_PROJET' :
                         return {
+                            ...state,
+                            phasesProjets : action.payload
+                        }
+                        case 'ADD_TO_CORBEILLE_PHASES_PROJET' : 
+                        return {
+                            ...state,
+                            phasesProjets : action.payload
+                        }
+                        case 'UNDO_DELETE_PHASES_PROJET'  : 
+                        return {
+
                             ...state,
                             phasesProjets : action.payload
                         }
