@@ -94,22 +94,19 @@ class AjouterProjet extends Component {
     }
     if(d.phasesProjetsSelected.length === 0){
       this.setState({ error: "le champ Phase du projet et obligatoire *" });
+      return;
     }
-    const phase_du_projets = [];
-    Object.keys(d).map((key) => {
-      if (key.indexOf("textarea-") > -1) {
-        phase_du_projets.push(d[key]);
-      }
-    });
+   
+    
 
     const data = {
       nom: d.nom,
       objet: d.objet,
       maitreDouvrage_id: d.maitreDouvrage.id,
       adresse: d.adresse,
-      phase_du_projets,
+      phasesProjetsSelected : [...this.state.phasesProjetsSelected]
     };
-    // this.setState({ success: "Projet a été ajouter" });
+   
     this.props.ajouterProjet(data);
   };
 
@@ -239,7 +236,8 @@ class AjouterProjet extends Component {
 
           <Grid item xs={6}>
           <h3 style={{ margin: 0 }}>Phases du projet </h3>
-            <Select onChange={this.handleSelectChange} options={options} fullWidth isMulti />
+            <Select onChange={this.handleSelectChange} 
+             value={this.state.phasesProjetsSelected} options={options} fullWidth isMulti />
            
            
          

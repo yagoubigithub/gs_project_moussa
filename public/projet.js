@@ -5,7 +5,8 @@ const mainWindow = require("./mainWindow");
 const methode = Projet.prototype;
 
 function Projet() {
-// db.run('DROP TABLE projet');
+//db.run('DROP TABLE projet');
+//db.run('DROP TABLE phases_projets');
 
 
   db.run(`CREATE TABLE IF NOT EXISTS projet (
@@ -33,7 +34,7 @@ db.run(`CREATE TABLE IF NOT EXISTS phases_projets (
         mainWindow.webContents.send("projet", result);
       });
     }else{
-       db.all(`SELECT * FROM projet `, function (err, rows) {
+       db.all(`SELECT p.*, m.nom , m.prenom  FROM projet p  JOIN maitre_douvrage m ON m.id=p.maitreDouvrage_id`, function (err, rows) {
       if (err) mainWindow.webContents.send("projet", err);
       
       mainWindow.webContents.send("projet", rows);
@@ -44,6 +45,7 @@ db.run(`CREATE TABLE IF NOT EXISTS phases_projets (
 
   //AJOUTER
   ipcMain.on("projet:ajouter", (event, value) => {
+    const projets = [];
       db.run(
         `
                INSERT INTO projet(nom , objet , adresse , maitreDouvrage_id , status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.maitreDouvrage_id} , 'undo') `,
@@ -53,19 +55,44 @@ db.run(`CREATE TABLE IF NOT EXISTS phases_projets (
 
           //add phase de projet
           const projet_id = this.lastID;
-          value.phases_projets.forEach(phase => {
-            db.run(
-              `
-                     INSERT INTO phase_projet(projet_id , phases_projet_id , status) VALUES (${projet_id},'${phase.id}' , 'undo') `,
-              function (err) {
-                if(err) mainWindow.webContents.send("projet:ajouter", err);
-              })
+          let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , status) VALUES   `
+         
+          value.phasesProjetsSelected.forEach(phase => {
+            const placeholder = ` (${projet_id},'${phase.value}' , 'undo') ,`
+            sql = sql + placeholder;
+           
           });
-          
+
+         sql =  sql.slice(0,sql.lastIndexOf(',') - 1);
+         
+          db.run(
+            sql,
+            function (err) {
+              if(err) mainWindow.webContents.send("projet:ajouter", err);
+             
+            })
           
           db.all( `SELECT *  FROM projet `, function (err, rows) {
+           
             if (err) mainWindow.webContents.send("projet:ajouter", err);
-            mainWindow.webContents.send("projet:ajouter", rows);
+            //get phases_projets
+            const promise = new Promise((resolve,reject)=>{
+              rows.forEach(projet=>{
+                db.all(`SELECT *  FROM phases_projets WHERE projet_id=${projet.id}`,  function(err, phases_projets){
+                 
+                  projets.push({phases_projets : [...phases_projets],...projet})
+                  if(projets.length === rows.length) resolve();
+                  
+                })
+              })
+            }).then(()=>{
+             
+            
+              mainWindow.webContents.send("projet:ajouter", projets);
+            })
+          
+          
+            
           });
         }
       );
