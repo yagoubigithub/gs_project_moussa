@@ -1,0 +1,262 @@
+:root {
+  /* theme colors */
+  --text-gray: #3f4954;
+  --text-light: #686666da;
+  --bg-color: #eee;
+  --white: #fff;
+  --midnight: #104f55;
+  --primaryDark: #1b0606;
+
+  --primary: #1d1d1d;
+  --primaryLight: #ff5252;
+  --black: #010101;
+  --accent: #448aff;
+
+  /* gradient color */
+  --sky: #00acc1;
+
+  /*size*/
+
+  --navbarWidth : 270px;
+  --MincenavbarWidth : -261px;
+}
+
+.alert{
+  
+}
+.red {
+  color: darkred;
+}
+.black {
+  color: var(--black);
+}
+
+/****************************************************************************/
+/*nav styling*/
+.navbar {
+  background-color: rgba(0, 0, 0, 0.8);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+#root .container .nav {
+  width: var(--navbarWidth);
+background-image: url('./images/bg.jpg');
+background-size: cover;
+background-repeat: no-repeat;
+  position: fixed;
+  height: 100%;
+
+  top: 0;
+  left: 0;
+}
+
+.content {
+  position: fixed;
+  height: 100%;
+  left: var(--navbarWidth);
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+}
+.nav-link {
+  padding: 10px;
+  background: transparent;
+  border: 0;
+  outline: none;
+  margin: 2px;
+  color: var(--white);
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--white);
+  text-decoration: none;
+  text-transform: capitalize;
+  text-align: center;
+  font-weight: bold;
+}
+
+.nav-link:hover {
+  background: var(--sky);
+}
+.project-title {
+  text-align: center;
+  color: var(--white);
+}
+.nav-active {
+  background: var(--sky);
+}
+.nav-link-disabled {
+  color: var(--text-gray);
+}
+
+.btn-nav{
+  background-color: var(--accent);
+  color :  var(--white);
+  margin : 5px;
+}
+.btn{
+  border: 0;
+  padding: 6px 16px;
+  font-size: 14px;
+  min-width: 64px;
+  box-sizing: border-box;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    line-height: 1.75;
+    border-radius: 4px;
+    letter-spacing: 0.02857em;
+    text-transform: none;
+  cursor: pointer;
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.06), 0px 8px 10px 1px rgba(0, 0, 0, 0.042), 0px 3px 14px 2px rgba(0, 0, 0, 0.036);
+
+}
+/*end of navbar styling*/
+/************************************************************************************/
+
+/*auth*/
+
+.error-auth {
+  color: red;
+  width: 100%;
+}
+.input-auth {
+  padding: 7px 12px;
+
+  margin: 15px;
+}
+
+.form-auth {
+  width: 300px;
+  margin: auto;
+  text-align: center;
+}
+.button-auth {
+  background-color: var(--sky);
+  color: var(--white);
+  width: 120px;
+  font-size: 20px;
+  font-weight: bolder;
+  padding: 4px 7px;
+  border: 0;
+  outline: 0;
+  border-radius: 4px;
+}
+.container-auth {
+  margin-top: 200px;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  width: 700px;
+  padding: 20px;
+}
+
+/******************************************************************************/
+/*sous-nav styling*/
+.sous-nav-container {
+    background: var(--primary);
+    color: var(--white);
+    align-items: center;
+    padding: 15px;
+    display: flex;
+    margin-bottom: 35px !important;
+  }
+  .sous-nav-link {
+    color: var(--white);
+    text-decoration: none;
+    text-align: center;
+    width: 80% !important;
+    display: block;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid var(--white);
+  }
+  .sous-nav-link:hover {
+    background: var(--sky);
+  }
+  /*end sounav styling*/
+  /********************************************************************/
+  
+
+  /*table component*/
+.table {
+  background: var(--white);
+ 
+  margin-top: 25px;
+}
+
+.search-form {
+  margin-bottom: 15px;
+  padding: 10px;
+
+  background: var(--primary);
+}
+.search-form > input {
+  padding: 6px 9px;
+  margin-left: 5px;
+  border: 1px solid var(--white);
+  background: transparent;
+  border-radius: 10px;
+  color: var(--white);
+}
+
+
+
+.ReactTable .cell {
+  text-align: center;
+  text-overflow: initial;
+
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  margin: 0;
+}
+
+div[class^="react-tabs-css-module_content"] {
+  padding: 0px !important;
+  height: 600px !important;
+ 
+  
+}
+
+/*end table  styling*/
+
+/***********************************************************************/
+
+/***********************************************************************************/
+/*tabs*/
+
+.MuiDialog-container .MuiPaper-root .tab-content {
+  max-height: 500px;
+  height: 500px;
+  overflow: auto;
+  padding: 20px;
+  box-shadow: 1px 1px 5px gray;
+}
+
+/*end tabs styling*/
+/*************************************************************************************/
+/***************************************************************************************/
+/* search in table-*/
+
+.searchtable-container {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  border-radius: 3px;
+}
+.searchtable-icon {
+  display: block;
+  height: 32px !important;
+  width: 30px !important;
+
+  color: rgba(0, 0, 0, 0.3);
+}
+
+.searchtable-input {
+  border: 0 !important;
+  background: transparent !important;
+  height: 32px;
+  overflow-x: auto;
+}
+
+
+/* end search in table*/
+/*****************************************************************/
