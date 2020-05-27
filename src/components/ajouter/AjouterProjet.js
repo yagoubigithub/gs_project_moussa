@@ -2,6 +2,9 @@ import React, { Component } from "react";
 
 import { Link } from "react-router-dom";
 
+//utils
+import { getCurrentDateTime } from "../../utils/methods";
+
 //Mui
 import Dialog from "@material-ui/core/Dialog";
 import AppBar from "@material-ui/core/AppBar";
@@ -43,15 +46,16 @@ class AjouterProjet extends Component {
     nom: "",
     objet: "",
     adresse: "",
-    duree_phase : 0,
-    delais : 0,
-    
+    duree_phase: 0,
+    delais: 0,
+    date_debut: "",
+    date_depot: "",
+
     maitreDouvrages: [],
-    phasesProjetsSelected : []
+    phasesProjetsSelected: [],
   };
   componentDidMount() {
-    
-    this.props.getAllPhasesProjet()
+    this.props.getAllPhasesProjet();
   }
   componentWillUnmount() {
     this.props.removeProjetCreated();
@@ -66,37 +70,33 @@ class AjouterProjet extends Component {
         objet: "",
         adresse: "",
         maitreDouvrage: undefined,
-        delais : 0,
-        duree_phase : 0,
-        phasesProjetsSelected : []
+        duree_phase: 0,
+        delais: 0,
+        date_debut: "",
+        date_depot: "",
+        phasesProjetsSelected: [],
       });
-    
     }
-    if(nextProps.phasesProjets){
+    if (nextProps.phasesProjets) {
       this.setState({
-        phasesProjets : nextProps.phasesProjets
-      })
+        phasesProjets: nextProps.phasesProjets,
+      });
     }
   }
 
- 
- 
-  
-  handleSelectChange = (phasesProjetsSelected) =>{
+  handleSelectChange = (phasesProjetsSelected) => {
     let duree_phase = 0;
-   this.setState({phasesProjetsSelected}, ()=>{
-     if(phasesProjetsSelected !== null){
-      phasesProjetsSelected.map(phase=>{
-        duree_phase = Number.parseInt(duree_phase) +  Number.parseInt(phase.value.duree);
-       
-     })
-     }
-  
-     
-     
-     this.setState({duree_phase})
-   })
-  }
+    this.setState({ phasesProjetsSelected }, () => {
+      if (phasesProjetsSelected !== null) {
+        phasesProjetsSelected.map((phase) => {
+          duree_phase =
+            Number.parseInt(duree_phase) + Number.parseInt(phase.value.duree);
+        });
+      }
+
+      this.setState({ duree_phase });
+    });
+  };
   ajouter = () => {
     const d = { ...this.state };
     if (d.nom.trim().length === 0) {
@@ -107,21 +107,19 @@ class AjouterProjet extends Component {
       this.setState({ error: "le champ Maitre d'ouvrage et obligatoire *" });
       return;
     }
-    if(d.phasesProjetsSelected.length === 0){
+    if (d.phasesProjetsSelected.length === 0) {
       this.setState({ error: "le champ Phase du projet et obligatoire *" });
       return;
     }
-   
-    
 
     const data = {
       nom: d.nom,
       objet: d.objet,
       maitreDouvrage_id: d.maitreDouvrage.id,
       adresse: d.adresse,
-      phasesProjetsSelected : [...this.state.phasesProjetsSelected]
+      phasesProjetsSelected: [...this.state.phasesProjetsSelected],
     };
-   
+
     this.props.ajouterProjet(data);
   };
 
@@ -129,6 +127,32 @@ class AjouterProjet extends Component {
     this.setState({
       [e.target.name]: e.target.value,
     });
+    if (e.target.name === "date_debut") {
+      this.calculDateDepotWithDateDebut(e.target.value);
+    }
+    if (e.target.name === "delais") {
+      this.calculDateDepotWithDelais(e.target.value);
+    }
+  };
+  calculDateDepotWithDelais = (delais) => {
+    const delais_milis = Number.parseInt(delais) * 24 * 60 * 60 * 1000;
+    const date_debut_milis =
+      this.state.date_debut === ""
+        ? new Date().getTime()
+        : new Date(this.state.date_debut).getTime();
+    const date_depot_milis = date_debut_milis + delais_milis;
+    const date_depot = getCurrentDateTime(date_depot_milis).split("T")[0];
+
+    this.setState({ date_depot });
+  };
+  calculDateDepotWithDateDebut = (date_debut) => {
+    const delais_milis =
+      Number.parseInt(this.state.delais) * 24 * 60 * 60 * 1000;
+    const date_debut_milis = new Date(date_debut).getTime();
+    const date_depot_milis = date_debut_milis + delais_milis;
+    const date_depot = getCurrentDateTime(date_depot_milis).split("T")[0];
+
+    this.setState({ date_depot });
   };
 
   handleMaitreDouvrageClose = () => {
@@ -144,16 +168,16 @@ class AjouterProjet extends Component {
   };
   render() {
     const options = [];
-    if(this.state.phasesProjets){
-      this.state.phasesProjets.map(phase=>{
-      options.push({
-        value : {...phase},
-        label : phase.titre,
-        className :  "react-select-option"
-      })
-    })
+    if (this.state.phasesProjets) {
+      this.state.phasesProjets.map((phase) => {
+        options.push({
+          value: { ...phase },
+          label: phase.titre,
+          className: "react-select-option",
+        });
+      });
     }
-    
+
     return (
       <Dialog fullScreen open={this.state.open}>
         <LoadingComponent
@@ -251,31 +275,54 @@ class AjouterProjet extends Component {
           </Grid>
 
           <Grid item xs={6}>
-          <h3 style={{ margin: 0 }}>Phases du projet </h3>
-            <Select onChange={this.handleSelectChange} 
-             getOptionValue ={(option)=> option.value.id}
-            classNamePrefix="react-select"
-             value={this.state.phasesProjetsSelected} options={options} fullWidth isMulti />
-           
-           <h3>La durée des phases : {this.state.duree_phase} {" "}(jours)</h3>
-           
-         
+            <h3 style={{ margin: 0 }}>Phases du projet </h3>
+            <Select
+              onChange={this.handleSelectChange}
+              getOptionValue={(option) => option.value.id}
+              classNamePrefix="react-select"
+              value={this.state.phasesProjetsSelected}
+              options={options}
+              fullWidth
+              isMulti
+            />
+
+            <h3>La durée des phases : {this.state.duree_phase} (jours)</h3>
           </Grid>
 
-
           <Grid item xs={6}>
-          <h3 style={{ margin: 0 }}>le délais de Maitre d’ouvrage (jours)</h3>
-          <TextField
-   name="delais"
-   value={this.state.delais}
-   onChange={this.handleChange}
-   
-    type="number"
-    
-    variant="outlined"
-    fullWidth
-   
-  />
+            <h3 style={{ margin: 0 }}> délais de Maitre d’ouvrage (jours)</h3>
+            <TextField
+              name="delais"
+              value={this.state.delais}
+              onChange={this.handleChange}
+              type="number"
+              variant="outlined"
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <h3 style={{ margin: 0 }}> date de début </h3>
+            <TextField
+              fullWidth
+              variant="outlined"
+              type="date"
+              name="date_debut"
+              onChange={this.handleChange}
+              value={
+                this.state.date_debut === ""
+                  ? getCurrentDateTime(new Date().getTime()).split("T")[0]
+                  : getCurrentDateTime(
+                      new Date(this.state.date_debut).getTime()
+                    ).split("T")[0]
+              }
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <h3 style={{ margin: 0 }}> Date de dépôt </h3>
+            <p>{this.state.date_depot}</p>
           </Grid>
           <Grid item xs={12}>
             <br />
