@@ -118,6 +118,10 @@ class AjouterProjet extends Component {
       maitreDouvrage_id: d.maitreDouvrage.id,
       adresse: d.adresse,
       phasesProjetsSelected: [...this.state.phasesProjetsSelected],
+      duree_phase: d.duree_phase,
+      delais: d.delais,
+      date_debut: d.date_debut,
+      date_depot: d.date_depot,
     };
 
     this.props.ajouterProjet(data);
@@ -128,10 +132,17 @@ class AjouterProjet extends Component {
       [e.target.name]: e.target.value,
     });
     if (e.target.name === "date_debut") {
-      this.calculDateDepotWithDateDebut(e.target.value);
+      
+      this.calculDateDepotWithDateDebut(e.target.value !== "" ? e.target.value : 
+      getCurrentDateTime(new Date().getTime()).split("T")[0]
+      );
     }
     if (e.target.name === "delais") {
-      this.calculDateDepotWithDelais(e.target.value);
+      console.log(e.target.value)
+      this.calculDateDepotWithDelais(
+        e.target.value !== "" ? e.target.value : 
+        0
+      );
     }
   };
   calculDateDepotWithDelais = (delais) => {
@@ -298,6 +309,7 @@ class AjouterProjet extends Component {
               type="number"
               variant="outlined"
               fullWidth
+              InputProps={{inputProps : {min  : 0, step : 1 }}}
             />
           </Grid>
           <Grid item xs={6}>
