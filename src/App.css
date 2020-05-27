@@ -260,3 +260,17 @@ div[class^="react-tabs-css-module_content"] {
 
 /* end search in table*/
 /*****************************************************************/
+/*react select*/
+
+.react-select__multi-value{
+ border : 1px solid gray !important;
+}
+.react-select__multi-value__label{
+  text-overflow: initial !important;
+  white-space: initial !important;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}
+.react-select__multi-value__remove{
+  background-color: #3f4954 !important;
+}

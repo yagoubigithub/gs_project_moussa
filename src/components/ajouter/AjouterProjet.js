@@ -43,6 +43,8 @@ class AjouterProjet extends Component {
     nom: "",
     objet: "",
     adresse: "",
+    duree_phase : 0,
+    delais : 0,
     
     maitreDouvrages: [],
     phasesProjetsSelected : []
@@ -64,7 +66,8 @@ class AjouterProjet extends Component {
         objet: "",
         adresse: "",
         maitreDouvrage: undefined,
-        
+        delais : 0,
+        duree_phase : 0,
         phasesProjetsSelected : []
       });
     
@@ -80,7 +83,19 @@ class AjouterProjet extends Component {
  
   
   handleSelectChange = (phasesProjetsSelected) =>{
-   this.setState({phasesProjetsSelected})
+    let duree_phase = 0;
+   this.setState({phasesProjetsSelected}, ()=>{
+     if(phasesProjetsSelected !== null){
+      phasesProjetsSelected.map(phase=>{
+        duree_phase = Number.parseInt(duree_phase) +  Number.parseInt(phase.value.duree);
+       
+     })
+     }
+  
+     
+     
+     this.setState({duree_phase})
+   })
   }
   ajouter = () => {
     const d = { ...this.state };
@@ -132,8 +147,9 @@ class AjouterProjet extends Component {
     if(this.state.phasesProjets){
       this.state.phasesProjets.map(phase=>{
       options.push({
-        value : phase.id,
-        label : phase.titre
+        value : {...phase},
+        label : phase.titre,
+        className :  "react-select-option"
       })
     })
     }
@@ -237,12 +253,30 @@ class AjouterProjet extends Component {
           <Grid item xs={6}>
           <h3 style={{ margin: 0 }}>Phases du projet </h3>
             <Select onChange={this.handleSelectChange} 
+             getOptionValue ={(option)=> option.value.id}
+            classNamePrefix="react-select"
              value={this.state.phasesProjetsSelected} options={options} fullWidth isMulti />
            
+           <h3>La durée des phases : {this.state.duree_phase} {" "}(jours)</h3>
            
          
           </Grid>
 
+
+          <Grid item xs={6}>
+          <h3 style={{ margin: 0 }}>le délais de Maitre d’ouvrage (jours)</h3>
+          <TextField
+   name="delais"
+   value={this.state.delais}
+   onChange={this.handleChange}
+   
+    type="number"
+    
+    variant="outlined"
+    fullWidth
+   
+  />
+          </Grid>
           <Grid item xs={12}>
             <br />
             <Button
