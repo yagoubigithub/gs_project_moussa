@@ -36,6 +36,7 @@ import {removePhasesProjetCreated,ajouterPahsesProjet} from '../../store/actions
     titre : "",
     description : "",
     duree : 0,
+    prix : 0,
    
   };
 
@@ -48,7 +49,9 @@ import {removePhasesProjetCreated,ajouterPahsesProjet} from '../../store/actions
         success : "Phase de projet a été ajouter",
 
         titre : "",
-        description : ""
+        description : "",
+        duree : 0,
+        prix : 0,
       })
     }
   }
@@ -90,16 +93,16 @@ import {removePhasesProjetCreated,ajouterPahsesProjet} from '../../store/actions
             </Link>
           </Toolbar>
         </AppBar>
-        <div style={{ marginTop: 50, padding: 15 }}></div>
+        <div style={{ marginTop: 30, padding: 15 }}></div>
         <h1 style={{ textAlign: "center" }}>Ajouter Une Phase du projet</h1>
         <div className="alert error">{this.state.error} </div>
         <div className="alert success">{this.state.success} </div>
         <Grid container spacing={2} style={{ padding: 25 }}>
           <Grid item xs={12}>
-            <h3 style={{ margin: 0 }}>titre * </h3>
+            <h3 style={{ margin: 0 }}>Désignation * </h3>
 
             <TextField
-              placeholder="titre *"
+              placeholder="Désignation *"
               value={this.state.titre}
               name="titre"
               variant="outlined"
@@ -127,6 +130,20 @@ import {removePhasesProjetCreated,ajouterPahsesProjet} from '../../store/actions
               placeholder="Durée"
               value={this.state.duree}
               name="duree"
+              variant="outlined"
+              onChange={this.handleChange}
+              fullWidth
+              type="number"
+              InputProps={{inputProps : {min  : 0, step : 1 }}}
+            />
+          </Grid>
+          
+          <Grid item xs={12}>
+            <h3 style={{ margin: 0 }}>Prix</h3>
+            <TextField
+              placeholder="prix"
+              value={this.state.prix}
+              name="prix"
               variant="outlined"
               onChange={this.handleChange}
               fullWidth

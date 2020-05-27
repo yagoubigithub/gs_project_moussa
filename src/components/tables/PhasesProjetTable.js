@@ -141,7 +141,7 @@ handleSelectOneChange =  (PhasesProjetSelected) =>{
         filterMethod: (filter, row) =>
         {
           const regx =  `.*${filter.value}.*`;
-          return row[filter.id].match(regx)
+          return row[filter.id].toString().match(regx)
         },
         
         
@@ -163,12 +163,12 @@ handleSelectOneChange =  (PhasesProjetSelected) =>{
           </div>
       }, 
       {
-        Header: 'Titre',
+        Header: 'Désignation',
         accessor: 'titre',
         filterMethod: (filter, row) =>
         {
           const regx =  `.*${filter.value}.*`;
-          return row[filter.id].match(regx)
+          return row[filter.id].toString().match(regx)
         },
         Cell: props =>
           (<div className="cell" >{props.value !== "undefined" ? props.value : ""}</div>)
@@ -189,7 +189,7 @@ handleSelectOneChange =  (PhasesProjetSelected) =>{
       }
     ,
     {
-      Header: 'Desription',
+      Header: 'Description',
       accessor: 'description',
       filterMethod: (filter, row) =>
       {
@@ -238,7 +238,34 @@ handleSelectOneChange =  (PhasesProjetSelected) =>{
      
       value={filter ? filter.value : ""}/>
       </div>
-  }]
+  }
+,
+{
+  Header: 'Prix',
+  accessor: 'prix',
+  filterMethod: (filter, row) =>
+  {
+    const regx =  `.*${filter.value}.*`;
+    return row[filter.id].toString().match(regx)
+  },
+  Cell: props =>
+    (<div className="cell" >{props.value !== "undefined" ? props.value : ""}</div>)
+    ,
+    Filter: ({ filter, onChange }) =>
+    <div className="searchtable-container">
+    <label htmlFor="date-input-prix">
+      <SearchIcon className="searchtable-icon" />
+    </label>
+    
+      <input type="text"
+      id="date-input-prix"
+      className="searchtable-input"
+     onChange={event => onChange(event.target.value)}
+   
+    value={filter ? filter.value : ""}/>
+    </div>
+}
+]
 
       
     
