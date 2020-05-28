@@ -48,6 +48,16 @@ const ProjetReducer = (state = initStat, action) =>{
                             ...state,
                             projets : action.payload
                         }
+                    case 'UNDO_DELETE_PROJET' : 
+                    return {
+                        ...state,
+                        projets : action.payload
+                    }
+                    case 'ADD_TO_CORBEILLE_PROJET' : 
+                    return {
+                        ...state,
+                        projets : action.payload
+                    }
 
             default :
             return {

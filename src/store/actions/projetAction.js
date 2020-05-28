@@ -13,7 +13,7 @@ export const ajouterProjet = (data) =>{
       dispatch({
         type : "STOP_LOADING_PROJET"
     });
-    console.log(res)
+    
     if(Array.isArray(res)){
       dispatch({
           type : "AJOUTER_PROJET",

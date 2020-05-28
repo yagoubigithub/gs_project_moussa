@@ -6,13 +6,18 @@ const methode = Projet.prototype;
 
 function Projet() {
   //db.run('DROP TABLE projet');
-  //db.run('DROP TABLE phases_projets');
+ // db.run('DROP TABLE phases_projets');
 
   db.run(`CREATE TABLE IF NOT EXISTS projet (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nom TEXT NOT NULL,
     objet TEXT,
     adresse TEXT ,
+    delais INTEGER ,
+    date_debut TEXT ,
+    date_depot TEXT ,
+    etat TEXT ,
+    duree_phase INTEGER ,
     maitreDouvrage_id INTEGER ,
    status TEXT
 )`);
@@ -42,12 +47,12 @@ function Projet() {
     }
   });
 
+  
   //AJOUTER
   ipcMain.on("projet:ajouter", (event, value) => {
     const projets = [];
     db.run(
-      `
-               INSERT INTO projet(nom , objet , adresse , maitreDouvrage_id , status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.maitreDouvrage_id} , 'undo') `,
+      `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.delais},'${value.date_debut}','${value.date_depot}' , 'en cours',${value.duree_phase},${value.maitreDouvrage_id} , 'undo') `,
       function (err) {
         if (err) mainWindow.webContents.send("projet:ajouter", err);
 
@@ -128,16 +133,21 @@ function ReturnAllProject() {
       `SELECT p.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM projet p  JOIN maitre_douvrage m ON m.id=p.maitreDouvrage_id `,
       function (err, rows) {
         if (err) reject(err);
+        if(rows.length === 0){
+          resolve(projets);
+        }else{
+          rows.forEach((projet) => {
+            db.all(
+              `SELECT *  FROM phases_projets WHERE projet_id=${projet.id}`,
+              function (err, phases_projets) {
+                projets.push({ phases_projets: [...phases_projets], ...projet });
+                if (projets.length === rows.length) resolve(projets);
+              }
+            );
+          });
+        }
 
-        rows.forEach((projet) => {
-          db.all(
-            `SELECT *  FROM phases_projets WHERE projet_id=${projet.id}`,
-            function (err, phases_projets) {
-              projets.push({ phases_projets: [...phases_projets], ...projet });
-              if (projets.length === rows.length) resolve(projets);
-            }
-          );
-        });
+        
       }
     );
   });
