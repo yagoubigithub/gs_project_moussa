@@ -5,9 +5,8 @@ const mainWindow = require("./mainWindow");
 const methode = Projet.prototype;
 
 function Projet() {
-//db.run('DROP TABLE projet');
-//db.run('DROP TABLE phases_projets');
-
+  //db.run('DROP TABLE projet');
+  //db.run('DROP TABLE phases_projets');
 
   db.run(`CREATE TABLE IF NOT EXISTS projet (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -18,126 +17,84 @@ function Projet() {
    status TEXT
 )`);
 
-db.run(`CREATE TABLE IF NOT EXISTS phases_projets (
+  db.run(`CREATE TABLE IF NOT EXISTS phases_projets (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   projet_id INTEGER NOT NULL,
   phases_projet_id INTEGER NOT NULL,
  status TEXT
 )`);
 
-
   //get
   ipcMain.on("projet", (event, value) => {
-    if(value.id){
-      db.get("SELECT * FROM projet WHERE id="+value.id, function (err, result) {
-        if (err) mainWindow.webContents.send("projet", err);
-        mainWindow.webContents.send("projet", result);
-      });
-    }else{
-       db.all(`SELECT p.*, m.nom , m.prenom  FROM projet p  JOIN maitre_douvrage m ON m.id=p.maitreDouvrage_id`, function (err, rows) {
-      if (err) mainWindow.webContents.send("projet", err);
-      
-      mainWindow.webContents.send("projet", rows);
-    });
+    if (value.id) {
+      db.get(
+        "SELECT p.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM projet p  JOIN maitre_douvrage m ON m.id=p.maitreDouvrage_id WHERE id=" +
+          value.id,
+        function (err, result) {
+          if (err) mainWindow.webContents.send("projet", err);
+          mainWindow.webContents.send("projet", result);
+        }
+      );
+    } else {
+      ReturnAllProject()
+        .then((projets) => mainWindow.webContents.send("projet", projets))
+        .catch((err) => mainWindow.webContents.send("projet", err));
     }
-   
   });
 
   //AJOUTER
   ipcMain.on("projet:ajouter", (event, value) => {
     const projets = [];
-      db.run(
-        `
+    db.run(
+      `
                INSERT INTO projet(nom , objet , adresse , maitreDouvrage_id , status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.maitreDouvrage_id} , 'undo') `,
-        function (err) {
-         
+      function (err) {
+        if (err) mainWindow.webContents.send("projet:ajouter", err);
+
+        //add phase de projet
+        const projet_id = this.lastID;
+        let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , status) VALUES   `;
+
+        value.phasesProjetsSelected.forEach((phase) => {
+          const placeholder = ` (${projet_id},'${phase.value}' , 'undo') ,`;
+          sql = sql + placeholder;
+        });
+
+        sql = sql.slice(0, sql.lastIndexOf(",") - 1);
+
+        db.run(sql, function (err) {
           if (err) mainWindow.webContents.send("projet:ajouter", err);
+        });
 
-          //add phase de projet
-          const projet_id = this.lastID;
-          let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , status) VALUES   `
-         
-          value.phasesProjetsSelected.forEach(phase => {
-            const placeholder = ` (${projet_id},'${phase.value}' , 'undo') ,`
-            sql = sql + placeholder;
-           
-          });
+        ReturnAllProject()
+        .then((projets) => mainWindow.webContents.send("projet:ajouter", projets))
+        .catch((err) => mainWindow.webContents.send("projet:ajouter", err));
+      }
+    );
 
-         sql =  sql.slice(0,sql.lastIndexOf(',') - 1);
-         
-          db.run(
-            sql,
-            function (err) {
-              if(err) mainWindow.webContents.send("projet:ajouter", err);
-             
-            })
-          
-          db.all( `SELECT *  FROM projet `, function (err, rows) {
-           
-            if (err) mainWindow.webContents.send("projet:ajouter", err);
-            //get phases_projets
-            const promise = new Promise((resolve,reject)=>{
-              rows.forEach(projet=>{
-                db.all(`SELECT *  FROM phases_projets WHERE projet_id=${projet.id}`,  function(err, phases_projets){
-                 
-                  projets.push({phases_projets : [...phases_projets],...projet})
-                  if(projets.length === rows.length) resolve();
-                  
-                })
-              })
-            }).then(()=>{
-             
-            
-              mainWindow.webContents.send("projet:ajouter", projets);
-            })
-          
-          
-            
-          });
-        }
-      );
-
-      /*
+    /*
                 
                               */
-    
   });
 
-  ipcMain.on('maitre_douvrage:logo', (event,value)=>{
-    if(value.id){
-      db.get(`SELECT logo FROM maitre_douvrage WHERE id=${value.id} `, function (err,result) {
-        if (err) mainWindow.webContents.send("maitre_douvrage:logo", err);
-
-        mainWindow.webContents.send("maitre_douvrage:logo", result.logo);
-
-      })
-    }
-  })
-  
-
-  ipcMain.on("maitre_douvrage:delete", (event, value) => {
+  ipcMain.on("projet:delete", (event, value) => {
     if (value.id !== undefined) {
-      // get one maitre_douvrage
+      // delete  projet
 
       db.run(
-        `UPDATE maitre_douvrage  SET status='${value.status}' WHERE id = ${value.id};`,
-        function(err) {
-          if (err) mainWindow.webContents.send("maitre_douvrage:delete", err);
+        `UPDATE projet  SET status='${value.status}' WHERE id = ${value.id};`,
+        function (err) {
+          if (err) mainWindow.webContents.send("projet:delete", err);
 
-          db.all("SELECT * FROM maitre_douvrage ORDER BY id DESC", function(
-            err,
-            rows
-          ) {
-            if (err) mainWindow.webContents.send("maitre_douvrage:delete", err);
-            mainWindow.webContents.send("maitre_douvrage:delete", rows);
-          });
+       
+          ReturnAllProject()
+          .then((projets) => mainWindow.webContents.send("projet:delete", projets))
+          .catch((err) => mainWindow.webContents.send("projet:delete", err));
         }
       );
     }
   });
 
-
-  
   //MODIFIER
   ipcMain.on("maitre_douvrage:modifier", (event, value) => {
     if (value.nom !== undefined) {
@@ -149,7 +106,10 @@ db.run(`CREATE TABLE IF NOT EXISTS phases_projets (
           db.all("SELECT * FROM maitre_douvrage ", function (err, rows) {
             if (err)
               mainWindow.webContents.send("maitre_douvrage:modifier", err);
-            mainWindow.webContents.send("maitre_douvrage:modifier", {maitreDouvrages : rows, maitreDouvrage : value});
+            mainWindow.webContents.send("maitre_douvrage:modifier", {
+              maitreDouvrages: rows,
+              maitreDouvrage: value,
+            });
           });
         }
       );
@@ -159,6 +119,27 @@ db.run(`CREATE TABLE IF NOT EXISTS phases_projets (
                               */
     }
   });
+}
+function ReturnAllProject() {
+  const projets = [];
 
+  return new Promise((resolve, reject) => {
+    db.all(
+      `SELECT p.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM projet p  JOIN maitre_douvrage m ON m.id=p.maitreDouvrage_id `,
+      function (err, rows) {
+        if (err) reject(err);
+
+        rows.forEach((projet) => {
+          db.all(
+            `SELECT *  FROM phases_projets WHERE projet_id=${projet.id}`,
+            function (err, phases_projets) {
+              projets.push({ phases_projets: [...phases_projets], ...projet });
+              if (projets.length === rows.length) resolve(projets);
+            }
+          );
+        });
+      }
+    );
+  });
 }
 module.exports = Projet;

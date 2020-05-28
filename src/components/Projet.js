@@ -6,6 +6,9 @@ import { Tab, Tabs } from "react-tabs-css";
 
 import { NavLink } from "react-router-dom";
 
+//mui
+import Dialog from '@material-ui/core/Dialog'
+
 //util
 import LoadingComponent from "../utils/loadingComponent";
 
@@ -50,6 +53,69 @@ class Projet extends Component {
       this.setState({ projetCorebeille, projets });
     }
   }
+
+
+  handleChangeTab = (tab) => {
+    switch (tab) {
+      case "projets":
+        this.setState({
+          delete_button_text: "Supprimer",
+          rowsSelected: [],
+         
+          tab: "projets",
+        });
+
+        break;
+
+      case "projetCorebeille":
+        this.setState({
+          delete_button_text: "Annuler Suppression",
+          rowsSelected: [],
+          tab: "projetCorebeille",
+        });
+
+        break;
+
+     
+
+      default:
+        this.setState({
+          delete_button_text: "Supprimer",
+          rowsSelected: [],
+          tab: "projets",
+        });
+        break;
+    }
+  };
+
+  getData = (rowsSelected) => {
+    this.setState({ rowsSelected });
+  };
+  handleOpenCloseaddToCorbeilleDialog = () => {
+    this.setState({ addToCorbeilleDialog: !this.state.addToCorbeilleDialog });
+  };
+  Supprimer = () => {
+    if (this.state.rowsSelected.length === 0) {
+      alert("Selectionnner des projets");
+    } else {
+      if (this.state.tab !== "projetCorebeille") {
+        this.handleOpenCloseaddToCorbeilleDialog();
+      }
+      if (this.state.tab === "projetCorebeille") {
+        this.state.rowsSelected.map((projet) => {
+          this.props.undoDeleteProjet(projet);
+        });
+        this.setState({ rowsSelected: [] });
+      }
+    }
+  };
+  addToCorbeille = () => {
+    const rowsSelected = [...this.state.rowsSelected];
+    rowsSelected.map((projet) => {
+      this.props.addToCorbeille(projet);
+    });
+    this.setState({ rowsSelected: [] });
+  };
   render() {
     return (
       <div>
@@ -72,6 +138,23 @@ class Projet extends Component {
           </button>
         </div>
 
+        <Dialog
+          open={this.state.addToCorbeilleDialog}
+          onClose={this.handleOpenCloseaddToCorbeilleDialog}
+        >
+          <h2>Supprimer</h2>
+          <button
+            onClick={() => {
+              this.addToCorbeille();
+              this.handleOpenCloseaddToCorbeilleDialog();
+            }}
+          >
+            Supprimer
+          </button>
+          <button onClick={this.handleOpenCloseaddToCorbeilleDialog}>
+            Cancel
+          </button>
+        </Dialog>
         <Route path="/projet/ajouter" component={AjouterProjet} />
 
 
