@@ -7,7 +7,7 @@ import { Tab, Tabs } from "react-tabs-css";
 import { NavLink } from "react-router-dom";
 
 //mui
-import Dialog from '@material-ui/core/Dialog'
+import Dialog from "@material-ui/core/Dialog";
 
 //util
 import LoadingComponent from "../utils/loadingComponent";
@@ -36,29 +36,33 @@ class EtatProjet extends Component {
     this.props.getAllProjet();
   }
   componentWillReceiveProps(nextProps) {
-    
     if (nextProps.projets) {
       const projetCorebeille = [];
       const projets = [];
-      let projetsCounter = 1 ;
-      let  projetCorebeilleCounter = 1;
+      let projetsCounter = 1;
+      let projetCorebeilleCounter = 1;
       nextProps.projets.map((projet) => {
+        let retard = 0;
+        const retard_mils= (new Date(projet.date_depot)).getTime() - (new Date()).getTime();
+        if(retard_mils < 0){
+            retard = ((retard_mils / 24 /60 /60 /1000)*-1).toFixed(0);
+        }
+
+
         if (projet.status === "undo") {
-          projets.push({number : projetsCounter,...projet});
+          projets.push({ number: projetsCounter, ...projet,retard });
           projetsCounter++;
         }
 
         if (projet.status === "corbeille") {
-          projetCorebeille.push({number : projetCorebeilleCounter,...projet});
+          projetCorebeille.push({ number: projetCorebeilleCounter, ...projet,retard });
           projetCorebeilleCounter++;
         }
       });
-     
 
       this.setState({ projetCorebeille, projets });
     }
   }
-
 
   handleChangeTab = (tab) => {
     switch (tab) {
@@ -66,7 +70,7 @@ class EtatProjet extends Component {
         this.setState({
           delete_button_text: "Supprimer",
           rowsSelected: [],
-         
+
           tab: "projets",
         });
 
@@ -80,8 +84,6 @@ class EtatProjet extends Component {
         });
 
         break;
-
-     
 
       default:
         this.setState({
@@ -162,7 +164,6 @@ class EtatProjet extends Component {
         </Dialog>
         <Route path="/projet/ajouter" component={AjouterProjet} />
 
-
         <Tabs>
           <Tab
             index={0}
@@ -177,12 +178,11 @@ class EtatProjet extends Component {
               rows={this.state.projets}
             />
           </Tab>
-        
 
           <Tab
             index={1}
             title="Corbeille"
-            onClick={() => this.handleChangeTab("projetCorebeille")}      
+            onClick={() => this.handleChangeTab("projetCorebeille")}
           >
             <ProjetTable
               checkBoxColumn
@@ -194,8 +194,7 @@ class EtatProjet extends Component {
             />
           </Tab>
         </Tabs>
-
-       </div>
+      </div>
     );
   }
 }
