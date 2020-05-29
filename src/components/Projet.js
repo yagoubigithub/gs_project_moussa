@@ -21,6 +21,7 @@ import {
 import { connect } from "react-redux";
 import AjouterProjet from "./ajouter/AjouterProjet";
 import ProjetTable from "./tables/ProjetTable";
+import EtatDeProjetTable from "./tables/EtatDeProjetTable";
 
 class Projet extends Component {
   state = {
@@ -39,13 +40,17 @@ class Projet extends Component {
     if (nextProps.projets) {
       const projetCorebeille = [];
       const projets = [];
+      let projetsCounter = 1 ;
+      let  projetCorebeilleCounter = 1;
       nextProps.projets.map((projet) => {
         if (projet.status === "undo") {
-          projets.push(projet);
+          projets.push({number : projetsCounter,...projet});
+          projetsCounter++;
         }
 
         if (projet.status === "corbeille") {
-          projetCorebeille.push(projet);
+          projetCorebeille.push({number : projetCorebeilleCounter,...projet});
+          projetCorebeilleCounter++;
         }
       });
      
@@ -172,11 +177,12 @@ class Projet extends Component {
               rows={this.state.projets}
             />
           </Tab>
+        
+
           <Tab
             index={1}
             title="Corbeille"
-            onClick={() => this.handleChangeTab("projetCorebeille")}
-           
+            onClick={() => this.handleChangeTab("projetCorebeille")}      
           >
             <ProjetTable
               checkBoxColumn

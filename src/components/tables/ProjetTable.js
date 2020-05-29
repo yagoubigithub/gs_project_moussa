@@ -124,6 +124,35 @@ class ProjetTable extends Component {
   render() {
     const columns = [
       {
+        Header: 'Référence',
+        accessor: 'number',
+        width : 100,
+        filterMethod: (filter, row) =>
+        {
+          const regx =  `.*${filter.value}.*`;
+         
+          return ("P-"+row[filter.id].toString()).match(regx)
+        },
+        
+        
+        Cell: props =>
+          (<div className="cell" >{props.value !== "undefined" ?"P-"  + props.value : ""}</div>)
+          , 
+          Filter: ({ filter, onChange }) =>
+          <div className="searchtable-container">
+          <label htmlFor="date-input-number">
+            <SearchIcon className="searchtable-icon" />
+          </label>
+          
+            <input type="text"
+            id="date-input-number"
+            className="searchtable-input"
+           onChange={event => onChange(event.target.value)}
+         
+          value={filter ? filter.value : ""}/>
+          </div>
+      },
+      {
         Header: "Nom",
         accessor: "nom",
         filterMethod: (filter, row) => {
@@ -376,6 +405,11 @@ class ProjetTable extends Component {
 
     return (
       <Fragment>
+       <LoadingComponent
+          loading={
+            this.props.loading !== undefined ? this.props.loading : false
+          }
+        />
         <Dialog
           open={this.state.addToCorbeilleDialog}
           onClose={this.handleOpenCloseaddToCorbeilleDialog}

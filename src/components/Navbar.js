@@ -28,6 +28,11 @@ class Navbar extends Component {
       <NavLink activeClassName="nav-active" to="/projet" className="nav-link">
         Projet{" "}
       </NavLink>
+
+      <NavLink activeClassName="nav-active" to="/etat_projet" className="nav-link">
+       Etat de Projet{" "}
+      </NavLink>
+   
      
       <NavLink activeClassName="nav-active" to="/facture" className="nav-link">
         Facture{" "}

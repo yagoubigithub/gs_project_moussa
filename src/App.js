@@ -13,6 +13,7 @@ import MaitreDouvrage from './components/MaitreDouvrage';
 import Agence from './components/Agence';
 import Projet from './components/Projet';
 import PhasesProjet from './components/PhasesProjet';
+import EtatProjet from './components/EtatProjet';
 
 class App extends Component {
   render(){
@@ -27,6 +28,7 @@ class App extends Component {
        <Route exact  path="/" component={Connexion} />
        <Route   path="/maitre_douvrage" component={MaitreDouvrage} />
        <Route   path="/projet" component={Projet} />
+       <Route   path="/etat_projet" component={EtatProjet} />
        <Route   path="/phases_projet" component={PhasesProjet} />
        <Route path="/agence" component={Agence} />
        </Switch>

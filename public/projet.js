@@ -5,7 +5,7 @@ const mainWindow = require("./mainWindow");
 const methode = Projet.prototype;
 
 function Projet() {
-  //db.run('DROP TABLE projet');
+ // db.run('DROP TABLE projet');
  // db.run('DROP TABLE phases_projets');
 
   db.run(`CREATE TABLE IF NOT EXISTS projet (
@@ -133,20 +133,23 @@ function ReturnAllProject() {
       `SELECT p.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM projet p  JOIN maitre_douvrage m ON m.id=p.maitreDouvrage_id `,
       function (err, rows) {
         if (err) reject(err);
-        if(rows.length === 0){
-          resolve(projets);
-        }else{
-          rows.forEach((projet) => {
-            db.all(
-              `SELECT *  FROM phases_projets WHERE projet_id=${projet.id}`,
-              function (err, phases_projets) {
-                projets.push({ phases_projets: [...phases_projets], ...projet });
-                if (projets.length === rows.length) resolve(projets);
-              }
-            );
-          });
+        if(rows !== undefined){
+          if(rows.length === 0){
+            resolve(projets);
+          }else{
+            rows.forEach((projet) => {
+              db.all(
+                `SELECT *  FROM phases_projets WHERE projet_id=${projet.id}`,
+                function (err, phases_projets) {
+                  projets.push({ phases_projets: [...phases_projets], ...projet });
+                  if (projets.length === rows.length) resolve(projets);
+                }
+              );
+            });
+          }
+  
         }
-
+     
         
       }
     );

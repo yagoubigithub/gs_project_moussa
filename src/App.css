@@ -216,6 +216,9 @@ div[class^="react-tabs-css-module_content"] {
  
   
 }
+.table-container{
+  overflow-x: auto;
+}
 
 /*end table  styling*/
 
