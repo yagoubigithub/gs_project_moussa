@@ -28,9 +28,11 @@ class EtatProjet extends Component {
     delete_button_text: "Suprimer",
     projets: [],
     projetCorebeille: [],
+    projetRetards : [],
     rowsSelected: [],
     tab: "projets",
     addToCorbeilleDialog: false,
+
   };
   componentDidMount() {
     this.props.getAllProjet();
@@ -39,13 +41,17 @@ class EtatProjet extends Component {
     if (nextProps.projets) {
       const projetCorebeille = [];
       const projets = [];
+      const projetRetards = [];
       let projetsCounter = 1;
       let projetCorebeilleCounter = 1;
+      let projetRetardCounter = 1;
       nextProps.projets.map((projet) => {
         let retard = 0;
         const retard_mils= (new Date(projet.date_depot)).getTime() - (new Date()).getTime();
         if(retard_mils < 0){
             retard = ((retard_mils / 24 /60 /60 /1000)*-1).toFixed(0);
+            projetRetards.push({ number: projetRetardCounter, ...projet,retard })
+            projetRetardCounter++;
         }
 
 
@@ -60,7 +66,7 @@ class EtatProjet extends Component {
         }
       });
 
-      this.setState({ projetCorebeille, projets });
+      this.setState({ projetCorebeille, projets,projetRetards });
     }
   }
 
@@ -136,7 +142,7 @@ class EtatProjet extends Component {
             <button className="btn btn-nav">Actualisé</button>
           </NavLink>
 
-          <NavLink to="/projet/ajouter">
+          <NavLink to="/projet/ajouter/etat_projet">
             <button className="btn btn-nav">Ajouter</button>
           </NavLink>
 
@@ -162,8 +168,7 @@ class EtatProjet extends Component {
             Cancel
           </button>
         </Dialog>
-        <Route path="/projet/ajouter" component={AjouterProjet} />
-
+       
         <Tabs>
           <Tab
             index={0}
@@ -181,10 +186,25 @@ class EtatProjet extends Component {
 
           <Tab
             index={1}
+            title="Projets en retard"
+            onClick={() => this.handleChangeTab("projetRetards")}
+          >
+            <EtatDeProjetTable
+              checkBoxColumn
+              IconsColumn
+              rowsSelected={this.state.rowsSelected}
+              sendData={this.getData}
+              rows={this.state.projetRetards}
+              
+            />
+          </Tab>
+          <Tab
+            index={2}
             title="Corbeille"
             onClick={() => this.handleChangeTab("projetCorebeille")}
           >
-            <ProjetTable
+            <EtatDeProjetTable
+         
               checkBoxColumn
               IconsColumn
               rowsSelected={this.state.rowsSelected}

@@ -250,30 +250,30 @@ class EtatDeProjet extends Component {
       {
         Header: "état",
         accessor: "etat",
-        filterMethod: (filter, row) => {
-          const regx = `.*${filter.value}.*`;
-          return row[filter.id].match(regx);
+        Cell: props =>{
+          if(props.value === "enPane"){
+            return(<div className="cell" >{props.value !== "undefined" ? "En Panne" : ""}</div>)
+          }else{
+            return(<div className="cell" >{props.value !== "undefined" ? props.value : ""}</div>)
+          }
         },
-        Cell: (props) => (
-          <div className="cell">
-            {props.value !== "undefined" ? props.value : ""}
-          </div>
-        ),
-        Filter: ({ filter, onChange }) => (
-          <div className="searchtable-container">
-            <label htmlFor="date-input-etat">
-              <SearchIcon className="searchtable-icon" />
-            </label>
-
-            <input
-              type="text"
-              id="date-input-etat"
-              className="searchtable-input"
-              onChange={(event) => onChange(event.target.value)}
-              value={filter ? filter.value : ""}
-            />
-          </div>
-        ),
+        filterMethod: (filter, row) =>
+        {
+          if(filter.value === "all") return true;
+          else
+          return row[filter.id] === filter.value   ;
+        },
+        Filter: ({ filter, onChange }) =>
+          <select
+            onChange={event => onChange(event.target.value)}
+            style={{ width: "100%" }}
+            value={filter ? filter.value : "all"}
+          >
+            <option value="all">Afficher tout</option>
+            <option value="en cours">En cours</option>
+            <option value="fini">Fini</option>
+           
+          </select>
       },
       {
         Header: "date de début",
@@ -374,7 +374,7 @@ class EtatDeProjet extends Component {
         return row[filter.id].match(regx);
       },
       Cell: (props) => (
-        <div className="cell">
+        <div className="cell" style={{color : props.value !== 0 ? "red" : "green"}}>
           {props.value !== "undefined" ? props.value : ""}
         </div>
       ),

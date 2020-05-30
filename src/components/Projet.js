@@ -134,7 +134,7 @@ class Projet extends Component {
             <button className="btn btn-nav">Actualisé</button>
           </NavLink>
 
-          <NavLink to="/projet/ajouter">
+          <NavLink to="/projet/ajouter/projet">
             <button className="btn btn-nav">Ajouter</button>
           </NavLink>
 
@@ -160,7 +160,7 @@ class Projet extends Component {
             Cancel
           </button>
         </Dialog>
-        <Route path="/projet/ajouter" component={AjouterProjet} />
+        <Route path="/projet/ajouter/:buttonReturn" component={AjouterProjet} />
 
 
         <Tabs>
