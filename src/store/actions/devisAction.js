@@ -168,3 +168,32 @@ export const removeDevisCreated = () =>{
       
   }
   }
+
+ export const  getPhasesProjetDeDevis = (data) =>{
+    return (dispatch ,getState)=>{
+
+      dispatch({
+        type : "LOADING_DEVIS"
+    })
+    ipcRenderer.send("phaseProjetDevis:get", {...data});
+  
+    ipcRenderer.once('phaseProjetDevis:get', function (event,data) {
+     
+      dispatch({
+        type : "STOP_LOADING_DEVIS"
+    });
+    if(data){
+      dispatch({
+          type : "GET_PHASES_PROJET_DEVIS",
+          payload : data
+      });
+    }else{
+      dispatch({
+        type : "ERROR_DEVIS",
+        payload : data
+    });
+    }
+  });
+      
+    }
+  }

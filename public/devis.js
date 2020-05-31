@@ -5,8 +5,8 @@ const mainWindow = require("./mainWindow");
 const methode = Devis.prototype;
 
 function Devis() {
- //db.run('DROP TABLE devis');
-// db.run('DROP TABLE devis_phases_projets');
+  // db.run('DROP TABLE devis');
+  // db.run('DROP TABLE devis_phases_projets');
 
   db.run(`CREATE TABLE IF NOT EXISTS devis (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -46,15 +46,12 @@ function Devis() {
     }
   });
 
-  
   //AJOUTER
   ipcMain.on("devis:ajouter", (event, value) => {
-      
     const deviss = [];
     db.run(
       `INSERT INTO devis(nom , objet , adresse  , duree_phase , prix_totale , remise, date_devis ,  maitreDouvrage_id , status) VALUES ('${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_devis}' , ${value.maitreDouvrage_id} , 'undo') `,
       function (err) {
-       
         if (err) mainWindow.webContents.send("devis:ajouter", err);
 
         //add phase de devis
@@ -62,7 +59,7 @@ function Devis() {
         let sql = `INSERT INTO devis_phases_projets(devis_id , phases_devis_id , status) VALUES   `;
 
         value.phasesProjetsSelected.forEach((phase) => {
-          const placeholder = ` (${devis_id},'${phase.value}' , 'undo') ,`;
+          const placeholder = ` (${devis_id},'${phase.value.id}' , 'undo') ,`;
           sql = sql + placeholder;
         });
 
@@ -73,8 +70,10 @@ function Devis() {
         });
 
         ReturnAllDevis()
-        .then((projets) => mainWindow.webContents.send("devis:ajouter", projets))
-        .catch((err) => mainWindow.webContents.send("devis:ajouter", err));
+          .then((projets) =>
+            mainWindow.webContents.send("devis:ajouter", projets)
+          )
+          .catch((err) => mainWindow.webContents.send("devis:ajouter", err));
       }
     );
 
@@ -92,12 +91,43 @@ function Devis() {
         function (err) {
           if (err) mainWindow.webContents.send("devis:delete", err);
 
-       
           ReturnAllDevis()
-          .then((deviss) => mainWindow.webContents.send("devis:delete", deviss))
-          .catch((err) => mainWindow.webContents.send("devis:delete", err));
+            .then((deviss) =>
+              mainWindow.webContents.send("devis:delete", deviss)
+            )
+            .catch((err) => mainWindow.webContents.send("devis:delete", err));
         }
       );
+    }
+  });
+
+  //get Phases
+  ipcMain.on("phaseProjetDevis:get", (event, value) => {
+    console.log(value);
+    if (Object.keys(value).length > 0) {
+      const phases = [];
+      const promise = new Promise((resolve, reject) => {
+        Object.keys(value).map((key) => {
+          console.log(value[key]);
+
+          db.get(
+            `SELECT * FROM phases_projet WHERE id=${value[key].phases_devis_id}`,
+            function (err, result) {
+              if (err) reject(err);
+              phases.push(result);
+              if (phases.length === Object.keys(value).length) resolve(phases);
+            }
+          );
+        });
+      })
+        .then((phases) => {
+          mainWindow.webContents.send("phaseProjetDevis:get", phases);
+        })
+        .catch((err) => {
+          mainWindow.webContents.send("phaseProjetDevis:get", err);
+        });
+    } else {
+      mainWindow.webContents.send("phaseProjetDevis:get", []);
     }
   });
 
@@ -134,26 +164,26 @@ function ReturnAllDevis() {
       `SELECT d.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM devis d  JOIN maitre_douvrage m ON m.id=d.maitreDouvrage_id `,
       function (err, rows) {
         if (err) reject(err);
-        if(rows !== undefined){
-          if(rows.length === 0){
+        if (rows !== undefined) {
+          if (rows.length === 0) {
             resolve(deviss);
-          }else{
+          } else {
             rows.forEach((devis) => {
               db.all(
                 `SELECT *  FROM devis_phases_projets WHERE devis_id=${devis.id}`,
                 function (err, devis_phases_projets) {
-                
-                
-                    deviss.push({ devis_phases_projets: [...devis_phases_projets], ...devis });
+                  if (devis_phases_projets !== undefined) {
+                    deviss.push({
+                      devis_phases_projets: [...devis_phases_projets],
+                      ...devis,
+                    });
+                  }
                   if (deviss.length === rows.length) resolve(deviss);
                 }
               );
             });
           }
-  
         }
-     
-        
       }
     );
   });

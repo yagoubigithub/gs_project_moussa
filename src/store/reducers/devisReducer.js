@@ -58,6 +58,11 @@ const DevisReducer = (state = initStat, action) =>{
                         ...state,
                         deviss : action.payload
                     }
+                    case 'GET_PHASES_PROJET_DEVIS':
+                        return {
+                            ...state,
+                            devis_phases_projets : action.payload
+                        }
 
             default :
             return {

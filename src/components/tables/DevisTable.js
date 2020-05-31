@@ -13,7 +13,8 @@ import { Dialog, Checkbox } from "@material-ui/core";
 
 //redux
 import { connect } from "react-redux";
-import { addToCorbeille } from "../../store/actions/projetAction";
+
+import { getPhasesProjetDeDevis ,addToCorbeille } from "../../store/actions/devisAction";
 
 //icons
 
@@ -22,36 +23,39 @@ import EditIcon from "@material-ui/icons/Edit";
 import PermMediaIcon from "@material-ui/icons/PermMedia";
 import UndoIcon from "@material-ui/icons/Undo";
 import SearchIcon from "@material-ui/icons/Search";
-import PrintIcon from '@material-ui/icons/Print';
-
-
+import PrintIcon from "@material-ui/icons/Print";
 
 import LoadingComponent from "../../utils/loadingComponent";
 
 class ProjetTable extends Component {
   state = {
     addToCorbeilleDialog: false,
+    transformDialog: false,
     deletedId: null,
     rowsSelected: this.props.rowsSelected,
     selectedAll: false,
+    devis: null,
 
     maitreDouvrageSelected: {},
+    devis_phases_projets : [],
+
     selectedAll: false,
     logo: "",
   };
   componentWillReceiveProps(nextProps) {
-    if (nextProps.voiture) {
-      this.setState({ ...nextProps.voiture });
-    }
-    if (nextProps.logo) {
-      this.setState({ logo: nextProps.logo });
-    }
+   
     if (nextProps.rowsSelected) {
       this.setState({ rowsSelected: nextProps.rowsSelected });
     }
     if (nextProps.rows.length !== this.props.rows.length) {
       this.setState({ selectedAll: false });
     }
+    if(nextProps.devis_phases_projets){
+        this.setState({
+            devis_phases_projets : nextProps.devis_phases_projets
+        })
+    }
+
   }
 
   componentWillUnmount() {
@@ -68,11 +72,23 @@ class ProjetTable extends Component {
   handleOpenCloseaddToCorbeilleDialog = () => {
     this.setState({ addToCorbeilleDialog: !this.state.addToCorbeilleDialog });
   };
+  handleOpenCloseatransformDialog = () => {
+    this.setState({ transformDialog: !this.state.transformDialog });
+  };
   add_To_Corbeille = (id) => {
     this.setState({ deletedId: id });
     //popup
     this.handleOpenCloseaddToCorbeilleDialog();
   };
+
+  transform = (devis) => {
+      this.props.getPhasesProjetDeDevis(devis.devis_phases_projets)
+    this.setState({
+      devis,
+    });
+    this.handleOpenCloseatransformDialog();
+  };
+
   handeleCheckCheckboxRow = (e, id) => {
     const rowsSelected = [...this.state.rowsSelected];
     if (this.checkRowIsSelected(id)) {
@@ -272,11 +288,14 @@ class ProjetTable extends Component {
         accessor: "prix_totale",
         filterMethod: (filter, row) => {
           const regx = `.*${filter.value}.*`;
-          return (Number.parseInt(row["prix_totale"] )+ Number.parseInt(row["remise"])).toString().match(regx);
+          return (
+            Number.parseInt(row["prix_totale"]) + Number.parseInt(row["remise"])
+          )
+            .toString()
+            .match(regx);
         },
-       
+
         Cell: (props) => {
-          
           return (
             <div className="cell">
               {props.value !== "undefined"
@@ -309,7 +328,7 @@ class ProjetTable extends Component {
           const regx = `.*${filter.value}.*`;
           return row[filter.id].match(regx);
         },
-       
+
         Cell: (props) => (
           <div className="cell">
             {props.value !== "undefined" ? props.value : ""}
@@ -338,7 +357,7 @@ class ProjetTable extends Component {
           const regx = `.*${filter.value}.*`;
           return row[filter.id].match(regx);
         },
-        
+
         Cell: (props) => (
           <div className="cell">
             {props.value !== "undefined" ? props.value : ""}
@@ -406,14 +425,13 @@ class ProjetTable extends Component {
                 </IconButton>
 
                 <Button
-
                   size="small"
-                  onClick={() => this.add_To_Corbeille(props.value)}
-                  style={{fontSize : 10, textTransform : "capitalize"}}
+                  onClick={() => this.transform(props.original)}
+                  style={{ fontSize: 10, textTransform: "capitalize" }}
                   color="primary"
                   variant="contained"
                 >
-                 Transformez-le en projet
+                  Transformez-le en projet
                 </Button>
               </div>
             );
@@ -507,6 +525,39 @@ class ProjetTable extends Component {
           </button>
         </Dialog>
 
+        <Dialog
+          maxWidth="xl"
+          open={this.state.transformDialog}
+          onClose={this.handleOpenCloseatransformDialog}
+        >
+          <h2>Transformez-le en projet</h2>
+
+          <ul>
+            <li>Nom du projet : </li>
+            <li>Adresse du projet : </li>
+            <li>Objet du projet : </li>
+            <li>
+              Maitre d'ouvrage :
+              <ul>
+                <li>Nom du Maitre d'ouvrage : </li>
+                <li>Prénom du Maitre d'ouvrage : </li>
+              </ul>
+            </li>
+
+            <li>les phases du projet </li>
+
+            {this.props.loading ? <LoadingComponent loading={true} /> : 
+            
+          this.state.devis_phases_projets.map(phase=>{
+              return (<p>{phase.titre}</p>)
+          })
+            }
+          </ul>
+
+          <h1> {this.state.devis && this.state.devis.nom}</h1>
+          <button onClick={this.handleOpenCloseatransformDialog}>Cancel</button>
+        </Dialog>
+
         <div className="table-container">
           {/*
             recherche
@@ -531,6 +582,7 @@ class ProjetTable extends Component {
 const mapActionToProps = (dispatch) => {
   return {
     addToCorbeille: (id) => dispatch(addToCorbeille(id)),
+    getPhasesProjetDeDevis : (data) =>dispatch(getPhasesProjetDeDevis(data))
   };
 };
 
@@ -538,6 +590,7 @@ const mapStateToProps = (state) => {
   return {
     loading: state.devis.loading,
     devis: state.devis.devis,
+    devis_phases_projets : state.devis.devis_phases_projets
   };
 };
 export default connect(mapStateToProps, mapActionToProps)(ProjetTable);
