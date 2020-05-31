@@ -12,17 +12,19 @@ function Devis() {
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nom TEXT NOT NULL,
     objet TEXT,
+    adresse TEXT,
     duree_phase INTEGER ,
     prix_totale    INTEGER ,
     remise INTEGER,
+    date_devis TEXT,
     maitreDouvrage_id INTEGER ,
    status TEXT
 )`);
 
   db.run(`CREATE TABLE IF NOT EXISTS devis_phases_projets (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  projet_id INTEGER NOT NULL,
-  phases_projet_id INTEGER NOT NULL,
+  devis_id INTEGER NOT NULL,
+  phases_devis_id INTEGER NOT NULL,
  status TEXT
 )`);
 
@@ -47,18 +49,20 @@ function Devis() {
   
   //AJOUTER
   ipcMain.on("devis:ajouter", (event, value) => {
+      console.log(value)
     const deviss = [];
     db.run(
-      `INSERT INTO devis(nom , objet , adresse     , duree_phase ,prix_totale , remise, maitreDouvrage_id , status) VALUES ('${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , ${value.maitreDouvrage_id} , 'undo') `,
+      `INSERT INTO devis(nom , objet , adresse  , duree_phase , prix_totale , remise, date_devis ,  maitreDouvrage_id , status) VALUES ('${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_devis}' , ${value.maitreDouvrage_id} , 'undo') `,
       function (err) {
+          console.log(err)
         if (err) mainWindow.webContents.send("devis:ajouter", err);
 
         //add phase de devis
         const devis_id = this.lastID;
-        let sql = `INSERT INTO devis_phases_projets(projet_id , phases_projet_id , status) VALUES   `;
+        let sql = `INSERT INTO devis_phases_projets(devis_id , phases_devis_id , status) VALUES   `;
 
         value.phasesProjetsSelected.forEach((phase) => {
-          const placeholder = ` (${projet_id},'${phase.value}' , 'undo') ,`;
+          const placeholder = ` (${devis_id},'${phase.value}' , 'undo') ,`;
           sql = sql + placeholder;
         });
 
@@ -136,8 +140,10 @@ function ReturnAllDevis() {
           }else{
             rows.forEach((projet) => {
               db.all(
-                `SELECT *  FROM devis_phases_projets WHERE projet_id=${projet.id}`,
+                `SELECT *  FROM devis_phases_projets WHERE devis_id=${projet.id}`,
                 function (err, devis_phases_projets) {
+                
+                    console.log("devis_phases_projets",devis_phases_projets)
                     deviss.push({ devis_phases_projets: [...devis_phases_projets], ...projet });
                   if (deviss.length === rows.length) resolve(deviss);
                 }

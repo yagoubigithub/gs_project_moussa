@@ -126,9 +126,10 @@ class AjouterProjet extends Component {
       adresse: d.adresse,
       phasesProjetsSelected: [...this.state.phasesProjetsSelected],
       duree_phase: d.duree_phase,
-      delais: d.delais,
-      date_debut: d.date_debut,
-      date_depot: d.date_depot,
+     
+      prix_totale : d.prix_totale - d.remise,
+      remise : d.remise,
+      date_devis : getCurrentDateTime(new Date().getTime())
     };
 
     this.props.ajouterDevis(data);
@@ -309,6 +310,17 @@ class AjouterProjet extends Component {
               onChange={this.handleChange}
               fullWidth
             />
+          </Grid>
+          <Grid item xs={12}>
+            <br />
+            <Button
+              color="primary"
+              variant="contained"
+              fullWidth
+              onClick={this.ajouter}
+            >
+              <SaveIcon />
+            </Button>
           </Grid>
         </Grid>
       </Dialog>

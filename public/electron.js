@@ -1,9 +1,10 @@
 const electron = require("electron");
 const isDev = require("electron-is-dev");
+require('v8-compile-cache');
 
-const path = require("path");
 
-const { app, BrowserWindow, Menu, ipcMain } = electron;
+
+const { app } = electron;
 
 let mainWindow;
 
@@ -31,6 +32,10 @@ app.on("ready", () => {
   
   const PhasesProjet = require('./phasesProjet');
   const phasesProjet = new PhasesProjet();
+
+
+  const Devis = require('./devis');
+  const devis = new Devis();
 
   
 });

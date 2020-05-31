@@ -16,7 +16,7 @@ export const ajouterDevis = (data) =>{
     
     if(Array.isArray(res)){
       dispatch({
-          type : "AJOUTER_PROJET",
+          type : "AJOUTER_DEVIS",
           payload : res
       });
     }else{
