@@ -97,7 +97,7 @@ export const getAllDevis = () =>{
 
   
 //undo delete
-export const undoDeleteProjet = (id) =>{
+export const undoDeleteDevis = (id) =>{
     return (dispatch ,getState)=>{
   
       dispatch({

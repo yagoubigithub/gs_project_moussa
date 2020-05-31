@@ -14,12 +14,12 @@ import LoadingComponent from "../utils/loadingComponent";
 
 //redux
 import {
-  getAllProjet,
+  getAllDevis,
   addToCorbeille,
-  undoDeleteProjet,
-} from "../store/actions/projetAction";
+  undoDeleteDevis,
+} from "../store/actions/devisAction";
 import { connect } from "react-redux";
-import AjouterProjet from "./ajouter/AjouterProjet";
+
 import ProjetTable from "./tables/ProjetTable";
 import AjouterDevis from "./ajouter/AjouterDevis.";
 
@@ -28,26 +28,26 @@ import AjouterDevis from "./ajouter/AjouterDevis.";
 class Devis extends Component {
     state = {
         delete_button_text: "Suprimer",
-        projets: [],
+        deviss: [],
         projetCorebeille: [],
         rowsSelected: [],
-        tab: "projets",
+        tab: "deviss",
         addToCorbeilleDialog: false,
       };
       componentDidMount() {
-        this.props.getAllProjet();
+        this.props.getAllDevis();
       }
       componentWillReceiveProps(nextProps) {
         
-        if (nextProps.projets) {
+        if (nextProps.deviss) {
           const projetCorebeille = [];
-          const projets = [];
-          let projetsCounter = 1 ;
+          const deviss = [];
+          let devissCounter = 1 ;
           let  projetCorebeilleCounter = 1;
-          nextProps.projets.map((projet) => {
+          nextProps.deviss.map((projet) => {
             if (projet.status === "undo") {
-              projets.push({number : projetsCounter ,...projet});
-              projetsCounter++;
+              deviss.push({number : devissCounter ,...projet});
+              devissCounter++;
             }
     
             if (projet.status === "corbeille") {
@@ -57,19 +57,19 @@ class Devis extends Component {
           });
          
     
-          this.setState({ projetCorebeille, projets });
+          this.setState({ projetCorebeille, deviss });
         }
       }
     
     
       handleChangeTab = (tab) => {
         switch (tab) {
-          case "projets":
+          case "deviss":
             this.setState({
               delete_button_text: "Supprimer",
               rowsSelected: [],
              
-              tab: "projets",
+              tab: "deviss",
             });
     
             break;
@@ -89,7 +89,7 @@ class Devis extends Component {
             this.setState({
               delete_button_text: "Supprimer",
               rowsSelected: [],
-              tab: "projets",
+              tab: "deviss",
             });
             break;
         }
@@ -103,7 +103,7 @@ class Devis extends Component {
       };
       Supprimer = () => {
         if (this.state.rowsSelected.length === 0) {
-          alert("Selectionnner des projets");
+          alert("Selectionnner des devis");
         } else {
           if (this.state.tab !== "projetCorebeille") {
             this.handleOpenCloseaddToCorbeilleDialog();
@@ -168,15 +168,15 @@ class Devis extends Component {
             <Tabs>
               <Tab
                 index={0}
-                title="Tous les Projets"
-                onClick={() => this.handleChangeTab("projets")}
+                title="Tous les devis"
+                onClick={() => this.handleChangeTab("deviss")}
               >
                 <ProjetTable
                   checkBoxColumn
                   IconsColumn
                   rowsSelected={this.state.rowsSelected}
                   sendData={this.getData}
-                  rows={this.state.projets}
+                  rows={this.state.deviss}
                 />
               </Tab>
             
@@ -203,13 +203,13 @@ class Devis extends Component {
 }
 
 const mapActionToProps = (dispatch) => ({
-    getAllProjet: () => dispatch(getAllProjet()),
+  getAllDevis: () => dispatch(getAllDevis()),
     addToCorbeille: (id) => dispatch(addToCorbeille(id)),
-    undoDeleteProjet: (id) => dispatch(undoDeleteProjet(id)),
+    undoDeleteDevis: (id) => dispatch(undoDeleteDevis(id)),
   });
   const mapStateToProps = (state) => ({
-    projets: state.projet.projets,
-    loading: state.projet.loading,
+    deviss: state.devis.deviss,
+    loading: state.devis.loading,
   });
   export default connect(mapStateToProps, mapActionToProps)(Devis);
   

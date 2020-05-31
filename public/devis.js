@@ -5,8 +5,8 @@ const mainWindow = require("./mainWindow");
 const methode = Devis.prototype;
 
 function Devis() {
- db.run('DROP TABLE devis');
- db.run('DROP TABLE devis_phases_projets');
+ //db.run('DROP TABLE devis');
+// db.run('DROP TABLE devis_phases_projets');
 
   db.run(`CREATE TABLE IF NOT EXISTS devis (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -138,13 +138,13 @@ function ReturnAllDevis() {
           if(rows.length === 0){
             resolve(deviss);
           }else{
-            rows.forEach((projet) => {
+            rows.forEach((devis) => {
               db.all(
-                `SELECT *  FROM devis_phases_projets WHERE devis_id=${projet.id}`,
+                `SELECT *  FROM devis_phases_projets WHERE devis_id=${devis.id}`,
                 function (err, devis_phases_projets) {
                 
                     console.log("devis_phases_projets",devis_phases_projets)
-                    deviss.push({ devis_phases_projets: [...devis_phases_projets], ...projet });
+                    deviss.push({ devis_phases_projets: [...devis_phases_projets], ...devis });
                   if (deviss.length === rows.length) resolve(deviss);
                 }
               );
