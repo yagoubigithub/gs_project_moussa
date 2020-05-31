@@ -5,6 +5,7 @@ import entrepriseReducer from './entrepriseReducer';
 import maitreDouvrageReducer from './maitreDouvrageReducer';
 import projetReducer from './projetReducer';
 import pahsesProjetReducer from './pahsesProjetReducer';
+import devisReducer from './devisReducer';
 
 
 const rootReducer  = combineReducers({
@@ -14,6 +15,7 @@ const rootReducer  = combineReducers({
     maitre_douvrage : maitreDouvrageReducer,
     projet : projetReducer,
     phases_projet  : pahsesProjetReducer,
+    devis : devisReducer
    
   
     

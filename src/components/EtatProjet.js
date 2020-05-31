@@ -50,8 +50,10 @@ class EtatProjet extends Component {
         const retard_mils= (new Date(projet.date_depot)).getTime() - (new Date()).getTime();
         if(retard_mils < 0){
             retard = ((retard_mils / 24 /60 /60 /1000)*-1).toFixed(0);
+            if (projet.status !== "corbeille" && projet.etat !== "fini") {
             projetRetards.push({ number: projetRetardCounter, ...projet,retard })
             projetRetardCounter++;
+            }
         }
 
 

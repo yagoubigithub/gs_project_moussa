@@ -14,6 +14,7 @@ import Agence from './components/Agence';
 import Projet from './components/Projet';
 import PhasesProjet from './components/PhasesProjet';
 import EtatProjet from './components/EtatProjet';
+import Devis from './components/Devis';
 
 class App extends Component {
   render(){
@@ -30,6 +31,7 @@ class App extends Component {
        <Route   path="/projet" component={Projet} />
        <Route   path="/etat_projet" component={EtatProjet} />
        <Route   path="/phases_projet" component={PhasesProjet} />
+       <Route   path="/devis" component={Devis} />
        <Route path="/agence" component={Agence} />
        </Switch>
        </div>
