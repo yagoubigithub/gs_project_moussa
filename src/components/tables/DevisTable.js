@@ -7,6 +7,7 @@ import "react-table/react-table.css";
 
 //Mui
 import IconButton from "@material-ui/core/IconButton";
+import Button from "@material-ui/core/Button";
 
 import { Dialog, Checkbox } from "@material-ui/core";
 
@@ -21,6 +22,9 @@ import EditIcon from "@material-ui/icons/Edit";
 import PermMediaIcon from "@material-ui/icons/PermMedia";
 import UndoIcon from "@material-ui/icons/Undo";
 import SearchIcon from "@material-ui/icons/Search";
+import PrintIcon from '@material-ui/icons/Print';
+
+
 
 import LoadingComponent from "../../utils/loadingComponent";
 
@@ -270,7 +274,7 @@ class ProjetTable extends Component {
           const regx = `.*${filter.value}.*`;
           return (Number.parseInt(row["prix_totale"] )+ Number.parseInt(row["remise"])).toString().match(regx);
         },
-        width: 250,
+       
         Cell: (props) => {
           
           return (
@@ -305,7 +309,7 @@ class ProjetTable extends Component {
           const regx = `.*${filter.value}.*`;
           return row[filter.id].match(regx);
         },
-        width: 250,
+       
         Cell: (props) => (
           <div className="cell">
             {props.value !== "undefined" ? props.value : ""}
@@ -334,7 +338,7 @@ class ProjetTable extends Component {
           const regx = `.*${filter.value}.*`;
           return row[filter.id].match(regx);
         },
-        width: 250,
+        
         Cell: (props) => (
           <div className="cell">
             {props.value !== "undefined" ? props.value : ""}
@@ -362,7 +366,7 @@ class ProjetTable extends Component {
       columns.unshift({
         Header: "  ",
         accessor: "id",
-        width: 100,
+        width: 200,
         sortable: false,
         filterable: false,
         Cell: (props) => {
@@ -393,6 +397,24 @@ class ProjetTable extends Component {
                     <EditIcon className="black" fontSize="small"></EditIcon>
                   </Link>
                 </IconButton>
+
+                <IconButton
+                  size="small"
+                  onClick={() => this.add_To_Corbeille(props.value)}
+                >
+                  <PrintIcon className="black" fontSize="small"></PrintIcon>
+                </IconButton>
+
+                <Button
+
+                  size="small"
+                  onClick={() => this.add_To_Corbeille(props.value)}
+                  style={{fontSize : 10, textTransform : "capitalize"}}
+                  color="primary"
+                  variant="contained"
+                >
+                 Transformez-le en projet
+                </Button>
               </div>
             );
           }
