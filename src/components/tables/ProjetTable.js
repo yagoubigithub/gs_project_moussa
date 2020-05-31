@@ -19,17 +19,15 @@ import {
 //redux
 import { connect } from "react-redux";
 import {
-  addToCorbeille,
-  getMaitreDouvrage,
-  getLogo,
-  undoDeleteMaitreDouvrage,
-} from "../../store/actions/maitreDouvrageAction";
+  addToCorbeille
+
+} from "../../store/actions/projetAction";
 
 //icons
 
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
-import PermMediaIcon from "@material-ui/icons/PermMedia";
+
 import UndoIcon from "@material-ui/icons/Undo";
 import SearchIcon from "@material-ui/icons/Search";
 
@@ -451,10 +449,7 @@ class ProjetTable extends Component {
 
 const mapActionToProps = (dispatch) => {
   return {
-    addToCorbeille: (id) => dispatch(addToCorbeille(id)),
-    getLogo: (id) => dispatch(getLogo(id)),
-    undoDeleteMaitreDouvrage: (id) => dispatch(undoDeleteMaitreDouvrage(id)),
-    getMaitreDouvrage: (id) => dispatch(getMaitreDouvrage(id)),
+    addToCorbeille: (id) => dispatch(addToCorbeille(id))
   };
 };
 

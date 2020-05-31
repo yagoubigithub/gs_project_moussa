@@ -22,6 +22,7 @@ import { connect } from "react-redux";
 
 import ProjetTable from "./tables/ProjetTable";
 import AjouterDevis from "./ajouter/AjouterDevis.";
+import DevisTable from "./tables/DevisTable";
 
 
 
@@ -171,7 +172,7 @@ class Devis extends Component {
                 title="Tous les devis"
                 onClick={() => this.handleChangeTab("deviss")}
               >
-                <ProjetTable
+                <DevisTable
                   checkBoxColumn
                   IconsColumn
                   rowsSelected={this.state.rowsSelected}

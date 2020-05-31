@@ -49,12 +49,12 @@ function Devis() {
   
   //AJOUTER
   ipcMain.on("devis:ajouter", (event, value) => {
-      console.log(value)
+      
     const deviss = [];
     db.run(
       `INSERT INTO devis(nom , objet , adresse  , duree_phase , prix_totale , remise, date_devis ,  maitreDouvrage_id , status) VALUES ('${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_devis}' , ${value.maitreDouvrage_id} , 'undo') `,
       function (err) {
-          console.log(err)
+       
         if (err) mainWindow.webContents.send("devis:ajouter", err);
 
         //add phase de devis
@@ -143,7 +143,7 @@ function ReturnAllDevis() {
                 `SELECT *  FROM devis_phases_projets WHERE devis_id=${devis.id}`,
                 function (err, devis_phases_projets) {
                 
-                    console.log("devis_phases_projets",devis_phases_projets)
+                
                     deviss.push({ devis_phases_projets: [...devis_phases_projets], ...devis });
                   if (deviss.length === rows.length) resolve(deviss);
                 }
