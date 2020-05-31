@@ -5,15 +5,16 @@ const mainWindow = require("./mainWindow");
 const methode = Devis.prototype;
 
 function Devis() {
- // db.run('DROP TABLE devis');
- // db.run('DROP TABLE devis_phases_projets');
+ db.run('DROP TABLE devis');
+ db.run('DROP TABLE devis_phases_projets');
 
   db.run(`CREATE TABLE IF NOT EXISTS devis (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nom TEXT NOT NULL,
     objet TEXT,
-   
     duree_phase INTEGER ,
+    prix_totale    INTEGER ,
+    remise INTEGER,
     maitreDouvrage_id INTEGER ,
    status TEXT
 )`);
@@ -48,7 +49,7 @@ function Devis() {
   ipcMain.on("devis:ajouter", (event, value) => {
     const deviss = [];
     db.run(
-      `INSERT INTO devis(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.delais},'${value.date_debut}','${value.date_depot}' , 'en cours',${value.duree_phase},${value.maitreDouvrage_id} , 'undo') `,
+      `INSERT INTO devis(nom , objet , adresse     , duree_phase ,prix_totale , remise, maitreDouvrage_id , status) VALUES ('${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , ${value.maitreDouvrage_id} , 'undo') `,
       function (err) {
         if (err) mainWindow.webContents.send("devis:ajouter", err);
 

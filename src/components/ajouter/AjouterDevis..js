@@ -3,7 +3,6 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { withRouter } from "react-router-dom";
 
-
 //utils
 import { getCurrentDateTime } from "../../utils/methods";
 
@@ -46,29 +45,23 @@ class AjouterProjet extends Component {
     success: "",
     maitreDouvrageDialog: false,
 
-    buttonReturn : "/projet/",
-
-
+    buttonReturn: "/projet/",
 
     nom: "",
     objet: "",
     adresse: "",
     duree_phase: 0,
-    delais: 0,
-    date_debut: "",
-    date_depot: "",
+    remise :0,
 
-
-
+    prix_totale: 0,
 
     maitreDouvrages: [],
     phasesProjetsSelected: [],
   };
   componentDidMount() {
     this.props.getAllPhasesProjet();
-    const buttonReturn = "/"+this.props.match.params.buttonReturn+"/";
-        this.setState({buttonReturn})
-  
+    const buttonReturn = "/" + this.props.match.params.buttonReturn + "/";
+    this.setState({ buttonReturn });
   }
   componentWillUnmount() {
     this.props.removeDevisCreated();
@@ -77,17 +70,16 @@ class AjouterProjet extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.devisCreated) {
       this.setState({
-        error: "",
-        success: "Devis a été ajouter",
-        nom: "",
-        objet: "",
-        adresse: "",
-        maitreDouvrage: undefined,
-        duree_phase: 0,
-        delais: 0,
-        date_debut: "",
-        date_depot: "",
-        phasesProjetsSelected: [],
+        error : "",
+        success : "Devis a été ajouter",
+        nom : "",
+        objet : "",
+        adresse : "",
+        prix_totale : 0,
+        remise :0,
+        maitreDouvrage : undefined,
+        duree_phase : 0,
+        phasesProjetsSelected : [],
       });
     }
     if (nextProps.phasesProjets) {
@@ -99,15 +91,17 @@ class AjouterProjet extends Component {
 
   handleSelectChange = (phasesProjetsSelected) => {
     let duree_phase = 0;
+    let prix_totale = 0;
     this.setState({ phasesProjetsSelected }, () => {
       if (phasesProjetsSelected !== null) {
         phasesProjetsSelected.map((phase) => {
           duree_phase =
             Number.parseInt(duree_phase) + Number.parseInt(phase.value.duree);
+          prix_totale = prix_totale + Number.parseInt(phase.value.prix);
         });
       }
 
-      this.setState({ duree_phase });
+      this.setState({ duree_phase, prix_totale });
     });
   };
   ajouter = () => {
@@ -145,39 +139,21 @@ class AjouterProjet extends Component {
       [e.target.name]: e.target.value,
     });
     if (e.target.name === "date_debut") {
-      
-      this.calculDateDepotWithDateDebut(e.target.value !== "" ? e.target.value : 
-      getCurrentDateTime(new Date().getTime()).split("T")[0]
+      this.calculDateDepotWithDateDebut(
+        e.target.value !== ""
+          ? e.target.value
+          : getCurrentDateTime(new Date().getTime()).split("T")[0]
       );
     }
     if (e.target.name === "delais") {
-      console.log(e.target.value)
+      console.log(e.target.value);
       this.calculDateDepotWithDelais(
-        e.target.value !== "" ? e.target.value : 
-        0
+        e.target.value !== "" ? e.target.value : 0
       );
     }
   };
-  calculDateDepotWithDelais = (delais) => {
-    const delais_milis = Number.parseInt(delais) * 24 * 60 * 60 * 1000;
-    const date_debut_milis =
-      this.state.date_debut === ""
-        ? new Date().getTime()
-        : new Date(this.state.date_debut).getTime();
-    const date_depot_milis = date_debut_milis + delais_milis;
-    const date_depot = getCurrentDateTime(date_depot_milis).split("T")[0];
 
-    this.setState({ date_depot });
-  };
-  calculDateDepotWithDateDebut = (date_debut) => {
-    const delais_milis =
-      Number.parseInt(this.state.delais) * 24 * 60 * 60 * 1000;
-    const date_debut_milis = new Date(date_debut).getTime();
-    const date_depot_milis = date_debut_milis + delais_milis;
-    const date_depot = getCurrentDateTime(date_depot_milis).split("T")[0];
-
-    this.setState({ date_depot });
-  };
+ 
 
   handleMaitreDouvrageClose = () => {
     this.setState({
@@ -233,7 +209,13 @@ class AjouterProjet extends Component {
 
         <AppBar className="bg-dark">
           <Toolbar style={{ display: "flax", justifyContent: "space-between" }}>
-            <Link to={this.state.buttonReturn !== undefined ? this.state.buttonReturn : "/projet/"}>
+            <Link
+              to={
+                this.state.buttonReturn !== undefined
+                  ? this.state.buttonReturn
+                  : "/projet/"
+              }
+            >
               <IconButton onClick={this.handleClose} style={{ color: "white" }}>
                 <ArrowBackIcon />
               </IconButton>
@@ -270,7 +252,7 @@ class AjouterProjet extends Component {
           </Grid>
 
           <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}>Adresse</h3>
+            <h3 style={{ margin: 0 }}>Adresse </h3>
             <TextField
               placeholder="Adresse"
               value={this.state.adresse}
@@ -280,6 +262,7 @@ class AjouterProjet extends Component {
               fullWidth
             />
           </Grid>
+
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}>Maitre d’ouvrage * </h3>
             <Button
@@ -311,54 +294,21 @@ class AjouterProjet extends Component {
             />
 
             <h3>La durée des phases : {this.state.duree_phase} (jours)</h3>
+            <h3>Prix Totale : {this.state.prix_totale} (DA)</h3>
+            <h3>Prix a Payer : {this.state.prix_totale - this.state.remise} (DA)</h3>
           </Grid>
 
           <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}> délais de Maitre d’ouvrage (jours)</h3>
+            <h3 style={{ margin: 0 }}>Remise Sur le Totale</h3>
             <TextField
-              name="delais"
-              value={this.state.delais}
-              onChange={this.handleChange}
               type="number"
+              placeholder="Remise"
+              value={this.state.remise}
+              name="remise"
               variant="outlined"
-              fullWidth
-              InputProps={{inputProps : {min  : 0, step : 1 }}}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}> date de début </h3>
-            <TextField
-              fullWidth
-              variant="outlined"
-              type="date"
-              name="date_debut"
               onChange={this.handleChange}
-              value={
-                this.state.date_debut === ""
-                  ? getCurrentDateTime(new Date().getTime()).split("T")[0]
-                  : getCurrentDateTime(
-                      new Date(this.state.date_debut).getTime()
-                    ).split("T")[0]
-              }
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}> Date de dépôt </h3>
-            <p>{this.state.date_depot}</p>
-          </Grid>
-          <Grid item xs={12}>
-            <br />
-            <Button
-              color="primary"
-              variant="contained"
               fullWidth
-              onClick={this.ajouter}
-            >
-              <SaveIcon />
-            </Button>
+            />
           </Grid>
         </Grid>
       </Dialog>
@@ -381,4 +331,7 @@ const mapStateToProps = (state) => {
     phasesProjets: state.phases_projet.phasesProjets,
   };
 };
-export default connect(mapStateToProps, mapActionToProps)(withRouter(AjouterProjet));
+export default connect(
+  mapStateToProps,
+  mapActionToProps
+)(withRouter(AjouterProjet));

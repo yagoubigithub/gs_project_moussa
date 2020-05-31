@@ -57,7 +57,7 @@ class AjouterProjet extends Component {
     delais: 0,
     date_debut: "",
     date_depot: "",
-
+    prix_totale : 0,
 
 
 
@@ -87,6 +87,7 @@ class AjouterProjet extends Component {
         delais: 0,
         date_debut: "",
         date_depot: "",
+        prix_totale : 0,
         phasesProjetsSelected: [],
       });
     }
@@ -315,6 +316,7 @@ class AjouterProjet extends Component {
 
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}> délais de Maitre d’ouvrage (jours)</h3>
+            <h3>Prix Totale : {this.state.prix_totale} (DA)</h3>
             <TextField
               name="delais"
               value={this.state.delais}
