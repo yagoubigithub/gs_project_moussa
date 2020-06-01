@@ -59,6 +59,9 @@ class AjouterProjet extends Component {
     date_depot: "",
     prix_totale : 0,
 
+ remise :0,
+
+    prix_totale: 0,
 
 
     maitreDouvrages: [],
@@ -88,6 +91,8 @@ class AjouterProjet extends Component {
         date_debut: "",
         date_depot: "",
         prix_totale : 0,
+        remise :0,
+       
         phasesProjetsSelected: [],
       });
     }
@@ -100,15 +105,17 @@ class AjouterProjet extends Component {
 
   handleSelectChange = (phasesProjetsSelected) => {
     let duree_phase = 0;
+    let prix_totale = 0;
     this.setState({ phasesProjetsSelected }, () => {
       if (phasesProjetsSelected !== null) {
         phasesProjetsSelected.map((phase) => {
           duree_phase =
             Number.parseInt(duree_phase) + Number.parseInt(phase.value.duree);
+          prix_totale = prix_totale + Number.parseInt(phase.value.prix);
         });
       }
 
-      this.setState({ duree_phase });
+      this.setState({ duree_phase, prix_totale });
     });
   };
   ajouter = () => {
@@ -127,6 +134,7 @@ class AjouterProjet extends Component {
     }
 
     const data = {
+    
       nom: d.nom,
       objet: d.objet,
       maitreDouvrage_id: d.maitreDouvrage.id,
@@ -136,6 +144,10 @@ class AjouterProjet extends Component {
       delais: d.delais,
       date_debut: d.date_debut,
       date_depot: d.date_depot,
+
+      prix_totale : d.prix_totale - d.remise,
+      remise : d.remise,
+      date_devis : getCurrentDateTime(new Date().getTime())
     };
 
     this.props.ajouterProjet(data);
@@ -312,11 +324,27 @@ class AjouterProjet extends Component {
             />
 
             <h3>La durée des phases : {this.state.duree_phase} (jours)</h3>
+            <h3>Prix Totale : {this.state.prix_totale} (DA)</h3>
+            <h3>Prix a Payer : {this.state.prix_totale - this.state.remise} (DA)</h3>
           </Grid>
+          
+          <Grid item xs={6}>
+            <h3 style={{ margin: 0 }}>Remise Sur le Totale</h3>
+            <TextField
+              type="number"
+              placeholder="Remise"
+              value={this.state.remise}
+              name="remise"
+              variant="outlined"
+              onChange={this.handleChange}
+              fullWidth
+            />
+          </Grid>
+         
 
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}> délais de Maitre d’ouvrage (jours)</h3>
-            <h3>Prix Totale : {this.state.prix_totale} (DA)</h3>
+           
             <TextField
               name="delais"
               value={this.state.delais}

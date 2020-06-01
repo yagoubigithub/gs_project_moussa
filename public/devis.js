@@ -10,11 +10,12 @@ function Devis() {
 
   db.run(`CREATE TABLE IF NOT EXISTS devis (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    projet_id INTEGER,
     nom TEXT NOT NULL,
     objet TEXT,
     adresse TEXT,
     duree_phase INTEGER ,
-    prix_totale    INTEGER ,
+    prix_totale  INTEGER ,
     remise INTEGER,
     date_devis TEXT,
     maitreDouvrage_id INTEGER ,
@@ -48,12 +49,14 @@ function Devis() {
 
   //AJOUTER
   ipcMain.on("devis:ajouter", (event, value) => {
+    
     const deviss = [];
     db.run(
-      `INSERT INTO devis(nom , objet , adresse  , duree_phase , prix_totale , remise, date_devis ,  maitreDouvrage_id , status) VALUES ('${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_devis}' , ${value.maitreDouvrage_id} , 'undo') `,
+      `INSERT INTO devis(projet_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, date_devis ,  maitreDouvrage_id , status) VALUES (${value.projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_devis}' , ${value.maitreDouvrage_id} , 'undo') `,
       function (err) {
         if (err) mainWindow.webContents.send("devis:ajouter", err);
 
+        
         //add phase de devis
         const devis_id = this.lastID;
         let sql = `INSERT INTO devis_phases_projets(devis_id , phases_devis_id , status) VALUES   `;
@@ -67,13 +70,14 @@ function Devis() {
 
         db.run(sql, function (err) {
           if (err) mainWindow.webContents.send("devis:ajouter", err);
-        });
-
-        ReturnAllDevis()
+          ReturnAllDevis()
           .then((projets) =>
             mainWindow.webContents.send("devis:ajouter", projets)
           )
           .catch((err) => mainWindow.webContents.send("devis:ajouter", err));
+        });
+
+       
       }
     );
 

@@ -58,6 +58,7 @@ function Projet() {
 
         //add phase de projet
         const projet_id = this.lastID;
+        console.log("projet_id = ",projet_id)
         let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , status) VALUES   `;
 
         value.phasesProjetsSelected.forEach((phase) => {
@@ -69,11 +70,41 @@ function Projet() {
 
         db.run(sql, function (err) {
           if (err) mainWindow.webContents.send("projet:ajouter", err);
+          db.run(
+            `INSERT INTO devis(projet_id  ,nom , objet , adresse  , duree_phase , prix_totale , remise, date_devis ,  maitreDouvrage_id , status) VALUES (${projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_devis}' , ${value.maitreDouvrage_id} , 'undo') `,
+            function (err) {
+              if (err) mainWindow.webContents.send("projet:ajouter", err);
+              console.log("devis",err)
+      
+              //add phase de devis
+              const devis_id = this.lastID;
+              let sql = `INSERT INTO devis_phases_projets(devis_id , phases_devis_id , status) VALUES   `;
+      
+              console.log("devis_id = ",devis_id)
+              value.phasesProjetsSelected.forEach((phase) => {
+                const placeholder = ` (${devis_id},'${phase.value.id}' , 'undo') ,`;
+                sql = sql + placeholder;
+              });
+      
+              sql = sql.slice(0, sql.lastIndexOf(",") - 1);
+      
+              db.run(sql, function (err) {
+                if (err) mainWindow.webContents.send("projet:ajouter", err);
+
+                console.log("devis_phases_projets",err)
+                
+                ReturnAllProject()
+                .then((projets) => mainWindow.webContents.send("projet:ajouter", projets))
+                .catch((err) => mainWindow.webContents.send("projet:ajouter", err));
+        
+              });
+             
+            }
+          );
         });
 
-        ReturnAllProject()
-        .then((projets) => mainWindow.webContents.send("projet:ajouter", projets))
-        .catch((err) => mainWindow.webContents.send("projet:ajouter", err));
+       
+      
       }
     );
 
@@ -130,7 +161,7 @@ function ReturnAllProject() {
 
   return new Promise((resolve, reject) => {
     db.all(
-      `SELECT p.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM projet p  JOIN maitre_douvrage m ON m.id=p.maitreDouvrage_id `,
+      `SELECT p.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM projet p  JOIN maitre_douvrage m ON m.id=p.maitreDouvrage_id  ORDER BY p.id DESC`,
       function (err, rows) {
         if (err) reject(err);
         if(rows !== undefined){

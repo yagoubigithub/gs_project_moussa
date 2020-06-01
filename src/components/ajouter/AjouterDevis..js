@@ -120,6 +120,7 @@ class AjouterProjet extends Component {
     }
 
     const data = {
+      projet_id : 0,
       nom: d.nom,
       objet: d.objet,
       maitreDouvrage_id: d.maitreDouvrage.id,
