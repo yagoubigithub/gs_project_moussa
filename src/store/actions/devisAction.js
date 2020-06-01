@@ -197,3 +197,41 @@ export const removeDevisCreated = () =>{
       
     }
   }
+
+
+  export const transformDevisAProjet = (data) =>{
+    return (dispatch ,getState)=>{
+      dispatch({
+        type : "LOADING_DEVIS"
+    })
+    ipcRenderer.send("devis:transform", {...data});
+  
+    ipcRenderer.once('devis:transform', function (event,data) {
+     
+      dispatch({
+        type : "STOP_LOADING_DEVIS"
+    });
+    if(data){
+      dispatch({
+          type : "DEVIS_TRANSFORM_PROJET",
+          payload : data
+      });
+    }else{
+      dispatch({
+        type : "ERROR_DEVIS",
+        payload : data
+    });
+    }
+  });
+    }
+  }
+
+  export const removeDevisTransformProjet = () =>{
+    return (dispatch , getState)=>{
+
+      dispatch({
+        type : "REMOVE_DEVIS_TRANSFORM_PROJECT"
+    })
+    
+    }
+  }

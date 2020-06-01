@@ -70,6 +70,7 @@ function Projet() {
 
         db.run(sql, function (err) {
           if (err) mainWindow.webContents.send("projet:ajouter", err);
+          
           db.run(
             `INSERT INTO devis(projet_id  ,nom , objet , adresse  , duree_phase , prix_totale , remise, date_devis ,  maitreDouvrage_id , status) VALUES (${projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_devis}' , ${value.maitreDouvrage_id} , 'undo') `,
             function (err) {
@@ -82,7 +83,7 @@ function Projet() {
       
               console.log("devis_id = ",devis_id)
               value.phasesProjetsSelected.forEach((phase) => {
-                const placeholder = ` (${devis_id},'${phase.value.id}' , 'undo') ,`;
+                const placeholder = ` (${devis_id},'${phase.id}' , 'undo') ,`;
                 sql = sql + placeholder;
               });
       

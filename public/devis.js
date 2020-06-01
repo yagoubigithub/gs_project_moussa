@@ -86,6 +86,54 @@ function Devis() {
                               */
   });
 
+
+ //AJOUTER
+ ipcMain.on("devis:transform", (event, value) => {
+  
+  db.run(
+    `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.delais},'${value.date_debut}','${value.date_depot}' , 'en cours',${value.duree_phase},${value.maitreDouvrage_id} , 'undo') `,
+    function (err) {
+      if (err) mainWindow.webContents.send("devis:transform", err);
+
+      //add phase de projet
+      const projet_id = this.lastID;
+      console.log("projet_id = ",projet_id)
+      let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , status) VALUES   `;
+
+      value.phasesProjetsSelected.forEach((phase) => {
+        const placeholder = ` (${projet_id},'${phase.value}' , 'undo') ,`;
+        sql = sql + placeholder;
+      });
+
+      sql = sql.slice(0, sql.lastIndexOf(",") - 1);
+
+      db.run(sql, function (err) {
+        if (err) mainWindow.webContents.send("devis:transform", err);
+
+        db.run(
+          `
+                 UPDATE devis SET projet_id=${projet_id}  WHERE id=${value.id} `
+
+                 ,function(err){
+
+                  ReturnAllDevis()
+                  .then((projets) => mainWindow.webContents.send("devis:transform", projets))
+                  .catch((err) => mainWindow.webContents.send("devis:transform", err));
+                 });
+
+
+
+
+     
+      });
+
+     
+    
+    }
+  );
+
+ });
+
   ipcMain.on("devis:delete", (event, value) => {
     if (value.id !== undefined) {
       // delete  projet
@@ -165,7 +213,7 @@ function ReturnAllDevis() {
 
   return new Promise((resolve, reject) => {
     db.all(
-      `SELECT d.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM devis d  JOIN maitre_douvrage m ON m.id=d.maitreDouvrage_id `,
+      `SELECT d.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM devis d  JOIN maitre_douvrage m ON m.id=d.maitreDouvrage_id ORDER BY id DESC`,
       function (err, rows) {
         if (err) reject(err);
         if (rows !== undefined) {

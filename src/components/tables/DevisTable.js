@@ -13,11 +13,8 @@ import { Dialog, Checkbox, Grid } from "@material-ui/core";
 
 //redux
 import { connect } from "react-redux";
-import {
-  removeProjetCreated,
-  ajouterProjet,
-} from "../../store/actions/projetAction";
-import { getPhasesProjetDeDevis ,addToCorbeille } from "../../store/actions/devisAction";
+
+import { getPhasesProjetDeDevis ,addToCorbeille, transformDevisAProjet , removeDevisTransformProjet } from "../../store/actions/devisAction";
 
 //utils
 import { getCurrentDateTime } from "../../utils/methods";
@@ -68,7 +65,7 @@ class ProjetTable extends Component {
             devis_phases_projets : nextProps.devis_phases_projets
         })
     }
-    if (nextProps.projetCreated) {
+    if (nextProps.devisTransformProject) {
       this.setState({
         transformDialog : false,
         devis: {
@@ -79,7 +76,7 @@ class ProjetTable extends Component {
           prix_totale : 0,
         }
       });
-      this.props.removeProjetCreated()
+      this.props.removeDevisTransformProjet()
     }
 
   }
@@ -122,6 +119,7 @@ class ProjetTable extends Component {
     const d = {...this.state.devis}
    
     const data = {
+      id : d.id,
       projet_id : d.projet_id,
       nom: d.nom,
       objet: d.objet,
@@ -133,9 +131,8 @@ class ProjetTable extends Component {
       date_debut: d.date_debut,
       date_depot: d.date_depot,
     };
-    console.log(data);
-
-    this.props.ajouterProjet(data);
+   
+   this.props.transformDevisAProjet(data);
 
   }
 
@@ -516,7 +513,8 @@ class ProjetTable extends Component {
                   <PrintIcon className="black" fontSize="small"></PrintIcon>
                 </IconButton>
 
-                <Button
+{props.original.projet_id == 0 ? 
+  <Button
                   size="small"
                   onClick={() => this.transform(props.original)}
                   style={{ fontSize: 10, textTransform: "capitalize" }}
@@ -525,6 +523,8 @@ class ProjetTable extends Component {
                 >
                   Transformez-le en projet
                 </Button>
+: null}
+        
               </div>
             );
           }
@@ -741,8 +741,8 @@ const mapActionToProps = (dispatch) => {
   return {
     addToCorbeille: (id) => dispatch(addToCorbeille(id)),
     getPhasesProjetDeDevis : (data) =>dispatch(getPhasesProjetDeDevis(data)),
-    ajouterProjet: (data) => dispatch(ajouterProjet(data)),
-    removeProjetCreated: () => dispatch(removeProjetCreated()),
+    transformDevisAProjet: (data) => dispatch(transformDevisAProjet(data)),
+    removeDevisTransformProjet: () => dispatch(removeDevisTransformProjet()),
   };
 };
 
@@ -751,7 +751,7 @@ const mapStateToProps = (state) => {
     loading: state.devis.loading,
     devis: state.devis.devis,
     devis_phases_projets : state.devis.devis_phases_projets,
-    projetCreated :  state.projet.projetCreated
+    devisTransformProject :  state.devis.devisTransformProject
   };
 };
 export default connect(mapStateToProps, mapActionToProps)(ProjetTable);

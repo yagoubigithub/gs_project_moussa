@@ -63,6 +63,18 @@ const DevisReducer = (state = initStat, action) =>{
                             ...state,
                             devis_phases_projets : action.payload
                         }
+                        case 'REMOVE_DEVIS_TRANSFORM_PROJECT' : 
+                        return {
+                            ...state,
+                            devisTransformProject : false,
+                        }
+                        case 'DEVIS_TRANSFORM_PROJET' : 
+                        return {
+                            ...state,
+                            devisTransformProject : true,
+                            error : null,
+                            deviss : action.payload
+                        }
 
             default :
             return {
