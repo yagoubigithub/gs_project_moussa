@@ -103,12 +103,12 @@ function Devis() {
 
   //get Phases
   ipcMain.on("phaseProjetDevis:get", (event, value) => {
-    console.log(value);
+    
     if (Object.keys(value).length > 0) {
       const phases = [];
       const promise = new Promise((resolve, reject) => {
         Object.keys(value).map((key) => {
-          console.log(value[key]);
+         
 
           db.get(
             `SELECT * FROM phases_projet WHERE id=${value[key].phases_devis_id}`,
