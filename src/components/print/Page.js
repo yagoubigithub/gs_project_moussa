@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import logo from '../../utils/logo'
 
 export default class Page extends Component {
     state = {
@@ -9,11 +10,40 @@ export default class Page extends Component {
         console.log(this.props.row)
     }
     render() {
+        const info = {...this.props.entreprise}
         return (
             <div className="print-page-container">
  <div className="print-page-head">
-     head
-    {this.props.row[0].devis.date_devis}
+ <div>
+
+ <div>
+   <p>{info.nom}</p>
+    <p>Adresse : {info.adresse}</p>
+    <p>Télephpne : {info.telephone}</p>
+    <p>Email : {info.email}</p>
+    <p>Adresse : {info.adresse}</p>  
+ </div>
+
+ <div>
+     <img src={logo} />
+ </div>
+ </div>
+
+    
+    <hr />
+    <div>
+        <div>
+        <p>Devis :N° {this.props.row[0].devis.id}</p>  
+ <p>Date :  { this.props.row[0].devis.date_devis}</p> 
+  <p>Par  : yagoubi moussa</p>
+        </div>
+        <div>
+        <h5>Maitre d'ouvrage  </h5>
+        <p>Adresse : {this.props.row[0].devis.maitre_douvrage_adresse}</p>
+
+        </div>
+    </div>
+  
  </div>
  
  <div className="print-page-content">
@@ -47,16 +77,10 @@ export default class Page extends Component {
             </tbody>
           </table>
 
-{
-    this.props.row.map((r,index)=>{
-        return (
-            <h6 key={index}>{r.rows_to_print.titre}</h6>
-        )
-    })
-}
+
  </div>
  <div className="print-page-footer">
- footer 
+ {(this.props.index) + 1} 
  </div>
            
             </div>

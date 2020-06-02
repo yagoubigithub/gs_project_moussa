@@ -56,7 +56,7 @@ const head = [{ access : "numero", value: "N°" },{ access : "id", value: "ID" }
         const rows_to_print = this.calculRows()
         const pages = []
         rows_to_print.map((row,index)=>{
-          pages.push({page : ReactDOMServer.renderToString(<Page head={head} row={row} key={index}  />)})
+          pages.push({page : ReactDOMServer.renderToString(<Page entreprise={this.props.entreprise} head={head} index={index}  row={row} key={index}  />)})
 
         
          
@@ -150,7 +150,7 @@ const head = [{ access : "numero", value: "N°" },{ access : "id", value: "ID" }
 
   
 
-return (<Page head={head} row={row} key={index}  />)
+return (<Page head={head} row={row} index={index} key={index} entreprise={this.props.entreprise}  />)
   })
   }
                 </div>
