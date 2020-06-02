@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print</title>
+</head>
+<body>
+    <div id="print"></div>
+    <script>
+
+const electron = window.require("electron");
+const {ipcRenderer}  = electron;
+
+const html2canvas =  window.require('html2canvas') ;
+const  jsPDF = window.require('jspdf');
+
+ipcRenderer.once("print:devis", function (event,res) {
+    console.log(res)
+    document.getElementById("print").innerHTML = res.p;
+
+    html2canvas(document.querySelector("#print")).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF();
+    pdf.addImage(imgData, 'PNG', 0, 0);
+    pdf.save("download.pdf", {returnPromise: true}).then((scb, ecb)=>{
+        ipcRenderer.send('print:close')
+    }); 
+
+});
+
+})
+    </script>
+
+</body>
+</html>

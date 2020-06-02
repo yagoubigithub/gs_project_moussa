@@ -94,6 +94,37 @@ export const getAllDevis = () =>{
 
     }
   }
+  export const getDevis = (id) =>{
+    return (dispatch ,getState)=>{
+  
+      
+      dispatch({
+        type : "LOADING_DEVIS"
+    })
+    ipcRenderer.send("devis", {id});
+  
+    
+    ipcRenderer.once('devis', function (event,data) {
+      dispatch({
+        type : "STOP_LOADING_DEVIS"
+    });
+    console.log(data)
+   
+    if(data){
+      dispatch({
+          type : "READ_ONE_DEVIS",
+          payload : data
+      });
+    }else{
+      dispatch({
+        type : "ERROR_DEVIS",
+        payload :data
+    });
+    }
+  });
+
+    }
+  }
 
   
 //undo delete
@@ -233,5 +264,32 @@ export const removeDevisCreated = () =>{
         type : "REMOVE_DEVIS_TRANSFORM_PROJECT"
     })
     
+    }
+  }
+
+  export const print = (data) =>{
+    return (dispatch ,getState)=>{
+      dispatch({
+        type : "LOADING_DEVIS"
+    })
+    ipcRenderer.send("print:devis", {...data});
+  
+    ipcRenderer.once('print:devis', function (event,data) {
+     
+      dispatch({
+        type : "STOP_LOADING_DEVIS"
+    });
+    if(data){
+      dispatch({
+          type : "DEVIS_PRINT",
+          payload : data
+      });
+    }else{
+      dispatch({
+        type : "ERROR_DEVIS",
+        payload : data
+    });
+    }
+  });
     }
   }

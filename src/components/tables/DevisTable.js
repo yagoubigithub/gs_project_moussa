@@ -14,7 +14,12 @@ import { Dialog, Checkbox, Grid } from "@material-ui/core";
 //redux
 import { connect } from "react-redux";
 
-import { getPhasesProjetDeDevis ,addToCorbeille, transformDevisAProjet , removeDevisTransformProjet } from "../../store/actions/devisAction";
+import {
+  getPhasesProjetDeDevis,
+  addToCorbeille,
+  transformDevisAProjet,
+  removeDevisTransformProjet,
+} from "../../store/actions/devisAction";
 
 //utils
 import { getCurrentDateTime } from "../../utils/methods";
@@ -29,6 +34,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import PrintIcon from "@material-ui/icons/Print";
 
 import LoadingComponent from "../../utils/loadingComponent";
+import PrintDevis from "../print/PrintDevis";
 
 class ProjetTable extends Component {
   state = {
@@ -42,43 +48,40 @@ class ProjetTable extends Component {
       delais: 0,
       date_debut: "",
       date_depot: "",
-      prix_totale : 0,
+      prix_totale: 0,
     },
 
     maitreDouvrageSelected: {},
-    devis_phases_projets : [],
+    devis_phases_projets: [],
 
     selectedAll: false,
-    
-  
+    printDialog: false,
   };
   componentWillReceiveProps(nextProps) {
-   
     if (nextProps.rowsSelected) {
       this.setState({ rowsSelected: nextProps.rowsSelected });
     }
     if (nextProps.rows.length !== this.props.rows.length) {
       this.setState({ selectedAll: false });
     }
-    if(nextProps.devis_phases_projets){
-        this.setState({
-            devis_phases_projets : nextProps.devis_phases_projets
-        })
+    if (nextProps.devis_phases_projets) {
+      this.setState({
+        devis_phases_projets: nextProps.devis_phases_projets,
+      });
     }
     if (nextProps.devisTransformProject) {
       this.setState({
-        transformDialog : false,
+        transformDialog: false,
         devis: {
           duree_phase: 0,
           delais: 0,
           date_debut: "",
           date_depot: "",
-          prix_totale : 0,
-        }
+          prix_totale: 0,
+        },
       });
-      this.props.removeDevisTransformProjet()
+      this.props.removeDevisTransformProjet();
     }
-
   }
 
   componentWillUnmount() {
@@ -104,23 +107,24 @@ class ProjetTable extends Component {
     this.handleOpenCloseaddToCorbeilleDialog();
   };
 
+
   transform = (devis) => {
-      this.props.getPhasesProjetDeDevis(devis.devis_phases_projets)
-    this.setState({
-     devis: {...this.state.devis,...devis}
-    }, (()=>{
-     
-      this.handleOpenCloseatransformDialog();
-    }));
-   
-    
+    this.props.getPhasesProjetDeDevis(devis.devis_phases_projets);
+    this.setState(
+      {
+        devis: { ...this.state.devis, ...devis },
+      },
+      () => {
+        this.handleOpenCloseatransformDialog();
+      }
+    );
   };
   ajouter = () => {
-    const d = {...this.state.devis}
-   
+    const d = { ...this.state.devis };
+
     const data = {
-      id : d.id,
-      projet_id : d.projet_id,
+      id: d.id,
+      projet_id: d.projet_id,
       nom: d.nom,
       objet: d.objet,
       maitreDouvrage_id: d.maitreDouvrage_id,
@@ -131,10 +135,9 @@ class ProjetTable extends Component {
       date_debut: d.date_debut,
       date_depot: d.date_depot,
     };
-   
-   this.props.transformDevisAProjet(data);
 
-  }
+    this.props.transformDevisAProjet(data);
+  };
 
   handeleCheckCheckboxRow = (e, id) => {
     const rowsSelected = [...this.state.rowsSelected];
@@ -177,31 +180,25 @@ class ProjetTable extends Component {
       maitreDouvrageSelected,
     });
   };
-  handeleDevisChange = (e)=>{
-    const devis = {...this.state.devis}
-    devis[e.target.name] = e.target.value
-    
-   
+  handeleDevisChange = (e) => {
+    const devis = { ...this.state.devis };
+    devis[e.target.name] = e.target.value;
+
     if (e.target.name === "date_debut") {
-      const date_debut = e.target.value !== "" ? e.target.value : 
-      getCurrentDateTime(new Date().getTime()).split("T")[0];
-      
-      
-      const delais_milis =
-        Number.parseInt(devis.delais) * 24 * 60 * 60 * 1000;
+      const date_debut =
+        e.target.value !== ""
+          ? e.target.value
+          : getCurrentDateTime(new Date().getTime()).split("T")[0];
+
+      const delais_milis = Number.parseInt(devis.delais) * 24 * 60 * 60 * 1000;
       const date_debut_milis = new Date(date_debut).getTime();
       const date_depot_milis = date_debut_milis + delais_milis;
       const date_depot = getCurrentDateTime(date_depot_milis).split("T")[0];
       devis.date_depot = date_depot;
-  
-     
-
-    
     }
     if (e.target.name === "delais") {
-     const delais =   e.target.value !== "" ? e.target.value : 
-     0;
-     
+      const delais = e.target.value !== "" ? e.target.value : 0;
+
       const delais_milis = Number.parseInt(delais) * 24 * 60 * 60 * 1000;
       const date_debut_milis =
         devis.date_debut === ""
@@ -210,15 +207,10 @@ class ProjetTable extends Component {
       const date_depot_milis = date_debut_milis + delais_milis;
       const date_depot = getCurrentDateTime(date_depot_milis).split("T")[0];
       devis.date_depot = date_depot;
-  
-     
-
-     
     }
     this.setState({ devis });
-  }
+  };
 
-  
   render() {
     const columns = [
       {
@@ -508,23 +500,25 @@ class ProjetTable extends Component {
 
                 <IconButton
                   size="small"
-                  onClick={() => this.add_To_Corbeille(props.value)}
+                 
                 >
+                  <Link to={`/devis/print/${props.value}/devis`}>
                   <PrintIcon className="black" fontSize="small"></PrintIcon>
+                  </Link>
+                 
                 </IconButton>
 
-{props.original.projet_id == 0 ? 
-  <Button
-                  size="small"
-                  onClick={() => this.transform(props.original)}
-                  style={{ fontSize: 10, textTransform: "capitalize" }}
-                  color="primary"
-                  variant="contained"
-                >
-                  Transformez-le en projet
-                </Button>
-: null}
-        
+                {props.original.projet_id == 0 ? (
+                  <Button
+                    size="small"
+                    onClick={() => this.transform(props.original)}
+                    style={{ fontSize: 10, textTransform: "capitalize" }}
+                    color="primary"
+                    variant="contained"
+                  >
+                    Transformez-le en projet
+                  </Button>
+                ) : null}
               </div>
             );
           }
@@ -592,7 +586,6 @@ class ProjetTable extends Component {
       });
     }
 
-  
     return (
       <Fragment>
         <LoadingComponent
@@ -600,6 +593,7 @@ class ProjetTable extends Component {
             this.props.loading !== undefined ? this.props.loading : false
           }
         />
+       
         <Dialog
           open={this.state.addToCorbeilleDialog}
           onClose={this.handleOpenCloseaddToCorbeilleDialog}
@@ -639,77 +633,75 @@ class ProjetTable extends Component {
 
             <li>les phases du projet </li>
 
-            {this.props.loading ? <LoadingComponent loading={true} /> : 
-            
-           
-         <ul>
-        { this.state.devis_phases_projets.map(phase=>{
-              return (<li key={phase.id}>{phase.titre}</li>)
-          })}
-         </ul>
-            }
-
+            {this.props.loading ? (
+              <LoadingComponent loading={true} />
+            ) : (
+              <ul>
+                {this.state.devis_phases_projets.map((phase) => {
+                  return <li key={phase.id}>{phase.titre}</li>;
+                })}
+              </ul>
+            )}
 
             <Grid container>
-            <Grid item xs={6}>
-        
+              <Grid item xs={6}>
+                <h3>
+                  La durée des phases : {this.state.devis.duree_phase} (jours)
+                </h3>
+              </Grid>
 
-            <h3>La durée des phases : {this.state.devis.duree_phase} (jours)</h3>
-          </Grid>
+              <Grid item xs={6}>
+                <h3 style={{ margin: 0 }}>
+                  {" "}
+                  délais de Maitre d’ouvrage (jours)
+                </h3>
 
-          <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}> délais de Maitre d’ouvrage (jours)</h3>
-           
-            <TextField
-              name="delais"
-              value={this.state.devis.delais}
-              onChange={this.handeleDevisChange}
-              type="number"
-              variant="outlined"
-              fullWidth
-              InputProps={{inputProps : {min  : 0, step : 1 }}}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <h3 style={{ margin : 0 }}> date de début </h3>
-            <TextField
-              fullWidth
-              variant="outlined"
-              type="date"
-              name="date_debut"
-              onChange={this.handeleDevisChange}
-              value={
-                this.state.devis.date_debut === ""
-                  ? getCurrentDateTime(new Date().getTime()).split("T")[0]
-                  : getCurrentDateTime(
-                      new Date(this.state.devis.date_debut).getTime()
-                    ).split("T")[0]
-              }
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}> Date de dépôt </h3>
-            <p>{this.state.devis.date_depot}</p>
-          </Grid>
-          <Grid item xs={12}>
-            <br />
-            <Button
-              color="primary"
-              variant="contained"
-              fullWidth
-              onClick={this.ajouter}
-            >
-              <SaveIcon />
-            </Button>
-          </Grid>
+                <TextField
+                  name="delais"
+                  value={this.state.devis.delais}
+                  onChange={this.handeleDevisChange}
+                  type="number"
+                  variant="outlined"
+                  fullWidth
+                  InputProps={{ inputProps: { min: 0, step: 1 } }}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <h3 style={{ margin: 0 }}> date de début </h3>
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  type="date"
+                  name="date_debut"
+                  onChange={this.handeleDevisChange}
+                  value={
+                    this.state.devis.date_debut === ""
+                      ? getCurrentDateTime(new Date().getTime()).split("T")[0]
+                      : getCurrentDateTime(
+                          new Date(this.state.devis.date_debut).getTime()
+                        ).split("T")[0]
+                  }
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <h3 style={{ margin: 0 }}> Date de dépôt </h3>
+                <p>{this.state.devis.date_depot}</p>
+              </Grid>
+              <Grid item xs={12}>
+                <br />
+                <Button
+                  color="primary"
+                  variant="contained"
+                  fullWidth
+                  onClick={this.ajouter}
+                >
+                  <SaveIcon />
+                </Button>
+              </Grid>
             </Grid>
-         
-         
-         
-         
           </ul>
 
           <h1> {this.state.devis && this.state.devis.nom}</h1>
@@ -740,7 +732,7 @@ class ProjetTable extends Component {
 const mapActionToProps = (dispatch) => {
   return {
     addToCorbeille: (id) => dispatch(addToCorbeille(id)),
-    getPhasesProjetDeDevis : (data) =>dispatch(getPhasesProjetDeDevis(data)),
+    getPhasesProjetDeDevis: (data) => dispatch(getPhasesProjetDeDevis(data)),
     transformDevisAProjet: (data) => dispatch(transformDevisAProjet(data)),
     removeDevisTransformProjet: () => dispatch(removeDevisTransformProjet()),
   };
@@ -750,8 +742,8 @@ const mapStateToProps = (state) => {
   return {
     loading: state.devis.loading,
     devis: state.devis.devis,
-    devis_phases_projets : state.devis.devis_phases_projets,
-    devisTransformProject :  state.devis.devisTransformProject
+    devis_phases_projets: state.devis.devis_phases_projets,
+    devisTransformProject: state.devis.devisTransformProject,
   };
 };
 export default connect(mapStateToProps, mapActionToProps)(ProjetTable);

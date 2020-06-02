@@ -37,5 +37,7 @@ app.on("ready", () => {
   const Devis = require('./devis');
   const devis = new Devis();
 
+  const Print = require('./print');
+  const print = new Print();
   
 });

@@ -58,7 +58,7 @@ function Projet() {
 
         //add phase de projet
         const projet_id = this.lastID;
-        console.log("projet_id = ",projet_id)
+        
         let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , status) VALUES   `;
 
         value.phasesProjetsSelected.forEach((phase) => {
@@ -75,15 +75,16 @@ function Projet() {
             `INSERT INTO devis(projet_id  ,nom , objet , adresse  , duree_phase , prix_totale , remise, date_devis ,  maitreDouvrage_id , status) VALUES (${projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_devis}' , ${value.maitreDouvrage_id} , 'undo') `,
             function (err) {
               if (err) mainWindow.webContents.send("projet:ajouter", err);
-              console.log("devis",err)
+             
       
               //add phase de devis
               const devis_id = this.lastID;
               let sql = `INSERT INTO devis_phases_projets(devis_id , phases_devis_id , status) VALUES   `;
       
-              console.log("devis_id = ",devis_id)
+              
+              console.log(value)
               value.phasesProjetsSelected.forEach((phase) => {
-                const placeholder = ` (${devis_id},'${phase.id}' , 'undo') ,`;
+                const placeholder = ` (${devis_id},'${phase.value.id}' , 'undo') ,`;
                 sql = sql + placeholder;
               });
       
@@ -92,7 +93,7 @@ function Projet() {
               db.run(sql, function (err) {
                 if (err) mainWindow.webContents.send("projet:ajouter", err);
 
-                console.log("devis_phases_projets",err)
+              
                 
                 ReturnAllProject()
                 .then((projets) => mainWindow.webContents.send("projet:ajouter", projets))

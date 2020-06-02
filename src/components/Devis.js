@@ -23,6 +23,7 @@ import { connect } from "react-redux";
 import ProjetTable from "./tables/ProjetTable";
 import AjouterDevis from "./ajouter/AjouterDevis.";
 import DevisTable from "./tables/DevisTable";
+import PrintDevis from "./print/PrintDevis";
 
 
 
@@ -164,6 +165,7 @@ class Devis extends Component {
               </button>
             </Dialog>
             <Route path="/devis/ajouter/:buttonReturn" component={AjouterDevis} />
+            <Route   path="/devis/print/:id/:buttonReturn" component={PrintDevis} />
     
     
             <Tabs>

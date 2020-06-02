@@ -32,35 +32,72 @@ function Devis() {
   //get
   ipcMain.on("devis", (event, value) => {
     if (value.id) {
+      let devis = {};
       db.get(
-        "SELECT d.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM devis d  JOIN maitre_douvrage m ON m.id=d.maitreDouvrage_id WHERE id=" +
+        "SELECT d.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM devis d  JOIN maitre_douvrage m ON m.id=d.maitreDouvrage_id WHERE d.id=" +
           value.id,
         function (err, result) {
           if (err) mainWindow.webContents.send("devis", err);
-          mainWindow.webContents.send("devis", result);
+          devis = { ...result };
+          const phases = [];
+          db.all(
+            `SELECT *  FROM devis_phases_projets WHERE devis_id=${value.id}`,
+            function (err, devis_phases_projets) {
+             
+              if (devis_phases_projets !== undefined) {
+               
+                if(devis_phases_projets.length === 0){
+                  mainWindow.webContents.send("devis", devis)
+                }else{
+                  
+                new Promise((resolve, reject) => {
+                  
+                  devis_phases_projets.forEach((devis_phase) => {
+                    db.get(
+                      `SELECT * FROM phases_projet WHERE id=${devis_phase.phases_devis_id}`,
+                      function (err, phase) {
+                        if (err) mainWindow.webContents.send("devis", err);
+                        phases.push(phase);
+                      
+                      
+                        if (phases.length === devis_phases_projets.length) {
+                          devis.phases = [...phases];
+                          resolve(devis);
+                        }
+                      }
+                    );
+                  });
+                }).then((devis) => mainWindow.webContents.send("devis", devis));
+                }
+              }else{
+                mainWindow.webContents.send("devis", phases)
+              }
+            }
+          );
         }
       );
     } else {
       ReturnAllDevis()
-        .then((projets) => mainWindow.webContents.send("devis", projets))
+        .then((deviss) => mainWindow.webContents.send("devis", deviss))
         .catch((err) => mainWindow.webContents.send("devis", err));
     }
   });
 
   //AJOUTER
   ipcMain.on("devis:ajouter", (event, value) => {
-    
     const deviss = [];
     db.run(
       `INSERT INTO devis(projet_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, date_devis ,  maitreDouvrage_id , status) VALUES (${value.projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_devis}' , ${value.maitreDouvrage_id} , 'undo') `,
       function (err) {
         if (err) mainWindow.webContents.send("devis:ajouter", err);
 
-        
         //add phase de devis
         const devis_id = this.lastID;
         let sql = `INSERT INTO devis_phases_projets(devis_id , phases_devis_id , status) VALUES   `;
 
+        /*phases_devis_id:
+        */
+       
         value.phasesProjetsSelected.forEach((phase) => {
           const placeholder = ` (${devis_id},'${phase.value.id}' , 'undo') ,`;
           sql = sql + placeholder;
@@ -71,13 +108,11 @@ function Devis() {
         db.run(sql, function (err) {
           if (err) mainWindow.webContents.send("devis:ajouter", err);
           ReturnAllDevis()
-          .then((projets) =>
-            mainWindow.webContents.send("devis:ajouter", projets)
-          )
-          .catch((err) => mainWindow.webContents.send("devis:ajouter", err));
+            .then((projets) =>
+              mainWindow.webContents.send("devis:ajouter", projets)
+            )
+            .catch((err) => mainWindow.webContents.send("devis:ajouter", err));
         });
-
-       
       }
     );
 
@@ -86,53 +121,46 @@ function Devis() {
                               */
   });
 
-
- //AJOUTER
- ipcMain.on("devis:transform", (event, value) => {
-  
-  db.run(
-    `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.delais},'${value.date_debut}','${value.date_depot}' , 'en cours',${value.duree_phase},${value.maitreDouvrage_id} , 'undo') `,
-    function (err) {
-      if (err) mainWindow.webContents.send("devis:transform", err);
-
-      //add phase de projet
-      const projet_id = this.lastID;
-      console.log("projet_id = ",projet_id)
-      let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , status) VALUES   `;
-
-      value.phasesProjetsSelected.forEach((phase) => {
-        const placeholder = ` (${projet_id},'${phase.value}' , 'undo') ,`;
-        sql = sql + placeholder;
-      });
-
-      sql = sql.slice(0, sql.lastIndexOf(",") - 1);
-
-      db.run(sql, function (err) {
+  //AJOUTER
+  ipcMain.on("devis:transform", (event, value) => {
+    db.run(
+      `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.delais},'${value.date_debut}','${value.date_depot}' , 'en cours',${value.duree_phase},${value.maitreDouvrage_id} , 'undo') `,
+      function (err) {
         if (err) mainWindow.webContents.send("devis:transform", err);
 
-        db.run(
-          `
-                 UPDATE devis SET projet_id=${projet_id}  WHERE id=${value.id} `
+        //add phase de projet
+        const projet_id = this.lastID;
+       
+        let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , status) VALUES   `;
 
-                 ,function(err){
+        value.phasesProjetsSelected.forEach((phase) => {
+          const placeholder = ` (${projet_id},'${phase.value}' , 'undo') ,`;
+          sql = sql + placeholder;
+        });
 
-                  ReturnAllDevis()
-                  .then((projets) => mainWindow.webContents.send("devis:transform", projets))
-                  .catch((err) => mainWindow.webContents.send("devis:transform", err));
-                 });
+        sql = sql.slice(0, sql.lastIndexOf(",") - 1);
 
+        db.run(sql, function (err) {
+          if (err) mainWindow.webContents.send("devis:transform", err);
 
+          db.run(
+            `
+                 UPDATE devis SET projet_id=${projet_id}  WHERE id=${value.id} `,
 
-
-     
-      });
-
-     
-    
-    }
-  );
-
- });
+            function (err) {
+              ReturnAllDevis()
+                .then((projets) =>
+                  mainWindow.webContents.send("devis:transform", projets)
+                )
+                .catch((err) =>
+                  mainWindow.webContents.send("devis:transform", err)
+                );
+            }
+          );
+        });
+      }
+    );
+  });
 
   ipcMain.on("devis:delete", (event, value) => {
     if (value.id !== undefined) {
@@ -155,13 +183,10 @@ function Devis() {
 
   //get Phases
   ipcMain.on("phaseProjetDevis:get", (event, value) => {
-    
     if (Object.keys(value).length > 0) {
       const phases = [];
       const promise = new Promise((resolve, reject) => {
         Object.keys(value).map((key) => {
-         
-
           db.get(
             `SELECT * FROM phases_projet WHERE id=${value[key].phases_devis_id}`,
             function (err, result) {

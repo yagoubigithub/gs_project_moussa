@@ -25,6 +25,8 @@
     "cross-env": "^6.0.3",
     "electron-alert": "^0.1.5",
     "electron-is-dev": "^1.1.0",
+    "html2canvas": "^1.0.0-rc.5",
+    "jspdf": "^1.5.3",
     "mkdirp": "^1.0.3",
     "python-shell": "^1.0.8",
     "react": "^16.12.0",
