@@ -50,13 +50,14 @@ import Page from './Page';
         const rows_to_print = this.calculRows()
         const pages = []
         rows_to_print.map((row,index)=>{
+          pages.push({page : ReactDOMServer.renderToString(<Page row={row} key={index}  />)})
 
-          pages.push (<Page row={row} key={index}  />)
+        
+         
             })
-            const p = 
-            ReactDOMServer.renderToString(pages);
            
-            this.props.print({p});
+           
+            this.props.print({pages});
             
             
            
@@ -95,7 +96,7 @@ import Page from './Page';
               //  phases[i+j].numero =  i+j+1;
             }
             rows_to_print.push(r)
-            console.log(r)
+         
           }
   
           }
@@ -135,11 +136,13 @@ import Page from './Page';
           </Toolbar>
         </AppBar>
 
-        <div style={{ marginTop : 70, paddingTop : 70, height: "100%", display: "flex", flexDirection: "column", alignItems: "center", overflow: "auto" }}>
+        <div style={{backgroundColor :  "gray", marginTop : 70, paddingTop : 70, height: "100%", display: "flex", flexDirection: "column", alignItems: "center", overflow: "auto" }}>
         {
   
    
   rows_to_print.map((row,index)=>{
+
+  
 
 return (<Page row={row} key={index}  />)
   })

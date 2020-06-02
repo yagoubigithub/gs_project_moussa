@@ -281,3 +281,11 @@ div[class^="react-tabs-css-module_content"] {
 .react-select__multi-value__remove{
   background-color: #3f4954 !important;
 }
+
+/*****************************************************************/
+.print-page-container{
+  width: 210mm;
+  min-height: 297mm;
+  background-color: white;
+  margin-bottom: 20px;
+}
