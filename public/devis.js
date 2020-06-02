@@ -34,15 +34,16 @@ function Devis() {
     if (value.id) {
       let devis = {};
       db.get(
-        "SELECT d.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM devis d  JOIN maitre_douvrage m ON m.id=d.maitreDouvrage_id WHERE d.id=" +
-          value.id,
+        "SELECT d.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom,m.rg maitre_douvrage_rg , m.raison_social maitre_douvrage_raison_social,m.telephone maitre_douvrage_telephone , m.email   maitre_douvrage_email, m.adresse maitre_douvrage_adresse ,m.logo maitre_douvrage_logo FROM devis d  JOIN maitre_douvrage m ON m.id=d.maitreDouvrage_id WHERE d.id=" +
+          value.id ,
         function (err, result) {
           if (err) mainWindow.webContents.send("devis", err);
           devis = { ...result };
           const phases = [];
           db.all(
-            `SELECT *  FROM devis_phases_projets WHERE devis_id=${value.id}`,
+            `SELECT *  FROM devis_phases_projets WHERE devis_id=${value.id} ORDER BY phases_devis_id `,
             function (err, devis_phases_projets) {
+             
              
               if (devis_phases_projets !== undefined) {
                
@@ -51,23 +52,44 @@ function Devis() {
                 }else{
                   
                 new Promise((resolve, reject) => {
+                  for (let i = 0; i < devis_phases_projets.length; i++) {
+                    const devis_phase = devis_phases_projets[i];
                   
-                  devis_phases_projets.forEach((devis_phase) => {
+                  
+
+
                     db.get(
-                      `SELECT * FROM phases_projet WHERE id=${devis_phase.phases_devis_id}`,
+                      `SELECT * FROM phases_projet WHERE id=${devis_phase.phases_devis_id} `,
                       function (err, phase) {
                         if (err) mainWindow.webContents.send("devis", err);
                         phases.push(phase);
+                       
                       
                       
                         if (phases.length === devis_phases_projets.length) {
+                          phases.sort((a,b)=>{
+                            let comparison = 0;
+                            if (a.id > b.id) {
+                              comparison = 1;
+                            } else if (a.id < b.id) {
+                              comparison = -1;
+                            }
+                            return comparison;
+                            
+                          })
                           devis.phases = [...phases];
                           resolve(devis);
                         }
                       }
                     );
-                  });
-                }).then((devis) => mainWindow.webContents.send("devis", devis));
+                  }
+                  
+                 
+                }).then((devis) => {
+                  console.log(devis.phases)
+                  
+                  mainWindow.webContents.send("devis", devis)
+                });
                 }
               }else{
                 mainWindow.webContents.send("devis", phases)
@@ -247,7 +269,7 @@ function ReturnAllDevis() {
           } else {
             rows.forEach((devis) => {
               db.all(
-                `SELECT *  FROM devis_phases_projets WHERE devis_id=${devis.id}`,
+                `SELECT *  FROM devis_phases_projets WHERE devis_id=${devis.id} ORDER BY id DESC`,
                 function (err, devis_phases_projets) {
                   if (devis_phases_projets !== undefined) {
                     deviss.push({

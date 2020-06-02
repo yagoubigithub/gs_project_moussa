@@ -27,6 +27,12 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import {connect} from "react-redux"
 import {getDevis, print} from "../../store/actions/devisAction"
 import Page from './Page';
+
+const head = [{ access : "numero", value: "N°" },{ access : "id", value: "ID" },
+{ access : "titre", value: "Désignation" },
+,
+{ access : "prix", value: "Prix" }]
+
  class PrintDevis extends Component {
     state = {
         open: true,
@@ -50,7 +56,7 @@ import Page from './Page';
         const rows_to_print = this.calculRows()
         const pages = []
         rows_to_print.map((row,index)=>{
-          pages.push({page : ReactDOMServer.renderToString(<Page row={row} key={index}  />)})
+          pages.push({page : ReactDOMServer.renderToString(<Page head={head} row={row} key={index}  />)})
 
         
          
@@ -144,7 +150,7 @@ import Page from './Page';
 
   
 
-return (<Page row={row} key={index}  />)
+return (<Page head={head} row={row} key={index}  />)
   })
   }
                 </div>

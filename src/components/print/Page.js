@@ -6,7 +6,7 @@ export default class Page extends Component {
     }
 
     componentDidMount(){
-        this.setState({row :  this.props.row})
+        console.log(this.props.row)
     }
     render() {
         return (
@@ -17,8 +17,43 @@ export default class Page extends Component {
  </div>
  
  <div className="print-page-content">
+ <table>
+            <thead>
+              <tr>
+                {this.props.head.map((title, index) => {
+                  return <th key={index}>{title.value}</th>;
+                })}
+              </tr>
+            </thead>
+            <tbody>
+              {this.props.row.map((row, index) => {
+                if (row !== undefined) {
+                  return (
+                    <tr key={`tbody-tr-${index}`}>
+                      {this.props.head.map((title, index) => {
+                        if(title.access === "numero" ){
+                            return (
+                          <td key={`tbody-td-${index}`}>{row[title.access]}</td>
+                        );
+                        }else
+                        return (
+                          <td key={`tbody-td-${index}`}>{row.rows_to_print[title.access]}</td>
+                        );
+                      })}
+                    </tr>
+                  );
+                } else return null;
+              })}
+            </tbody>
+          </table>
 
-content
+{
+    this.props.row.map((r,index)=>{
+        return (
+            <h6 key={index}>{r.rows_to_print.titre}</h6>
+        )
+    })
+}
  </div>
  <div className="print-page-footer">
  footer 
