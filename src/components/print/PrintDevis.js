@@ -72,7 +72,7 @@ const head = [{ access : "numero", value: "N°" },{ access : "id", value: "ID" }
       }
 
       calculRows = () =>{
-        const ROW_NUMBER  = 2;
+        const ROW_NUMBER  = 8;
         let rows_to_print = [];
         const devis = this.state.devis;
         let prixTotale = 0;

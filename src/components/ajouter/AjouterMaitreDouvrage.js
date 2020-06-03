@@ -190,9 +190,9 @@ import {removeMaitreDouvrageCreated,ajouterMaitreDouvrage} from '../../store/act
           </Grid>
 
           <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}>Numéro de rg ou agrément</h3>
+            <h3 style={{ margin: 0 }}>Numéro de RC ou agrément</h3>
             <TextField
-              placeholder="Numéro de rg ou agrément"
+              placeholder="Numéro de RC ou agrément"
               value={this.state.rg}
               name="rg"
               variant="outlined"

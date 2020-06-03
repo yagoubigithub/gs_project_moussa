@@ -19,8 +19,9 @@ function Print(){
           nodeIntegration: true,
           nativeWindowOpen: true
         },
-        width: 400,
-        height: 400,
+        width : 1200,
+        height : 900,
+        
         show: false
       });
       printWindow.loadURL(
@@ -36,7 +37,7 @@ function Print(){
         })
       })
       
-    console.log(value)
+  
   });
 
   

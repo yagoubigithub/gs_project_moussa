@@ -288,4 +288,43 @@ div[class^="react-tabs-css-module_content"] {
   min-height: 297mm;
   background-color: white;
   margin-bottom: 20px;
+  padding : 2mm;
+  display: flex;
+  flex-direction: column;
 }
+.print-page-head{
+  flex : 10;
+}
+.print-page-footer{
+  flex: 1;
+}
+.print-page-content {
+  flex :19;
+
+}
+.page-row{
+  display:  flex;
+  width : 100%;
+  justify-content: space-between;
+}
+.print-page-container table{
+  width : 100%;
+}
+.print-page-container p {
+  font-size: 12px;
+  font-weight: 400;
+}
+.logo-entreprise-page{
+  max-width:  100px;
+}
+
+
+.print-page-container table td,th{
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+  padding : 10px;
+  
+}
+.print-page-container p,h1,h2,h3,h4,h5,h6{
+  margin: 3px;
+}
+

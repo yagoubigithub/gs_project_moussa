@@ -12,6 +12,12 @@
             background-color: white;
             margin-bottom: 20px;
         }
+
+        .page-row {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+        }
     </style>
 </head>
 
@@ -29,31 +35,31 @@
             console.log(res)
             const pdf = new jsPDF();
             let count = 0
-            new Promise((resolve,reject)=>{
+            new Promise((resolve, reject) => {
                 res.pages.forEach((page, index) => {
-                document.getElementById("pages").insertAdjacentHTML('beforeend',`<div id="page-${index}">${page.page}</div>`);
+                    document.getElementById("pages").insertAdjacentHTML('beforeend', `<div id="page-${index}">${page.page}</div>`);
 
-                html2canvas(document.querySelector(`#page-${index}`)).then(canvas => {
-                    const imgData = canvas.toDataURL('image/png');
-                    if(count !== 0){
-                        pdf.addPage();
-                    }
-                    pdf.addImage(imgData, 'PNG', 0, 0);
-                    count++;
-                    if(count === res.pages.length){
-                        resolve()
-                    }
+                    html2canvas(document.querySelector(`#page-${index}`)).then(canvas => {
+                        const imgData = canvas.toDataURL('image/png');
+                        if (count !== 0) {
+                            pdf.addPage();
+                        }
+                        pdf.addImage(imgData, 'PNG', 0, 0);
+                        count++;
+                        if (count === res.pages.length) {
+                            resolve()
+                        }
 
 
+                    });
                 });
-            });
-            }).then(()=>{
- 
+            }).then(() => {
+
                 pdf.save("download.pdf", { returnPromise: true }).then((scb, ecb) => {
-                ipcRenderer.send('print:close')
-            });
+                    ipcRenderer.send('print:close')
+                });
             })
-          
+
 
 
 
