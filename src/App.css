@@ -284,13 +284,15 @@ div[class^="react-tabs-css-module_content"] {
 
 /*****************************************************************/
 .print-page-container{
-  width: 210mm;
-  min-height: 297mm;
-  background-color: white;
-  margin-bottom: 20px;
-  padding : 2mm;
-  display: flex;
-  flex-direction: column;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+width: 210mm;
+min-height: 297mm;
+background-color: white;
+margin-bottom: 20px;
+padding : 10mm;
+display: flex;
+flex-direction: column;
 }
 .print-page-head{
   flex : 10;
@@ -307,24 +309,34 @@ div[class^="react-tabs-css-module_content"] {
   width : 100%;
   justify-content: space-between;
 }
+.page-col{
+  flex: 5;
+}
 .print-page-container table{
   width : 100%;
 }
 .print-page-container p {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
 }
 .logo-entreprise-page{
   max-width:  100px;
+  float: left;
 }
 
-
+.entreprise-info{
+  border :1px solid gray;
+}
 .print-page-container table td,th{
   border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+  text-align: left;
   padding : 10px;
-  
+  max-height: 50px;
 }
 .print-page-container p,h1,h2,h3,h4,h5,h6{
-  margin: 3px;
+  margin: 7px;
+}
+.pt-1{
+  padding-top : 15px;
 }
 

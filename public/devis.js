@@ -86,7 +86,7 @@ function Devis() {
                   
                  
                 }).then((devis) => {
-                  console.log(devis.phases)
+               
                   
                   mainWindow.webContents.send("devis", devis)
                 });

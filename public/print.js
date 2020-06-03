@@ -29,7 +29,7 @@ function Print(){
           ? "http://localhost:3000/print.html"
           : `file://${path.join(__dirname, "../build/print.html")}`
       );
-     
+  //   printWindow.show()
       printWindow.webContents.on('dom-ready', ()=>{
         printWindow.webContents.send("print:devis", value);
         ipcMain.once('print:close', (event,value)=>{
