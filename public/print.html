@@ -2,116 +2,133 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Print</title>
-    <style>
-   .print-page-container{
-  box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
-width: 210mm;
-min-height: 297mm;
-background-color: white;
-margin-bottom: 20px;
-padding : 10mm;
-display: flex;
-flex-direction: column;
-}
-.print-page-head{
-  flex : 10;
-}
-.print-page-footer{
-  flex: 1;
-}
-.print-page-content {
-  flex :19;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Print</title>
+  <style>
+    .print-page-container {
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+      width: 210mm;
+      min-height: 297mm;
+      background-color: white;
+      margin-bottom: 20px;
+      padding: 10mm;
+      display: flex;
+      flex-direction: column;
+    }
 
-}
-.page-row{
-  display:  flex;
-  width : 100%;
-  justify-content: space-between;
-}
-.page-col{
-  flex: 5;
-}
-.print-page-container table{
-  width : 100%;
-}
-.print-page-container p {
-  font-size: 14px;
-  font-weight: 400;
-}
-.logo-entreprise-page{
-  max-width:  100px;
-  float: left;
-}
+    .print-page-head {
+      flex: 10;
+    }
 
-.entreprise-info{
-  border :1px solid gray;
-}
-.print-page-container table td,th{
-  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-  text-align: left;
-  padding : 10px;
-  max-height: 50px;
-}
-.print-page-container p,h1,h2,h3,h4,h5,h6{
-  margin: 7px;
-}
-.pt-1{
-  padding-top : 15px;
-}
+    .print-page-footer {
+      flex: 1;
+    }
 
+    .print-page-content {
+      flex: 19;
 
-    </style>
+    }
+
+    .page-row {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .page-col {
+      flex: 5;
+    }
+
+    .print-page-container table {
+      width: 100%;
+    }
+
+    .print-page-container p {
+      font-size: 14px;
+      font-weight: 400;
+    }
+
+    .logo-entreprise-page {
+      max-width: 100px;
+      float: left;
+    }
+
+    .entreprise-info {
+      border: 1px solid gray;
+    }
+
+    .print-page-container table td,
+    th {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+      text-align: left;
+      padding: 10px;
+      max-height: 50px;
+    }
+
+    .print-page-container p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin: 7px;
+    }
+
+    .pt-1 {
+      padding-top: 15px;
+    }
+  </style>
+  
 </head>
 
 <body>
-    <div id="pages"></div>
-    <script>
+  <div id="pages"></div>
+  <script>
 
-        const electron = window.require("electron");
-        const { ipcRenderer } = electron;
+    const electron = window.require("electron");
+    const { ipcRenderer } = electron;
 
-        const html2canvas = window.require('html2canvas');
-        const jsPDF = window.require('jspdf');
+    const html2canvas = window.require('html2canvas');
+    const jsPDF = window.require('jspdf');
 
-        ipcRenderer.once("print:devis", function (event, res) {
-           
-            const pdf = new jsPDF();
-            let count = 0
-            new Promise((resolve, reject) => {
-                res.pages.forEach((page, index) => {
-                    document.getElementById("pages").insertAdjacentHTML('beforeend', `<div id="page-${index}">${page.page}</div>`);
+    ipcRenderer.once("print:devis", function (event, res) {
 
-                    html2canvas(document.querySelector(`#page-${index}`)).then(canvas => {
-                        const imgData = canvas.toDataURL("image/jpeg", 1.0)
-                        if (count !== 0) {
-                            pdf.addPage();
-                        }
-                        pdf.addImage(imgData, 'PNG', 0, 0);
-                        count++;
-                        if (count === res.pages.length) {
-                            resolve()
-                        }
+      const pdf = new jsPDF();
+      let count = 0
+      new Promise((resolve, reject) => {
+        res.pages.forEach((page, index) => {
+          document.getElementById("pages").insertAdjacentHTML('beforeend', `<div id="page-${index}">${page.page}</div>`);
 
-
-                    });
-                });
-            }).then(() => {
-
-                pdf.save("download.pdf", { returnPromise: true }).then((scb, ecb) => {
-                    ipcRenderer.send('print:close')
-                });
-            })
+          html2canvas(document.querySelector(`#page-${index}`)).then(canvas => {
+            const imgData = canvas.toDataURL("image/jpeg", 1.0)
+            if (count !== 0) {
+              pdf.addPage();
+            }
+            pdf.addImage(imgData, 'PNG', 0, 0);
+            count++;
+            if (count === res.pages.length) {
+              resolve()
+            }
 
 
+          });
+        });
+      }).then(() => {
+
+        pdf.save("download.pdf", { returnPromise: true }).then((scb, ecb) => {
+          ipcRenderer.send('print:close')
+        });
+      })
 
 
 
-        })
-    </script>
+
+
+    })
+  </script>
 
 </body>
 

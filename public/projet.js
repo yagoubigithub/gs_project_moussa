@@ -5,8 +5,9 @@ const mainWindow = require("./mainWindow");
 const methode = Projet.prototype;
 
 function Projet() {
- // db.run('DROP TABLE projet');
+  //db.run('DROP TABLE projet');
  // db.run('DROP TABLE phases_projets');
+
 
   db.run(`CREATE TABLE IF NOT EXISTS projet (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,6 +20,8 @@ function Projet() {
     etat TEXT ,
     duree_phase INTEGER ,
     maitreDouvrage_id INTEGER ,
+    remise REAL,
+    unite_remise TEXT,
    status TEXT
 )`);
 
@@ -52,7 +55,7 @@ function Projet() {
   ipcMain.on("projet:ajouter", (event, value) => {
     const projets = [];
     db.run(
-      `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.delais},'${value.date_debut}','${value.date_depot}' , 'en cours',${value.duree_phase},${value.maitreDouvrage_id} , 'undo') `,
+      `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , remise , unite_remise ,  status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.delais},'${value.date_debut}','${value.date_depot}' , 'en cours',${value.duree_phase},${value.maitreDouvrage_id} , ${value.remise} ,  '${value.unite_remise}' , 'undo') `,
       function (err) {
         if (err) mainWindow.webContents.send("projet:ajouter", err);
 
@@ -174,6 +177,7 @@ function ReturnAllProject() {
               db.all(
                 `SELECT *  FROM phases_projets WHERE projet_id=${projet.id}`,
                 function (err, phases_projets) {
+                  if(phases_projets !== undefined)
                   projets.push({ phases_projets: [...phases_projets], ...projet });
                   if (projets.length === rows.length) resolve(projets);
                 }

@@ -13,7 +13,7 @@ export default class Page extends Component {
   render() {
     const info = { ...this.props.entreprise };
     const totalReporter = this.props.row.reduce((total,r)=>{
-      return total + Number.parseInt(r.rows_to_print.prix)
+      return total + Number.parseFloat(r.rows_to_print.prix)
     },0)
     return (
       <div className="print-page-container">
@@ -101,13 +101,13 @@ export default class Page extends Component {
               </h5>
               <h5>
                 Total a Payer :{" "}
-                {Number.parseInt(this.props.row[0].prixTotale) -
-                  Number.parseInt(this.props.row[0].devis.remise)}{" "}
+                {Number.parseFloat(this.props.row[0].prixTotale) -
+                  Number.parseFloat(this.props.row[0].devis.remise)}{" "}
                 DA
               </h5>
               <h6>Total a payer : {NumberToLetter(
-                Number.parseInt(this.props.row[0].prixTotale) -
-                  Number.parseInt(this.props.row[0].devis.remise)
+                Number.parseFloat(this.props.row[0].prixTotale) -
+                  Number.parseFloat(this.props.row[0].devis.remise)
               )} Dinars</h6>
             </div>
           </div>

@@ -13,10 +13,12 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Grid from "@material-ui/core/Grid";
+import MenuItem from '@material-ui/core/MenuItem';
 
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Select from "react-select";
+import MuiSelect from '@material-ui/core/Select';
 
 //icons
 
@@ -58,7 +60,7 @@ class AjouterProjet extends Component {
     date_debut: "",
     date_depot: "",
     prix_totale : 0,
-
+    unite_remise : "%",
  remise :0,
 
     prix_totale: 0,
@@ -90,6 +92,7 @@ class AjouterProjet extends Component {
         delais: 0,
         date_debut: "",
         date_depot: "",
+        unite_remise : "%",
         prix_totale : 0,
         remise :0,
        
@@ -111,7 +114,7 @@ class AjouterProjet extends Component {
         phasesProjetsSelected.map((phase) => {
           duree_phase =
             Number.parseInt(duree_phase) + Number.parseInt(phase.value.duree);
-          prix_totale = prix_totale + Number.parseInt(phase.value.prix);
+          prix_totale = prix_totale + Number.parseFloat(phase.value.prix);
         });
       }
 
@@ -132,6 +135,10 @@ class AjouterProjet extends Component {
       this.setState({ error: "le champ Phase du projet et obligatoire *" });
       return;
     }
+    if(d.unite_remise === "%" && d.remise > 100){
+      this.setState({ error: "le champ Remise et superieur de 100%" }); 
+      return;
+    }
 
     const data = {
     
@@ -144,9 +151,9 @@ class AjouterProjet extends Component {
       delais: d.delais,
       date_debut: d.date_debut,
       date_depot: d.date_depot,
-
       prix_totale : d.prix_totale - d.remise,
       remise : d.remise,
+      unite_remise : d.unite_remise,
       date_devis : getCurrentDateTime(new Date().getTime())
     };
 
@@ -203,6 +210,12 @@ class AjouterProjet extends Component {
         maitreDouvrage,
       });
   };
+  handleUniteRemiseChange = (e) =>{
+
+    this.setState({
+      unite_remise : e.target.value
+    })
+  }
   render() {
     const options = [];
     if (this.state.phasesProjets) {
@@ -325,12 +338,21 @@ class AjouterProjet extends Component {
 
             <h3>La durée des phases : {this.state.duree_phase} (jours)</h3>
             <h3>Prix Totale : {this.state.prix_totale} (DA)</h3>
-            <h3>Prix a Payer : {this.state.prix_totale - this.state.remise} (DA)</h3>
+            {
+              this.state.unite_remise === "DA"   ?
+              <h3>Prix a Payer : {this.state.prix_totale - this.state.remise} (DA)</h3>
+              :
+              <h3>Prix a Payer : {Number.parseFloat(this.state.prix_totale) - Number.parseFloat(this.state.remise * this.state.prix_totale / 100)} (DA)</h3>
+            }
+           
           </Grid>
           
           <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}>Remise Sur le Totale</h3>
-            <TextField
+            <h3 style={{ margin: 0 }}>Remise Sur le Totale <small><span className="red">(Unité : {this.state.unite_remise} )</span></small></h3>
+            {
+              this.state.unite_remise === "DA"? 
+              
+              <TextField
               type="number"
               placeholder="Remise"
               value={this.state.remise}
@@ -339,6 +361,23 @@ class AjouterProjet extends Component {
               onChange={this.handleChange}
               fullWidth
             />
+              :   <TextField
+              type="number"
+              placeholder="Remise"
+              value={this.state.remise}
+              name="remise"
+              variant="outlined"
+              onChange={this.handleChange}
+              fullWidth
+              InputProps={{inputProps : {min  : 0, step : 1, max : 100 }}}
+            />
+            }
+            
+
+<MuiSelect value={this.state.unite_remise} onChange={this.handleUniteRemiseChange}>
+            <MenuItem value={"%"}>%</MenuItem>
+          <MenuItem value={"DA"}>DA</MenuItem>
+            </MuiSelect>
           </Grid>
          
 

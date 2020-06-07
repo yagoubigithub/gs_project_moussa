@@ -16,7 +16,7 @@ db.run(`CREATE TABLE IF NOT EXISTS phases_projet (
   titre TEXT,
   description TEXT,
   duree INTEGER ,
-  prix INTEGER ,
+  prix REAL ,
  status TEXT
 )`);
 

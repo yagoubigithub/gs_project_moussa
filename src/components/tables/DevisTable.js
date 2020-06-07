@@ -370,7 +370,7 @@ class ProjetTable extends Component {
         filterMethod: (filter, row) => {
           const regx = `.*${filter.value}.*`;
           return (
-            Number.parseInt(row["prix_totale"]) + Number.parseInt(row["remise"])
+            Number.parseFloat(row["prix_totale"]) + Number.parseFloat(row["remise"])
           )
             .toString()
             .match(regx);
@@ -380,8 +380,8 @@ class ProjetTable extends Component {
           return (
             <div className="cell">
               {props.value !== "undefined"
-                ? Number.parseInt(props.original.prix_totale) +
-                  Number.parseInt(props.original.remise)
+                ? Number.parseFloat(props.original.prix_totale) +
+                  Number.parseFloat(props.original.remise)
                 : ""}
             </div>
           );

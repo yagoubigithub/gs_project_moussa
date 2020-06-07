@@ -5,8 +5,8 @@ const mainWindow = require("./mainWindow");
 const methode = Devis.prototype;
 
 function Devis() {
-  // db.run('DROP TABLE devis');
-  // db.run('DROP TABLE devis_phases_projets');
+ db.run('DROP TABLE devis');
+ db.run('DROP TABLE devis_phases_projets');
 
   db.run(`CREATE TABLE IF NOT EXISTS devis (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -15,8 +15,9 @@ function Devis() {
     objet TEXT,
     adresse TEXT,
     duree_phase INTEGER ,
-    prix_totale  INTEGER ,
-    remise INTEGER,
+    prix_totale  REAL ,
+    remise REAL,
+    unite_remise TEXT,
     date_devis TEXT,
     maitreDouvrage_id INTEGER ,
    status TEXT
@@ -109,10 +110,10 @@ function Devis() {
   ipcMain.on("devis:ajouter", (event, value) => {
     const deviss = [];
     db.run(
-      `INSERT INTO devis(projet_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, date_devis ,  maitreDouvrage_id , status) VALUES (${value.projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_devis}' , ${value.maitreDouvrage_id} , 'undo') `,
+      `INSERT INTO devis(projet_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, unite_remise, date_devis ,  maitreDouvrage_id , status) VALUES (${value.projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.unite_remise}', '${value.date_devis}' , ${value.maitreDouvrage_id} , 'undo') `,
       function (err) {
         if (err) mainWindow.webContents.send("devis:ajouter", err);
-
+        console.log("devis***",err)
         //add phase de devis
         const devis_id = this.lastID;
         let sql = `INSERT INTO devis_phases_projets(devis_id , phases_devis_id , status) VALUES   `;
@@ -128,10 +129,12 @@ function Devis() {
         sql = sql.slice(0, sql.lastIndexOf(",") - 1);
 
         db.run(sql, function (err) {
+          console.log("devis_phases_projets",err)
+
           if (err) mainWindow.webContents.send("devis:ajouter", err);
           ReturnAllDevis()
-            .then((projets) =>
-              mainWindow.webContents.send("devis:ajouter", projets)
+            .then((deviss) =>
+              mainWindow.webContents.send("devis:ajouter", deviss)
             )
             .catch((err) => mainWindow.webContents.send("devis:ajouter", err));
         });
@@ -146,7 +149,7 @@ function Devis() {
   //AJOUTER
   ipcMain.on("devis:transform", (event, value) => {
     db.run(
-      `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.delais},'${value.date_debut}','${value.date_depot}' , 'en cours',${value.duree_phase},${value.maitreDouvrage_id} , 'undo') `,
+      `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , remise , unite_remise , status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.delais},'${value.date_debut}','${value.date_depot}' , 'en cours',${value.duree_phase},${value.maitreDouvrage_id} , ${value.remise} , '${value.unite_remise}' , 'undo') `,
       function (err) {
         if (err) mainWindow.webContents.send("devis:transform", err);
 
