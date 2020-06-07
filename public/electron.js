@@ -6,7 +6,7 @@ require('v8-compile-cache');
 
 const { app } = electron;
 
-let mainWindow;
+
 
 
 app.on("ready", () => {

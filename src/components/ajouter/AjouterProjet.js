@@ -62,7 +62,7 @@ class AjouterProjet extends Component {
     prix_totale : 0,
     unite_remise : "%",
  remise :0,
-
+tva : 0,
     prix_totale: 0,
 
 
@@ -95,6 +95,7 @@ class AjouterProjet extends Component {
         unite_remise : "%",
         prix_totale : 0,
         remise :0,
+        tva : 0,
        
         phasesProjetsSelected: [],
       });
@@ -114,7 +115,7 @@ class AjouterProjet extends Component {
         phasesProjetsSelected.map((phase) => {
           duree_phase =
             Number.parseInt(duree_phase) + Number.parseInt(phase.value.duree);
-          prix_totale = prix_totale + Number.parseFloat(phase.value.prix);
+          prix_totale = prix_totale + (Number.parseFloat(phase.value.prix)  + (Number.parseFloat(phase.value.prix) * this.state.tva)/100);
         });
       }
 
@@ -154,6 +155,7 @@ class AjouterProjet extends Component {
       prix_totale : d.prix_totale - d.remise,
       remise : d.remise,
       unite_remise : d.unite_remise,
+      tva : d.tva,
       date_devis : getCurrentDateTime(new Date().getTime())
     };
 
@@ -380,6 +382,21 @@ class AjouterProjet extends Component {
             </MuiSelect>
           </Grid>
          
+
+          <Grid item xs={6}>
+            <h3 style={{ margin: 0 }}> TVA (%)</h3>
+           
+            <TextField
+              name="tva"
+              value={this.state.tva}
+              onChange={this.handleChange}
+              type="number"
+              variant="outlined"
+              fullWidth
+              InputProps={{inputProps : {min  : 0, step : 1 , max : 100}}}
+            />
+          </Grid>
+
 
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}> délais de Maitre d’ouvrage (jours)</h3>

@@ -30,7 +30,7 @@ import Page from './Page';
 
 const head = [{ access : "numero", value: "N°" },{ access : "id", value: "ID" },
 { access : "titre", value: "Désignation" },
-,
+,{ access : "tva", value: "TVA" } , 
 { access : "prix", value: "Prix" }]
 
  class PrintDevis extends Component {
@@ -75,13 +75,14 @@ const head = [{ access : "numero", value: "N°" },{ access : "id", value: "ID" }
         const ROW_NUMBER  = 8;
         let rows_to_print = [];
         const devis = this.state.devis;
+        
         let prixTotale = 0;
         let phases = [];
         if(devis !== {}){
           if(devis.phases !== undefined){
               phases = [...devis.phases];
            phases.map(p=>{
-            prixTotale = prixTotale + parseInt(p.prix);
+            prixTotale = prixTotale + (Number.parseFloat(p.prix) +  (Number.parseFloat(p.prix)*devis.tva)/100);
           })
           for (let i = 0; i < phases.length; i = i + ROW_NUMBER) {
             const r = [];

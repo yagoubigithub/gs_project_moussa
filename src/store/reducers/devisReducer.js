@@ -77,6 +77,11 @@ const DevisReducer = (state = initStat, action) => {
             devis : action.payload,
             error : null
           }
+          case 'DEVIS_PRINT' :
+            return{
+              ...state,
+              loading : false
+            }
 
     default:
       return {
