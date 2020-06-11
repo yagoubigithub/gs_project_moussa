@@ -129,7 +129,9 @@ export default class Page extends Component {
               <h5>Total net : {this.props.row[0].prixTotale} DA</h5>
 
               <h5>Total TVA : {(Number.parseFloat(this.props.row[0].prixTotale) * this.props.row[0].devis["tva"]) / 100} DA</h5>
-              <h5>Total TTC : {(Number.parseFloat(this.props.row[0].prixTotale))  + (Number.parseFloat(this.props.row[0].prixTotale) * this.props.row[0].devis["tva"]) / 100} DA</h5>
+            
+            
+              <h5>Total TTC : {(Number.parseFloat(this.props.row[0].prixTotale))  + ((Number.parseFloat(this.props.row[0].prixTotale) * this.props.row[0].devis["tva"]) / 100)} DA</h5>
 
               {this.props.row[0].devis.unite_remise === "DA" ?
               
@@ -145,7 +147,7 @@ export default class Page extends Component {
   ?
   <h5>
                 Total a Payer :{" "}
-                {Number.parseFloat(this.props.row[0].prixTotale) -
+                {(Number.parseFloat(this.props.row[0].prixTotale))  + ((Number.parseFloat(this.props.row[0].prixTotale) * this.props.row[0].devis["tva"]) / 100) -
                   Number.parseFloat(this.props.row[0].devis.remise)}{" "}
                 DA
               </h5>
@@ -153,19 +155,35 @@ export default class Page extends Component {
 
   <h5>
                 Total a Payer :{" "}
-                {Number.parseFloat(this.props.row[0].prixTotale) -
+                {(Number.parseFloat(this.props.row[0].prixTotale))  + ((Number.parseFloat(this.props.row[0].prixTotale) * this.props.row[0].devis["tva"]) / 100) -
                   (Number.parseFloat(this.props.row[0].prixTotale) * 
                 Number.parseFloat(this.props.row[0].devis.remise) / 100)}{" "}
                 DA
               </h5>
 }
-             
-            
-       {       <h6>Total a payer : {floatToDrahem(
-                Number.parseFloat(this.props.row[0].prixTotale) -
+
+{
+  this.props.row[0].devis.unite_remise === "DA"
+  ?
+  <h6>
+                Total a Payer :{" "}
+                {floatToDrahem((Number.parseFloat(this.props.row[0].prixTotale))  + ((Number.parseFloat(this.props.row[0].prixTotale) * this.props.row[0].devis["tva"]) / 100) -
+                  Number.parseFloat(this.props.row[0].devis.remise))}
+                
+              </h6>
+  :
+
+  <h6>
+                Total a Payer :{" "}
+                {floatToDrahem((Number.parseFloat(this.props.row[0].prixTotale))  + ((Number.parseFloat(this.props.row[0].prixTotale) * this.props.row[0].devis["tva"]) / 100) -
                   (Number.parseFloat(this.props.row[0].prixTotale) * 
-                Number.parseFloat(this.props.row[0].devis.remise) / 100)
-              )} </h6>} 
+                Number.parseFloat(this.props.row[0].devis.remise) / 100))}
+                
+              </h6>
+}
+
+             
+   
             </div>
           </div>
         </div>

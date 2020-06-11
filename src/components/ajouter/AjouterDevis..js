@@ -168,6 +168,7 @@ class AjouterDevis extends Component {
         maitreDouvrage,
       });
   };
+  
   render() {
     const options = [];
     if (this.state.phasesProjets) {
@@ -296,18 +297,13 @@ class AjouterDevis extends Component {
             />
 
             <h3>La durée des phases : {this.state.duree_phase} (jours)</h3>
-            <h3>Prix Totale : {this.state.prix_totale} (DA)</h3>
-            {
-              this.state.unite_remise === "DA"   ?
-              <h3>Prix a Payer : {this.state.prix_totale - this.state.remise} (DA)</h3>
-              :
-              <h3>Prix a Payer : {Number.parseFloat(this.state.prix_totale) - Number.parseFloat(this.state.remise * this.state.prix_totale / 100)} (DA)</h3>
-            }
+            <h3>Total Net: {this.state.prix_totale} (DA)</h3>
+           
           </Grid>
 
           
           <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}>Remise Sur le Totale <small><span className="red">(Unité : {this.state.unite_remise} )</span></small></h3>
+            <h3 style={{ margin: 0 }}>Remise Sur le Total <small><span className="red">(Unité : {this.state.unite_remise} )</span></small></h3>
             {
               this.state.unite_remise === "DA"? 
               
@@ -333,7 +329,7 @@ class AjouterDevis extends Component {
             }
             
 
-<MuiSelect value={this.state.unite_remise} onChange={this.handleUniteRemiseChange}>
+<MuiSelect value={this.state.unite_remise} name="unite_remise" onChange={this.handleChange}>
             <MenuItem value={"%"}>%</MenuItem>
           <MenuItem value={"DA"}>DA</MenuItem>
             </MuiSelect>

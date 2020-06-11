@@ -61,7 +61,10 @@ class AjouterFacture extends Component {
     prix_totale: 0,
 
     remise: 0,
+    unite_remise : "%",
 
+    paye : 0,
+    unite_paye :"%",
     prix_totale: 0,
 
     maitreDouvrages: [],
@@ -90,6 +93,9 @@ class AjouterFacture extends Component {
         date_depot: "",
         prix_totale: 0,
         remise: 0,
+        unite_remise : "%",
+        paye : 0,
+        unite_paye :"%",
         prix_totale: 0,
         maitreDouvrage: undefined,
         duree_phase: 0,
@@ -328,20 +334,16 @@ class AjouterFacture extends Component {
             />
 
             <h3>La durée des phases : {this.state.duree_phase} (jours)</h3>
-            <h3>Prix Totale : {this.state.prix_totale} (DA)</h3>
-            <h3>
-              Prix a Payer : {this.state.prix_totale - this.state.remise} (DA)
-            </h3>
+            <h3>Total net : {this.state.prix_totale} (DA)</h3>
+           
           </Grid>
 
           <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}>Remise Sur le Totale </h3>
-            <span className="red">(Unite % ou DA)</span>  
-            <MuiSelect value="%">
-            <MenuItem value={"%"}>%</MenuItem>
-          <MenuItem value={"DA"}>DA</MenuItem>
-            </MuiSelect>
-            <TextField
+            <h3 style={{ margin: 0 }}>Remise Sur le Total <small><span className="red">(Unité : {this.state.unite_remise} )</span></small></h3>
+            {
+              this.state.unite_remise === "DA"? 
+              
+              <TextField
               type="number"
               placeholder="Remise"
               value={this.state.remise}
@@ -350,8 +352,26 @@ class AjouterFacture extends Component {
               onChange={this.handleChange}
               fullWidth
             />
-           
+              :   <TextField
+              type="number"
+              placeholder="Remise"
+              value={this.state.remise}
+              name="remise"
+              variant="outlined"
+              onChange={this.handleChange}
+              fullWidth
+              InputProps={{inputProps : {min  : 0, step : 1, max : 100 }}}
+            />
+            }
+            
+
+<MuiSelect value={this.state.unite_remise} name="unite_remise" onChange={this.handleChange}>
+            <MenuItem value={"%"}>%</MenuItem>
+          <MenuItem value={"DA"}>DA</MenuItem>
+            </MuiSelect>
           </Grid>
+
+         
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}> délais de Maitre d’ouvrage (jours)</h3>
 
@@ -389,6 +409,42 @@ class AjouterFacture extends Component {
             <h3 style={{ margin: 0 }}> Date de dépôt </h3>
             <p>{this.state.date_depot}</p>
           </Grid>
+
+
+          <Grid item xs={6}>
+            <h3 style={{ margin: 0 }}>Payé <small><span className="red">(Unité : {this.state.unite_paye} )</span></small></h3>
+            {
+              this.state.unite_paye === "DA"? 
+              
+              <TextField
+              type="number"
+              placeholder="Payé"
+              value={this.state.remise}
+              name="paye"
+              variant="outlined"
+              onChange={this.handleChange}
+              fullWidth
+            />
+              :   <TextField
+              type="number"
+              placeholder="Payé"
+              value={this.state.remise}
+              name="paye"
+              variant="outlined"
+              onChange={this.handleChange}
+              fullWidth
+              InputProps={{inputProps : {min  : 0, step : 1, max : 100 }}}
+            />
+            }
+            
+
+<MuiSelect value={this.state.unite_paye} name="unite_paye" onChange={this.handleChange}>
+            <MenuItem value={"%"}>%</MenuItem>
+          <MenuItem value={"DA"}>DA</MenuItem>
+            </MuiSelect>
+          </Grid>
+
+          
           <Grid item xs={12}>
             <br />
             <Button
