@@ -28,8 +28,9 @@ import {connect} from "react-redux"
 import {getDevis, print} from "../../store/actions/devisAction"
 import Page from './Page';
 
-const head = [{ access : "numero", value: "N°" },{ access : "id", value: "ID" },
+const head = [{ access : "numero", value: "N°" },
 { access : "titre", value: "Désignation" },
+{ access : "qte", value: "Quantité " }
 ,{ access : "tva", value: "TVA" } , 
 { access : "prix", value: "Prix" }]
 
@@ -82,7 +83,7 @@ const head = [{ access : "numero", value: "N°" },{ access : "id", value: "ID" }
           if(devis.phases !== undefined){
               phases = [...devis.phases];
            phases.map(p=>{
-            prixTotale = prixTotale + (Number.parseFloat(p.prix) +  (Number.parseFloat(p.prix)*devis.tva)/100);
+            prixTotale = prixTotale + Number.parseFloat(p.prix) ;
           })
           for (let i = 0; i < phases.length; i = i + ROW_NUMBER) {
             const r = [];

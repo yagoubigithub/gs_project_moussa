@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import logo from "../../utils/logo";
-import {NumberToLetter} from 'convertir-nombre-chiffre'
+import {floatToDrahem} from 'drahem'
 
 export default class Page extends Component {
   state = {
@@ -27,17 +27,20 @@ export default class Page extends Component {
 
             <div className="page-col entreprise-info">
               <img className="logo-entreprise-page" src={logo} />
-              <p>RC :**********************</p>
+              <div className="entreprise-fiscaux">
+                  <p>RC :**********************</p>
               <p>AI :**********************</p>
               <p>NIF :**********************</p>
               <p>NIS :**********************</p>
+              </div>
+            
             </div>
           </div>
 
           <hr />
           <div className="page-row">
             <div className="page-col">
-              <h4>Devis :N° {this.props.row[0].devis.id} / {new Date(this.props.row[0].devis.date_devis).getFullYear()}</h4>
+              <h2>Devis : N° {this.props.row[0].devis.id} / {new Date(this.props.row[0].devis.date_devis).getFullYear()}</h2>
               <p>Date : {this.props.row[0].devis.date_devis.split('T')[0]}</p>
               <p>Par : yagoubi moussa</p>
               <p>Objet :  {this.props.row[0].devis.objet}</p>
@@ -63,7 +66,7 @@ export default class Page extends Component {
                 {this.props.head.map((title, index) => {
                   return <th key={index}>{title.value}</th>;
                 })}
-                <th>Prix Total</th>
+                <th>Motant HT</th>
               </tr>
             </thead>
             <tbody>
@@ -80,6 +83,13 @@ export default class Page extends Component {
                           );
                         } 
 
+                        if (title.access === "qte"   ) {
+                          return (
+                            <td key={`tbody-td-${index}`}>
+                              {1}
+                            </td>
+                          );
+                        } 
 
 
                         if (title.access === "tva"   ) {
@@ -97,7 +107,7 @@ export default class Page extends Component {
                           );
                       })}
                     <td>
-                      {row.rows_to_print["prix"] + (row.rows_to_print["prix"] * row.devis["tva"]) /100}
+                      {row.rows_to_print["prix"] + (row.rows_to_print["prix"] * row.devis["tva"]) /100} DA
                     </td>
                     </tr>
                   );
@@ -109,7 +119,7 @@ export default class Page extends Component {
           <div className="page-row pt-1">
             <div className="page-col" style={{flex : 6}}>
             <small>  <h5>Total à reporter : {totalReporter} DA</h5> 
-            {/* <h5>Total à reporter : {NumberToLetter(totalReporter)} Dinars</h5> */}
+            { <h6>Total à reporter : {floatToDrahem(totalReporter)} </h6> }
 </small>
            
           
@@ -117,6 +127,10 @@ export default class Page extends Component {
             <div className="page-col " style={{flex : 4}}>
           
               <h5>Total net : {this.props.row[0].prixTotale} DA</h5>
+
+              <h5>Total TVA : {(Number.parseFloat(this.props.row[0].prixTotale) * this.props.row[0].devis["tva"]) / 100} DA</h5>
+              <h5>Total TTC : {(Number.parseFloat(this.props.row[0].prixTotale))  + (Number.parseFloat(this.props.row[0].prixTotale) * this.props.row[0].devis["tva"]) / 100} DA</h5>
+
               {this.props.row[0].devis.unite_remise === "DA" ?
               
               <h5>Remise sur le Total : {this.props.row[0].devis.remise} DA
@@ -124,6 +138,7 @@ export default class Page extends Component {
                : <h5>Remise sur le Total : {(Number.parseFloat(this.props.row[0].prixTotale) * 
                 Number.parseFloat(this.props.row[0].devis.remise) / 100)} DA
            </h5>}
+           <hr />
 
 {
   this.props.row[0].devis.unite_remise === "DA"
@@ -146,11 +161,11 @@ export default class Page extends Component {
 }
              
             
-       {/* {       <h6>Total a payer : {NumberToLetter(
+       {       <h6>Total a payer : {floatToDrahem(
                 Number.parseFloat(this.props.row[0].prixTotale) -
                   (Number.parseFloat(this.props.row[0].prixTotale) * 
                 Number.parseFloat(this.props.row[0].devis.remise) / 100)
-              )} Dinars</h6>} */}
+              )} </h6>} 
             </div>
           </div>
         </div>

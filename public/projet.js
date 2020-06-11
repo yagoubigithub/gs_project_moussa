@@ -10,7 +10,7 @@ function Projet() {
 
 
   db.run(`CREATE TABLE IF NOT EXISTS projet (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY AUTOINCREMENT ,
     nom TEXT NOT NULL,
     objet TEXT,
     adresse TEXT ,
