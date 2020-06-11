@@ -284,8 +284,9 @@ function ReturnAllFacture() {
 
   return new Promise((resolve, reject) => {
     db.all(
-      `SELECT f.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM facture f   JOIN maitre_douvrage m ON m.id=f.maitreDouvrage_id ORDER BY id DESC`,
+      `SELECT f.*,SUM(p.paye) paye, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM facture f   JOIN maitre_douvrage m ON m.id=f.maitreDouvrage_id JOIN paye p ON p.facture_id=f.id GROUP BY f.id ORDER BY f.id DESC `,
       function (err, rows) {
+        console.log(err)
         if (err) reject(err);
         if (rows !== undefined) {
           if (rows.length === 0) {
