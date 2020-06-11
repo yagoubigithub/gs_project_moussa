@@ -66,6 +66,7 @@ class AjouterFacture extends Component {
     paye : 0,
     unite_paye :"%",
     prix_totale: 0,
+    tva : 0,
 
     maitreDouvrages: [],
     phasesProjetsSelected: [],
@@ -92,6 +93,7 @@ class AjouterFacture extends Component {
         date_debut: "",
         date_depot: "",
         prix_totale: 0,
+        tva : 0,
         remise: 0,
         unite_remise : "%",
         paye : 0,
@@ -156,11 +158,11 @@ class AjouterFacture extends Component {
       adresse: d.adresse,
       phasesProjetsSelected: [...this.state.phasesProjetsSelected],
       duree_phase: d.duree_phase,
-
-      prix_totale: d.prix_totale - d.remise,
-      remise: d.remise,
+      tva : d.tva,
+      prix_totale: d.prix_totale ,
+      remise:Number.parseFloat( d.remise),
       unite_remise: d.unite_remise,
-      paye: d.paye,
+      paye: Number.parseFloat(d.paye),
       unite_paye: d.unite_paye,
       
       date_facture: getCurrentDateTime(new Date().getTime()),
@@ -423,6 +425,19 @@ class AjouterFacture extends Component {
             <p>{this.state.date_depot}</p>
           </Grid>
 
+          <Grid item xs={6}>
+            <h3 style={{ margin: 0 }}> TVA (%)</h3>
+           
+            <TextField
+              name="tva"
+              value={this.state.tva}
+              onChange={this.handleChange}
+              type="number"
+              variant="outlined"
+              fullWidth
+              InputProps={{inputProps : {min  : 0, step : 1 , max : 100}}}
+            />
+          </Grid>
 
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}>Payé <small><span className="red">(Unité : {this.state.unite_paye} )</span></small></h3>

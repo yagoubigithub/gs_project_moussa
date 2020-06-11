@@ -138,7 +138,7 @@ class AjouterDevis extends Component {
       phasesProjetsSelected: [...this.state.phasesProjetsSelected],
       duree_phase: d.duree_phase,
      
-      prix_totale : d.prix_totale - d.remise,
+      prix_totale : d.prix_totale ,
       remise : d.remise,
       unite_remise : d.unite_remise,
       tva : d.tva,

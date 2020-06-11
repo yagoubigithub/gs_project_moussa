@@ -39,5 +39,10 @@ app.on("ready", () => {
 
   const Print = require('./print');
   const print = new Print();
+
+
+  
+  const Facture = require('./facture');
+  const facture = new Facture();
   
 });
