@@ -139,6 +139,15 @@ class AjouterFacture extends Component {
       return;
     }
 
+    if(d.unite_remise === "%" && d.remise > 100){
+      this.setState({ error: "le champ Remise et superieur a 100%" }); 
+      return;
+    }
+
+    if(d.unite_paye === "%" && d.pay > 100){
+      this.setState({ error: "le champ Payé et superieur a 100%" }); 
+      return;
+    }
     const data = {
       projet_id: 0,
       nom: d.nom,
@@ -150,6 +159,10 @@ class AjouterFacture extends Component {
 
       prix_totale: d.prix_totale - d.remise,
       remise: d.remise,
+      unite_remise: d.unite_remise,
+      paye: d.paye,
+      unite_paye: d.unite_paye,
+      
       date_facture: getCurrentDateTime(new Date().getTime()),
     };
 
@@ -419,7 +432,7 @@ class AjouterFacture extends Component {
               <TextField
               type="number"
               placeholder="Payé"
-              value={this.state.remise}
+              value={this.state.paye}
               name="paye"
               variant="outlined"
               onChange={this.handleChange}
@@ -428,7 +441,7 @@ class AjouterFacture extends Component {
               :   <TextField
               type="number"
               placeholder="Payé"
-              value={this.state.remise}
+              value={this.state.paye}
               name="paye"
               variant="outlined"
               onChange={this.handleChange}

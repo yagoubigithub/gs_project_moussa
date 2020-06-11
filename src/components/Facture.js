@@ -30,7 +30,7 @@ import PrintFacture from "./print/PrintFacture";
 
 class Facture extends Component {
     state = {
-        delete_button_text: "Suprimer",
+        delete_button_text: "Supprimer",
         factures: [],
         factureCorebeille: [],
         rowsSelected: [],

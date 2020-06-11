@@ -29,7 +29,7 @@ import PrintDevis from "./print/PrintDevis";
 
 class Devis extends Component {
     state = {
-        delete_button_text: "Suprimer",
+        delete_button_text: "Supprimer",
         deviss: [],
         projetCorebeille: [],
         rowsSelected: [],
