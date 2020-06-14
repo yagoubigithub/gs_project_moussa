@@ -150,6 +150,9 @@ class AjouterFacture extends Component {
       this.setState({ error: "le champ Payé et superieur a 100%" }); 
       return;
     }
+   const paye = this.calculPaye(d.prix_totale,d.tva ,d.remise, d.unite_remise,d.paye, d.unite_paye)
+   const remise = this.calculRemise(d.prix_totale,d.tva ,d.remise, d.unite_remise);
+
     const data = {
       projet_id: 0,
       nom: d.nom,
@@ -160,10 +163,8 @@ class AjouterFacture extends Component {
       duree_phase: d.duree_phase,
       tva : d.tva,
       prix_totale: d.prix_totale ,
-      remise:Number.parseFloat( d.remise),
-      unite_remise: d.unite_remise,
-      paye: Number.parseFloat(d.paye),
-      unite_paye: d.unite_paye,
+      remise:remise,
+      paye:paye,
       
       date_facture: getCurrentDateTime(new Date().getTime()),
     };
@@ -171,6 +172,34 @@ class AjouterFacture extends Component {
     this.props.ajouterFacture(data);
   };
 
+  calculPaye = (total_net, tva,remise, unite_remise, paye, unite_paye)=>{
+
+    if(unite_paye === "%"){
+      if(unite_remise === "%"){
+        const result_paye = parseFloat((total_net  + parseFloat(tva*(total_net  + parseFloat(tva*total_net/100))/100) - parseFloat(remise*total_net/100)) * paye /100)
+        return result_paye;
+      }else{
+ const result_paye = parseFloat((total_net  + parseFloat(tva*(total_net  + parseFloat(tva*total_net/100))/100) - remise) * paye /100);
+ return result_paye;
+      }
+
+    }else{
+      const result_paye = paye;
+      return result_paye;
+    }
+
+  }
+
+  calculRemise = (total_net, tva,remise, unite_remise) =>{
+
+    if(unite_remise === "%"){
+      return parseFloat(remise*(total_net  + parseFloat(tva*total_net/100))/100)
+    }else{
+
+      return remise
+    }
+
+  }
   handleChange = (e) => {
     this.setState({
       [e.target.name]: e.target.value,

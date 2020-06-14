@@ -5,8 +5,9 @@ const mainWindow = require("./mainWindow");
 const methode = Facture.prototype;
 
 function Facture() {
-// db.run('DROP TABLE facture');
-// db.run('DROP TABLE facture_phases_projets');
+//db.run('DROP TABLE facture');
+//db.run('DROP TABLE facture_phases_projets');
+ //db.run('DROP TABLE paye');
 
   db.run(`CREATE TABLE IF NOT EXISTS facture (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -17,7 +18,7 @@ function Facture() {
     duree_phase INTEGER ,
     prix_totale  REAL ,
     remise REAL,
-    unite_remise TEXT,
+   
     date_facture TEXT,
     maitreDouvrage_id INTEGER ,
     tva REAL,
@@ -38,77 +39,62 @@ db.run(`CREATE TABLE IF NOT EXISTS paye (
   )`);
   
   //get
-  ipcMain.on("devis", (event, value) => {
+  ipcMain.on("facture", (event, value) => {
     if (value.id) {
-      let devis = {};
-      db.get(
-        "SELECT d.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom,m.rg maitre_douvrage_rg , m.raison_social maitre_douvrage_raison_social,m.telephone maitre_douvrage_telephone , m.email   maitre_douvrage_email, m.adresse maitre_douvrage_adresse ,m.logo maitre_douvrage_logo FROM devis d  JOIN maitre_douvrage m ON m.id=d.maitreDouvrage_id WHERE d.id=" +
-          value.id ,
-        function (err, result) {
-          if (err) mainWindow.webContents.send("devis", err);
-          devis = { ...result };
-          const phases = [];
-          db.all(
-            `SELECT *  FROM devis_phases_projets WHERE devis_id=${value.id} ORDER BY phases_devis_id `,
-            function (err, devis_phases_projets) {
-             
-             
-              if (devis_phases_projets !== undefined) {
-               
-                if(devis_phases_projets.length === 0){
-                  mainWindow.webContents.send("devis", devis)
-                }else{
-                  
-                new Promise((resolve, reject) => {
-                  for (let i = 0; i < devis_phases_projets.length; i++) {
-                    const devis_phase = devis_phases_projets[i];
-                  
-                  
+     
+      const factures = [];
+    
 
 
-                    db.get(
-                      `SELECT * FROM phases_projet WHERE id=${devis_phase.phases_devis_id} `,
-                      function (err, phase) {
-                        if (err) mainWindow.webContents.send("devis", err);
-                        phases.push(phase);
-                       
-                      
-                      
-                        if (phases.length === devis_phases_projets.length) {
-                          phases.sort((a,b)=>{
-                            let comparison = 0;
-                            if (a.id > b.id) {
-                              comparison = 1;
-                            } else if (a.id < b.id) {
-                              comparison = -1;
-                            }
-                            return comparison;
-                            
+      db.all(
+        `SELECT f.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM facture f   JOIN maitre_douvrage m ON m.id=f.maitreDouvrage_id   WHERE f.id=${value.id}`,
+        function (err, factures_rows) {
+          console.log(err)
+          if (err) mainWindow.webContents.send("facture", err);
+          if (factures_rows !== undefined) {
+            if (factures_rows.length === 0) {
+              mainWindow.webContents.send("facture",  {});
+            } else {
+              factures_rows.forEach((facture) => {
+                let paye = [],facture_phases_projets = [];
+                db.all(
+                  `SELECT *  FROM facture_phases_projets WHERE facture_id=${facture.id} ORDER BY id DESC`,
+                  function (err, rows) {
+                    if (rows !== undefined) {
+                     facture_phases_projets = [...rows]
+                    }
+  
+  
+                    db.all(
+                      `SELECT *  FROM paye WHERE facture_id=${facture.id} ORDER BY id DESC`,
+                      function (err, rows) {
+                        if (rows !== undefined) {
+                          paye = [...rows]
+                          
+                          factures.push({
+                            ...facture,
+                            facture_phases_projets,
+                            payeObject : paye,
+                            paye : paye.reduce((total, num)=>toal = total + num.paye,0)
                           })
-                          devis.phases = [...phases];
-                          resolve(devis);
+                          if (factures.length === factures_rows.length) mainWindow.webContents.send("facture", factures[0]);
                         }
-                      }
-                    );
+  
+                      })
+  
+                   
                   }
-                  
-                 
-                }).then((devis) => {
-               
-                  
-                  mainWindow.webContents.send("devis", devis)
-                });
-                }
-              }else{
-                mainWindow.webContents.send("devis", phases)
-              }
+                );
+              });
             }
-          );
+          }
         }
       );
+
+
     } else {
       ReturnAllFacture()
-        .then((deviss) => mainWindow.webContents.send("facture", deviss))
+        .then((factures) => mainWindow.webContents.send("facture", factures))
         .catch((err) => mainWindow.webContents.send("facture", err));
     }
   });
@@ -118,7 +104,7 @@ db.run(`CREATE TABLE IF NOT EXISTS paye (
     const factures = [];
     console.log(value)
     db.run(
-      `INSERT INTO facture(projet_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, unite_remise, date_facture ,  maitreDouvrage_id , tva , status) VALUES (${value.projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.unite_remise}', '${value.date_facture}' , ${value.maitreDouvrage_id} , ${value.tva} , 'undo') `,
+      `INSERT INTO facture(projet_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, date_facture ,  maitreDouvrage_id , tva , status) VALUES (${value.projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_facture}' , ${value.maitreDouvrage_id} , ${value.tva} , 'undo') `,
       function (err) {
         if (err) mainWindow.webContents.send("facture:ajouter", err);
         console.log("facture***",err)
@@ -126,7 +112,7 @@ db.run(`CREATE TABLE IF NOT EXISTS paye (
         const facture_id = this.lastID;
 
         db.run(
-            `INSERT INTO paye(facture_id  , paye ) VALUES (${facture_id},${value.paye}) `,
+            `INSERT INTO paye(facture_id  , paye  ) VALUES (${facture_id},${value.paye} ) `,
             function (err) {
 
                 if (err) mainWindow.webContents.send("facture:ajouter", err);
@@ -284,25 +270,42 @@ function ReturnAllFacture() {
 
   return new Promise((resolve, reject) => {
     db.all(
-      `SELECT f.*,SUM(p.paye) paye, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM facture f   JOIN maitre_douvrage m ON m.id=f.maitreDouvrage_id JOIN paye p ON p.facture_id=f.id GROUP BY f.id ORDER BY f.id DESC `,
-      function (err, rows) {
+      `SELECT f.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM facture f   JOIN maitre_douvrage m ON m.id=f.maitreDouvrage_id  ORDER BY f.id DESC `,
+      function (err, factures_rows) {
         console.log(err)
         if (err) reject(err);
-        if (rows !== undefined) {
-          if (rows.length === 0) {
+        if (factures_rows !== undefined) {
+          if (factures_rows.length === 0) {
             resolve(factures);
           } else {
-            rows.forEach((facture) => {
+            factures_rows.forEach((facture) => {
+              let paye = [],facture_phases_projets = [];
               db.all(
                 `SELECT *  FROM facture_phases_projets WHERE facture_id=${facture.id} ORDER BY id DESC`,
-                function (err, facture_phases_projets) {
-                  if (facture_phases_projets !== undefined) {
-                    factures.push({
-                      facture_phases_projets: [...facture_phases_projets],
-                      ...facture,
-                    });
+                function (err, rows) {
+                  if (rows !== undefined) {
+                   facture_phases_projets = [...rows]
                   }
-                  if (factures.length === rows.length) resolve(factures);
+
+
+                  db.all(
+                    `SELECT *  FROM paye WHERE facture_id=${facture.id} ORDER BY id DESC`,
+                    function (err, rows) {
+                      if (rows !== undefined) {
+                        paye = [...rows]
+                        
+                        factures.push({
+                          ...facture,
+                          facture_phases_projets,
+                          payeObject : paye,
+                          paye : paye.reduce((total, num)=>toal = total + num.paye,0)
+                        })
+                        if (factures.length === factures_rows.length) resolve(factures);
+                      }
+
+                    })
+
+                 
                 }
               );
             });

@@ -94,7 +94,7 @@ export const getAllFacture = () =>{
 
     }
   }
-  export const getDevis = (id) =>{
+  export const getFacture = (id) =>{
     return (dispatch ,getState)=>{
   
       
@@ -108,7 +108,7 @@ export const getAllFacture = () =>{
       dispatch({
         type : "STOP_LOADING_FACTURE"
     });
-    console.log(data)
+   
    
     if(data){
       dispatch({
