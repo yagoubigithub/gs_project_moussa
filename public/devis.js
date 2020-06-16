@@ -291,4 +291,5 @@ function ReturnAllDevis() {
     );
   });
 }
+
 module.exports = Devis;

@@ -2,6 +2,9 @@ import React, { Component, Fragment } from "react";
 
 import { Link } from "react-router-dom";
 
+//utils
+import {round} from '../../utils/methods'
+
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 
@@ -43,6 +46,7 @@ class FactureTable extends Component {
     addToCorbeilleDialog: false,
     transformDialog: false,
     deletedId: null,
+    facture: null,
     rowsSelected: this.props.rowsSelected,
     selectedAll: false,
     devis: {
@@ -219,19 +223,33 @@ class FactureTable extends Component {
     this.setState({ devis });
   };
 
-  ajouter_paiement = (id) => {
-    this.setState({ paiementId: id });
+  ajouter_paiement = (facture) => {
+    this.setState({ facture });
     //popup
     this.handleOpenCloseAjouterPaiementDialog();
   };
   handleOpenCloseAjouterPaiementDialog = () => {
-    this.setState({ ajouterPaiement: !this.state.ajouterPaiement });
+    this.setState({ ajouterPaiement : !this.state.ajouterPaiement });
   };
+  ajouterPaiement =()=>{
+    const d = {...this.state}
+
+    const data = {
+    facture_id : d.facture.id,
+    paye  : d.paye,
+    unite_paye  : d.unite_paye
+
+    }
+    console.log(d.facture, data)
+
+    
+
+   }
   render() {
     const columns = [
       {
         Header: "Référence",
-        accessor: "number",
+        accessor: "id",
         width: 100,
         filterMethod: (filter, row) => {
           const regx = `.*${filter.value}.*`;
@@ -385,14 +403,14 @@ class FactureTable extends Component {
         accessor: "prix_totale",
         filterMethod: (filter, row) => {
           const regx = `.*${filter.value}.*`;
-          return Number.parseFloat(row["prix_totale"]).toString().match(regx);
+          return round(Number.parseFloat(row["prix_totale"])).toString().match(regx);
         },
 
         Cell: (props) => {
           return (
             <div className="cell">
               {props.value !== "undefined"
-                ? Number.parseFloat(props.original.prix_totale)
+                ? round(Number.parseFloat(props.original.prix_totale))
                 : ""}
             </div>
           );
@@ -423,7 +441,7 @@ class FactureTable extends Component {
 
         Cell: (props) => (
           <div className="cell">
-            {props.value !== "undefined" ? props.value : ""}
+            {props.value !== "undefined" ? round(Number.parseFloat( props.value)).toString() : ""}
           </div>
         ),
         Filter: ({ filter, onChange }) => (
@@ -452,7 +470,7 @@ class FactureTable extends Component {
 
         Cell: (props) => (
           <div className="cell">
-            {props.value !== "undefined" ? props.value : ""}
+            {props.value !== "undefined" ?  round(Number.parseFloat( props.value)).toString() : ""}
           </div>
         ),
         Filter: ({ filter, onChange }) => (
@@ -529,7 +547,7 @@ class FactureTable extends Component {
 
                 <Button
                   size="small"
-                  onClick={() => this.ajouter_paiement(props.value)}
+                  onClick={() => this.ajouter_paiement(props.original)}
                   color="primary"
                   variant="contained"
                   style={{
@@ -771,7 +789,10 @@ class FactureTable extends Component {
             <MenuItem value={"DA"}>DA</MenuItem>
           </MuiSelect>
           <DialogActions>
-            <Button color="primary" variant="contained">
+            <Button
+            onClick={this.ajouterPaiement}
+            
+             color="primary" variant="contained">
               Ajouter
             </Button>
           </DialogActions>

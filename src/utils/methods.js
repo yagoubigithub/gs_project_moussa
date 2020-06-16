@@ -9,3 +9,7 @@ export const getCurrentDateTime = (mills) =>{
         d.getMinutes() < 10 ? `0${d.getMinutes() }` :d.getMinutes() 
     }`
 }
+
+export const  round = (num) =>{
+    return  Math.round((num + Number.EPSILON) * 100) / 100
+  }
