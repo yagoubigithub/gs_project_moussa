@@ -9,7 +9,9 @@ import "react-table/react-table.css";
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import { Dialog, Checkbox, Grid } from "@material-ui/core";
+import { Dialog, Checkbox, Grid, DialogActions } from "@material-ui/core";
+import MenuItem from "@material-ui/core/MenuItem";
+import MuiSelect from "@material-ui/core/Select";
 
 //redux
 import { connect } from "react-redux";
@@ -53,10 +55,11 @@ class FactureTable extends Component {
 
     maitreDouvrageSelected: {},
     devis_phases_projets: [],
-
+    paye: 0,
+    unite_paye: "%",
     selectedAll: false,
     printDialog: false,
-    ajouterPaiement : false,
+    ajouterPaiement: false,
   };
   componentWillReceiveProps(nextProps) {
     if (nextProps.rowsSelected) {
@@ -107,7 +110,6 @@ class FactureTable extends Component {
     //popup
     this.handleOpenCloseaddToCorbeilleDialog();
   };
-
 
   transform = (devis) => {
     this.props.getPhasesProjetDeDevis(devis.devis_phases_projets);
@@ -181,6 +183,11 @@ class FactureTable extends Component {
       maitreDouvrageSelected,
     });
   };
+  handleChange = (e) => {
+    this.setState({
+      [e.target.name]: e.target.value,
+    });
+  };
   handeleDevisChange = (e) => {
     const devis = { ...this.state.devis };
     devis[e.target.name] = e.target.value;
@@ -212,14 +219,14 @@ class FactureTable extends Component {
     this.setState({ devis });
   };
 
-  ajouter_paiement = (id) =>{
+  ajouter_paiement = (id) => {
     this.setState({ paiementId: id });
     //popup
-    this.handleOpenCloseAjouterPaiementDialog(); 
-  }
-  handleOpenCloseAjouterPaiementDialog = () =>{
-    this.setState({ajouterPaiement : ! this.state.ajouterPaiement})
-  }
+    this.handleOpenCloseAjouterPaiementDialog();
+  };
+  handleOpenCloseAjouterPaiementDialog = () => {
+    this.setState({ ajouterPaiement: !this.state.ajouterPaiement });
+  };
   render() {
     const columns = [
       {
@@ -378,18 +385,14 @@ class FactureTable extends Component {
         accessor: "prix_totale",
         filterMethod: (filter, row) => {
           const regx = `.*${filter.value}.*`;
-          return (
-            Number.parseFloat(row["prix_totale"]) 
-          )
-            .toString()
-            .match(regx);
+          return Number.parseFloat(row["prix_totale"]).toString().match(regx);
         },
 
         Cell: (props) => {
           return (
             <div className="cell">
               {props.value !== "undefined"
-                ? Number.parseFloat(props.original.prix_totale) 
+                ? Number.parseFloat(props.original.prix_totale)
                 : ""}
             </div>
           );
@@ -420,7 +423,7 @@ class FactureTable extends Component {
 
         Cell: (props) => (
           <div className="cell">
-            {props.value !== "undefined" ? props.value  : ""}
+            {props.value !== "undefined" ? props.value : ""}
           </div>
         ),
         Filter: ({ filter, onChange }) => (
@@ -449,7 +452,7 @@ class FactureTable extends Component {
 
         Cell: (props) => (
           <div className="cell">
-            {props.value !== "undefined" ? props.value  : ""}
+            {props.value !== "undefined" ? props.value : ""}
           </div>
         ),
         Filter: ({ filter, onChange }) => (
@@ -506,14 +509,10 @@ class FactureTable extends Component {
                   </Link>
                 </IconButton>
 
-                <IconButton
-                  size="small"
-                 
-                >
+                <IconButton size="small">
                   <Link to={`/facture/print/${props.value}/facture`}>
-                  <PrintIcon className="black" fontSize="small"></PrintIcon>
+                    <PrintIcon className="black" fontSize="small"></PrintIcon>
                   </Link>
-                 
                 </IconButton>
 
                 {props.original.projet_id == 0 ? (
@@ -528,15 +527,18 @@ class FactureTable extends Component {
                   </Button>
                 ) : null}
 
-
                 <Button
-                 size="small"
-                 onClick={() => this.ajouter_paiement(props.value)}
- color="primary"
- variant="contained"
- style={{ fontSize: 10, textTransform: "capitalize", margin :  2 }}
+                  size="small"
+                  onClick={() => this.ajouter_paiement(props.value)}
+                  color="primary"
+                  variant="contained"
+                  style={{
+                    fontSize: 10,
+                    textTransform: "capitalize",
+                    margin: 2,
+                  }}
                 >
-                Ajouter un paiement
+                  Ajouter un paiement
                 </Button>
               </div>
             );
@@ -612,7 +614,7 @@ class FactureTable extends Component {
             this.props.loading !== undefined ? this.props.loading : false
           }
         />
-       
+
         <Dialog
           open={this.state.addToCorbeilleDialog}
           onClose={this.handleOpenCloseaddToCorbeilleDialog}
@@ -727,13 +729,53 @@ class FactureTable extends Component {
           <button onClick={this.handleOpenCloseatransformDialog}>Cancel</button>
         </Dialog>
 
- 
- 
- <Dialog  open={this.state.ajouterPaiement}
- 
- onClose={this.handleOpenCloseAjouterPaiementDialog}>
-   <h1>Ajouter poiement</h1>
- </Dialog>
+        <Dialog
+          open={this.state.ajouterPaiement}
+          onClose={this.handleOpenCloseAjouterPaiementDialog}
+        >
+          <h3 style={{ margin: 0 }}>
+            Ajouter paiement{" "}
+            <small>
+              <span className="red">(Unité : {this.state.unite_paye} )</span>
+            </small>
+          </h3>
+          {this.state.unite_paye === "DA" ? (
+            <TextField
+              type="number"
+              placeholder="Ajouter paiement"
+              value={this.state.paye}
+              name="paye"
+              variant="outlined"
+              onChange={this.handleChange}
+              fullWidth
+            />
+          ) : (
+            <TextField
+              type="number"
+              placeholder="Ajouter paiement"
+              value={this.state.paye}
+              name="paye"
+              variant="outlined"
+              onChange={this.handleChange}
+              fullWidth
+              InputProps={{ inputProps: { min: 0, step: 1, max: 100 } }}
+            />
+          )}
+
+          <MuiSelect
+            value={this.state.unite_paye}
+            name="unite_paye"
+            onChange={this.handleChange}
+          >
+            <MenuItem value={"%"}>%</MenuItem>
+            <MenuItem value={"DA"}>DA</MenuItem>
+          </MuiSelect>
+          <DialogActions>
+            <Button color="primary" variant="contained">
+              Ajouter
+            </Button>
+          </DialogActions>
+        </Dialog>
 
         <div className="table-container">
           {/*
