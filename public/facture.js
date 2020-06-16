@@ -138,12 +138,12 @@ function Facture() {
   //AJOUTER
   ipcMain.on("facture:ajouter", (event, value) => {
     const factures = [];
-    console.log(value);
+    
     db.run(
       `INSERT INTO facture(projet_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, date_facture ,  maitreDouvrage_id , tva , status) VALUES (${value.projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_facture}' , ${value.maitreDouvrage_id} , ${value.tva} , 'undo') `,
       function (err) {
         if (err) mainWindow.webContents.send("facture:ajouter", err);
-        console.log("facture***", err);
+      
         //add phase de facture
         const facture_id = this.lastID;
 
@@ -165,7 +165,7 @@ function Facture() {
             sql = sql.slice(0, sql.lastIndexOf(",") - 1);
 
             db.run(sql, function (err) {
-              console.log("facture_phases_projets", err);
+             
 
               if (err) mainWindow.webContents.send("facture:ajouter", err);
               ReturnAllFacture()
@@ -185,6 +185,29 @@ function Facture() {
                 
                               */
   });
+
+
+  ipcMain.on('facture:ajouterPaiement', (event , value)=>{
+
+    if(value.facture_id){
+      db.run(
+        `INSERT INTO paye(facture_id  , paye ) VALUES (${value.facture_id},${value.paye}) `,
+        function (err) {
+          if (err) mainWindow.webContents.send("facture:ajouterPaiement", err);
+          ReturnAllFacture()
+          .then((factures) =>
+            mainWindow.webContents.send("facture:ajouterPaiement", factures)
+          )
+          .catch((err) =>
+            mainWindow.webContents.send("facture:ajouterPaiement", err)
+          );
+        }
+      )
+    }
+  
+
+
+  })
 
   //AJOUTER
   ipcMain.on("devis:transform", (event, value) => {

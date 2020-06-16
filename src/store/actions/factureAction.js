@@ -284,3 +284,47 @@ export const removeFactureCreated = () =>{
   });
     }
   }
+
+
+  export const ajouterPaiement = (data) =>{
+    return (dispatch, getState) => {
+      dispatch({
+        type : "LOADING_FACTURE"
+    })
+    ipcRenderer.send("facture:ajouterPaiement", {...data});
+
+    ipcRenderer.once("facture:ajouterPaiement", function (event,res) {
+     
+      dispatch({
+        type : "STOP_LOADING_FACTURE"
+    });
+    
+    if(Array.isArray(res)){
+      dispatch({
+          type : "AJOUTER_PAIEMENT_FACTURE",
+          payload : res
+      });
+    }else{
+      dispatch({
+        type : "ERROR_FACTURE",
+        payload : res
+    });
+    }
+});
+      
+   
+
+
+
+
+    }
+  }
+
+
+  export const removePaiementAdded = () =>{
+    return (dispatch, getState)=>{
+      dispatch({
+        type : "REMOVE_PAIEMENT_ADDED"
+      })
+    }
+  }

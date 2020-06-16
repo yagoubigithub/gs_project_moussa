@@ -3,7 +3,7 @@ import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
 
 //utils
-import {round} from '../../utils/methods'
+import { round } from "../../utils/methods";
 
 import ReactTable from "react-table";
 import "react-table/react-table.css";
@@ -23,8 +23,10 @@ import {
   getPhasesProjetDeDevis,
   addToCorbeille,
   transformDevisAProjet,
-  removeDevisTransformProjet,
+  removeDevisTransformProjet
 } from "../../store/actions/devisAction";
+
+import {ajouterPaiement , removePaiementAdded}  from '../../store/actions/factureAction'
 
 //utils
 import { getCurrentDateTime } from "../../utils/methods";
@@ -90,6 +92,12 @@ class FactureTable extends Component {
       });
       this.props.removeDevisTransformProjet();
     }
+
+    if(nextProps.paiementAdded){
+      this.props.removePaiementAdded()
+      this.handleOpenCloseAjouterPaiementDialog()
+    }
+
   }
 
   componentWillUnmount() {
@@ -229,22 +237,42 @@ class FactureTable extends Component {
     this.handleOpenCloseAjouterPaiementDialog();
   };
   handleOpenCloseAjouterPaiementDialog = () => {
-    this.setState({ ajouterPaiement : !this.state.ajouterPaiement });
+    this.setState({ ajouterPaiement: !this.state.ajouterPaiement });
   };
-  ajouterPaiement =()=>{
-    const d = {...this.state}
+  ajouterPaiement = () => {
+    const d = { ...this.state };
 
     const data = {
-    facture_id : d.facture.id,
-    paye  : d.paye,
-    unite_paye  : d.unite_paye
-
+      facture_id: d.facture.id,
+      paye: this.calculPaye(
+        d.facture.prix_totale,
+        d.facture.tva,
+        d.facture.remise,
+        d.paye,
+        d.unite_paye
+      )
+    };
+   
+    this.props.ajouterPaiement(data)
+  };
+  calculPaye = (total_net, tva, remise, paye, unite_paye) => {
+    if (unite_paye === "%") {
+      const result_paye = parseFloat(
+        ((total_net +
+          parseFloat(
+            (tva * (total_net + parseFloat((tva * total_net) / 100))) / 100
+          ) -
+          remise) *
+          paye) /
+          100
+      );
+      return result_paye;
+    } else {
+      const result_paye = paye;
+      return result_paye;
     }
-    console.log(d.facture, data)
+  };
 
-    
-
-   }
   render() {
     const columns = [
       {
@@ -403,7 +431,9 @@ class FactureTable extends Component {
         accessor: "prix_totale",
         filterMethod: (filter, row) => {
           const regx = `.*${filter.value}.*`;
-          return round(Number.parseFloat(row["prix_totale"])).toString().match(regx);
+          return round(Number.parseFloat(row["prix_totale"]))
+            .toString()
+            .match(regx);
         },
 
         Cell: (props) => {
@@ -441,7 +471,9 @@ class FactureTable extends Component {
 
         Cell: (props) => (
           <div className="cell">
-            {props.value !== "undefined" ? round(Number.parseFloat( props.value)).toString() : ""}
+            {props.value !== "undefined"
+              ? round(Number.parseFloat(props.value)).toString()
+              : ""}
           </div>
         ),
         Filter: ({ filter, onChange }) => (
@@ -470,7 +502,9 @@ class FactureTable extends Component {
 
         Cell: (props) => (
           <div className="cell">
-            {props.value !== "undefined" ?  round(Number.parseFloat( props.value)).toString() : ""}
+            {props.value !== "undefined"
+              ? round(Number.parseFloat(props.value)).toString()
+              : ""}
           </div>
         ),
         Filter: ({ filter, onChange }) => (
@@ -790,9 +824,10 @@ class FactureTable extends Component {
           </MuiSelect>
           <DialogActions>
             <Button
-            onClick={this.ajouterPaiement}
-            
-             color="primary" variant="contained">
+              onClick={this.ajouterPaiement}
+              color="primary"
+              variant="contained"
+            >
               Ajouter
             </Button>
           </DialogActions>
@@ -825,6 +860,8 @@ const mapActionToProps = (dispatch) => {
     getPhasesProjetDeDevis: (data) => dispatch(getPhasesProjetDeDevis(data)),
     transformDevisAProjet: (data) => dispatch(transformDevisAProjet(data)),
     removeDevisTransformProjet: () => dispatch(removeDevisTransformProjet()),
+    ajouterPaiement : (data) => dispatch(ajouterPaiement(data)),
+    removePaiementAdded : () => dispatch(removePaiementAdded())
   };
 };
 
@@ -834,6 +871,7 @@ const mapStateToProps = (state) => {
     devis: state.devis.devis,
     devis_phases_projets: state.devis.devis_phases_projets,
     devisTransformProject: state.devis.devisTransformProject,
+    paiementAdded : state.facture.paiementAdded
   };
 };
 export default connect(mapStateToProps, mapActionToProps)(FactureTable);
