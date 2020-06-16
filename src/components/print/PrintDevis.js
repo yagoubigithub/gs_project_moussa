@@ -20,12 +20,13 @@ import Button from "@material-ui/core/Button";
 
 import PrintIcon from "@material-ui/icons/Print";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
 
 
 
 //redux
 import {connect} from "react-redux"
-import {getDevis, print} from "../../store/actions/devisAction"
+import {getDevis, printToPdf, print} from "../../store/actions/devisAction"
 import Page from './Page';
 
 const head = [{ access : "numero", value: "N°" },
@@ -52,7 +53,6 @@ const head = [{ access : "numero", value: "N°" },
         }
 
       }
-
       print = () =>{
         const rows_to_print = this.calculRows()
         const pages = []
@@ -65,6 +65,23 @@ const head = [{ access : "numero", value: "N°" },
            
            
             this.props.print({pages});
+            
+            
+           
+      }
+
+      printToPdf = () =>{
+        const rows_to_print = this.calculRows()
+        const pages = []
+        rows_to_print.map((row,index)=>{
+          pages.push({page : ReactDOMServer.renderToString(<Page entreprise={this.props.entreprise} head={head} index={index}  row={row} key={index}  />)})
+
+        
+         
+            })
+           
+           
+            this.props.printToPdf({pages});
             
             
            
@@ -128,7 +145,7 @@ const head = [{ access : "numero", value: "N°" },
                 <ArrowBackIcon />
               </IconButton>
             </Link>
-           
+           <div>
             <Button
               color="primary"
               variant="contained"
@@ -138,8 +155,18 @@ const head = [{ access : "numero", value: "N°" },
             >
               <PrintIcon />
             </Button>
-           
 
+            <Button
+              color="primary"
+              variant="contained"
+            
+              onClick={this.printToPdf}
+
+            >
+              <PictureAsPdfIcon />
+            </Button>
+           
+</div>
            
           </Toolbar>
         </AppBar>
@@ -173,7 +200,8 @@ const mapStateToProps = state =>{
   const mapActionToProps = dispatch =>{
     return {
       getDevis : (id)=>dispatch(getDevis(id)),
-      print : (pages) =>dispatch(print(pages))
+      printToPdf : (pages) =>dispatch(printToPdf(pages)),
+      print : (pages) =>dispatch(print(pages)),
   
     }
   }

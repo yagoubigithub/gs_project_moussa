@@ -266,7 +266,7 @@ export const removeDevisCreated = () =>{
     
     }
   }
-
+   
   export const print = (data) =>{
     return (dispatch ,getState)=>{
       dispatch({
@@ -275,6 +275,34 @@ export const removeDevisCreated = () =>{
     ipcRenderer.send("print:devis", {...data});
   
     ipcRenderer.once('print:devis', function (event,data) {
+     
+      dispatch({
+        type : "STOP_LOADING_DEVIS"
+    });
+    if(data){
+      dispatch({
+          type : "DEVIS_PRINT",
+          payload : data
+      });
+    }else{
+      dispatch({
+        type : "ERROR_DEVIS",
+        payload : data
+    });
+    }
+  });
+    }
+  }
+
+
+  export const printToPdf = (data) =>{
+    return (dispatch ,getState)=>{
+      dispatch({
+        type : "LOADING_DEVIS"
+    })
+    ipcRenderer.send("printToPdf:devis", {...data});
+  
+    ipcRenderer.once('printToPdf:devis', function (event,data) {
      
       dispatch({
         type : "STOP_LOADING_DEVIS"

@@ -20,12 +20,14 @@ import Button from "@material-ui/core/Button";
 
 import PrintIcon from "@material-ui/icons/Print";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
 
 
 
 //redux
 import {connect} from "react-redux"
-import {getFacture, print} from "../../store/actions/factureAction"
+import {getFacture , printToPdf , print} from "../../store/actions/factureAction";
+
 import PageFacture from './PageFacture';
 
 const head = [{ access : "numero", value: "N°" },
@@ -67,6 +69,22 @@ const head = [{ access : "numero", value: "N°" },
            
            
             this.props.print({pages});
+            
+            
+      }
+
+      printToPdf = () =>{
+        const rows_to_print = this.calculRows()
+        const pages = []
+        rows_to_print.map((row,index)=>{
+          pages.push({page : ReactDOMServer.renderToString(<PageFacture entreprise={this.props.entreprise} head={head} index={index}  row={row} key={index}  />)})
+
+        
+         
+            })
+           
+           
+            this.props.printToPdf({pages});
             
             
            
@@ -131,6 +149,18 @@ const head = [{ access : "numero", value: "N°" },
               </IconButton>
             </Link>
            
+           <div>
+
+           <Button
+              color="primary"
+              variant="contained"
+            
+              onClick={this.printToPdf}
+
+            >
+            <PictureAsPdfIcon />
+            </Button>
+
             <Button
               color="primary"
               variant="contained"
@@ -138,8 +168,10 @@ const head = [{ access : "numero", value: "N°" },
               onClick={this.print}
 
             >
-              <PrintIcon />
+            <PrintIcon />
             </Button>
+           </div>
+      
            
 
            
@@ -175,6 +207,7 @@ const mapStateToProps = state =>{
   const mapActionToProps = dispatch =>{
     return {
       getFacture : (id)=>dispatch(getFacture(id)),
+      printToPdf : (pages) =>dispatch(printToPdf(pages)),
       print : (pages) =>dispatch(print(pages))
   
     }

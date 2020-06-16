@@ -37,8 +37,13 @@ app.on("ready", () => {
   const Devis = require('./devis');
   const devis = new Devis();
 
-  const Print = require('./print');
-  const print = new Print();
+  const PrintDevis = require('./printDevis');
+  const printDevis = new PrintDevis();
+
+
+  
+  const PrintFacture = require('./printFacture');
+  const printFacture = new PrintFacture();
 
 
   

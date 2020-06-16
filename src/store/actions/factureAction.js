@@ -257,3 +257,30 @@ export const removeFactureCreated = () =>{
   });
     }
   }
+
+  export const printToPdf = (data) =>{
+    return (dispatch ,getState)=>{
+      dispatch({
+        type : "LOADING_FACTURE"
+    })
+    ipcRenderer.send("printToPdf:facture", {...data});
+  
+    ipcRenderer.once('printToPdf:facture', function (event,data) {
+     
+      dispatch({
+        type : "STOP_LOADING_FACTURE"
+    });
+    if(data){
+      dispatch({
+          type : "FACTURE_PRINT",
+          payload : data
+      });
+    }else{
+      dispatch({
+        type : "ERROR_FACTURE",
+        payload : data
+    });
+    }
+  });
+    }
+  }
