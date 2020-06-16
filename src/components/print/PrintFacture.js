@@ -26,7 +26,7 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 //redux
 import {connect} from "react-redux"
 import {getFacture, print} from "../../store/actions/factureAction"
-import Page from './Page';
+import PageFacture from './PageFacture';
 
 const head = [{ access : "numero", value: "N°" },
 { access : "titre", value: "Désignation" },
@@ -59,7 +59,7 @@ const head = [{ access : "numero", value: "N°" },
         const rows_to_print = this.calculRows()
         const pages = []
         rows_to_print.map((row,index)=>{
-          pages.push({page : ReactDOMServer.renderToString(<Page entreprise={this.props.entreprise} head={head} index={index}  row={row} key={index}  />)})
+          pages.push({page : ReactDOMServer.renderToString(<PageFacture entreprise={this.props.entreprise} head={head} index={index}  row={row} key={index}  />)})
 
         
          
@@ -154,7 +154,7 @@ const head = [{ access : "numero", value: "N°" },
 
   
 
-return (<Page head={head} row={row} index={index} key={index} entreprise={this.props.entreprise}  />)
+return (<PageFacture head={head} row={row} index={index} key={index} entreprise={this.props.entreprise}  />)
   })
   }
                 </div>

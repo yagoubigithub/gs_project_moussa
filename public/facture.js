@@ -62,25 +62,67 @@ db.run(`CREATE TABLE IF NOT EXISTS paye (
                   function (err, rows) {
                     if (rows !== undefined) {
                      facture_phases_projets = [...rows]
+
+                     new Promise((resolve, reject)=>{
+                       let phases  = [];
+                       for (let i = 0; i < facture_phases_projets.length; i++) {
+                        const facture_phase = facture_phases_projets[i];
+                      
+                      
+    
+    
+                        db.get(
+                          `SELECT * FROM phases_projet WHERE id=${facture_phase.phases_facture_id} `,
+                          function (err, phase) {
+                            if (err) mainWindow.webContents.send("facture", err);
+                            
+                            phases.push(phase);
+                            if (phases.length === facture_phases_projets.length) {
+                              phases.sort((a,b)=>{
+                                let comparison = 0;
+                                if (a.id > b.id) {
+                                  comparison = 1;
+                                } else if (a.id < b.id) {
+                                  comparison = -1;
+                                }
+                                return comparison;
+                                
+                              })
+                              
+                              resolve(phases);
+                            }
+
+                          }
+
+                        )
+
+                       
+                      
+                      }
+
+                     }).then((phases)=>{
+                      db.all(
+                        `SELECT *  FROM paye WHERE facture_id=${facture.id} ORDER BY id DESC`,
+                        function (err, rows) {
+                          if (rows !== undefined) {
+                          
+                            paye = [...rows]
+                            
+                            factures.push({
+                              ...facture,
+                              phases,
+                              payeObject : paye,
+                              paye : paye.reduce((total, num)=>toal = total + num.paye,0)
+                            })
+                            if (factures.length === factures_rows.length) mainWindow.webContents.send("facture", factures[0]);
+                          }
+    
+                        })
+                     })
                     }
   
   
-                    db.all(
-                      `SELECT *  FROM paye WHERE facture_id=${facture.id} ORDER BY id DESC`,
-                      function (err, rows) {
-                        if (rows !== undefined) {
-                          paye = [...rows]
-                          
-                          factures.push({
-                            ...facture,
-                            facture_phases_projets,
-                            payeObject : paye,
-                            paye : paye.reduce((total, num)=>toal = total + num.paye,0)
-                          })
-                          if (factures.length === factures_rows.length) mainWindow.webContents.send("facture", factures[0]);
-                        }
-  
-                      })
+                    
   
                    
                   }
