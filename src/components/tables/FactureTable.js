@@ -56,6 +56,7 @@ class FactureTable extends Component {
 
     selectedAll: false,
     printDialog: false,
+    ajouterPaiement : false,
   };
   componentWillReceiveProps(nextProps) {
     if (nextProps.rowsSelected) {
@@ -211,6 +212,14 @@ class FactureTable extends Component {
     this.setState({ devis });
   };
 
+  ajouter_paiement = (id) =>{
+    this.setState({ paiementId: id });
+    //popup
+    this.handleOpenCloseAjouterPaiementDialog(); 
+  }
+  handleOpenCloseAjouterPaiementDialog = () =>{
+    this.setState({ajouterPaiement : ! this.state.ajouterPaiement})
+  }
   render() {
     const columns = [
       {
@@ -518,6 +527,17 @@ class FactureTable extends Component {
                     Transformez-le en projet
                   </Button>
                 ) : null}
+
+
+                <Button
+                 size="small"
+                 onClick={() => this.ajouter_paiement(props.value)}
+ color="primary"
+ variant="contained"
+ style={{ fontSize: 10, textTransform: "capitalize", margin :  2 }}
+                >
+                Ajouter un paiement
+                </Button>
               </div>
             );
           }
@@ -706,6 +726,14 @@ class FactureTable extends Component {
           <h1> {this.state.devis && this.state.devis.nom}</h1>
           <button onClick={this.handleOpenCloseatransformDialog}>Cancel</button>
         </Dialog>
+
+ 
+ 
+ <Dialog  open={this.state.ajouterPaiement}
+ 
+ onClose={this.handleOpenCloseAjouterPaiementDialog}>
+   <h1>Ajouter poiement</h1>
+ </Dialog>
 
         <div className="table-container">
           {/*
