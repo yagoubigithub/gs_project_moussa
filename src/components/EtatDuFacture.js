@@ -19,9 +19,8 @@ import {
 import { connect } from "react-redux";
 
 
-import AjouterFacture from "./ajouter/AjouterFacture";
-import FactureTable from "./tables/FactureTable";
-import PrintFacture from "./print/PrintFacture";
+import EtatDuFactureTable from "./tables/EtatDuFactureTable";
+
 
 
 
@@ -42,7 +41,7 @@ class EtatDuFacture extends Component {
         
         if (nextProps.etat_factures) {
         
-            console.log(nextProps.etat_factures)
+           this.setState({etat_factures : nextProps.etat_factures})
      
         }
       }
@@ -69,12 +68,12 @@ class EtatDuFacture extends Component {
                 title="Tous les factures"
                
               >
-                <FactureTable
-                  checkBoxColumn
+                <EtatDuFactureTable
+                 
                   IconsColumn
                   rowsSelected={this.state.rowsSelected}
                   sendData={this.getData}
-                  rows={this.state.factures}
+                  rows={this.state.etat_factures}
                 />
               
               </Tab>
