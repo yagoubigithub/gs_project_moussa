@@ -5,8 +5,8 @@ const mainWindow = require("./mainWindow");
 const methode = Projet.prototype;
 
 function Projet() {
-//  db.run('DROP TABLE projet');
- // db.run('DROP TABLE phases_projets');
+  db.run('DROP TABLE projet');
+  db.run('DROP TABLE phases_projets');
 
 
   db.run(`CREATE TABLE IF NOT EXISTS projet (
@@ -21,7 +21,6 @@ function Projet() {
     duree_phase INTEGER ,
     maitreDouvrage_id INTEGER ,
     remise REAL,
-    unite_remise TEXT,
     tva REAL,
    status TEXT
 )`);
@@ -54,7 +53,7 @@ function Projet() {
   
   //AJOUTER
   ipcMain.on("projet:ajouter", (event, value) => {
-    const projets = [];
+  
     db.run(
       `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , remise , unite_remise , tva ,  status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.delais},'${value.date_debut}','${value.date_depot}' , 'en cours',${value.duree_phase},${value.maitreDouvrage_id} , ${value.remise} ,  '${value.unite_remise}' ,  ${value.tva} , 'undo') `,
       function (err) {
@@ -86,7 +85,7 @@ function Projet() {
               let sql = `INSERT INTO devis_phases_projets(devis_id , phases_devis_id , status) VALUES   `;
       
               
-              console.log(value)
+            
               value.phasesProjetsSelected.forEach((phase) => {
                 const placeholder = ` (${devis_id},'${phase.value.id}' , 'undo') ,`;
                 sql = sql + placeholder;

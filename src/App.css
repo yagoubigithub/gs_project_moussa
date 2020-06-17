@@ -21,9 +21,7 @@
   --MincenavbarWidth : -261px;
 }
 
-.alert{
-  
-}
+
 .red {
   color: darkred;
 }
@@ -344,9 +342,7 @@ border:  4px double black;
   margin : 20px !important;
 }
 
-.entreprise-info{
- 
-}
+
 .print-page-container table td,th{
   border-bottom: 1px solid rgba(0, 0, 0, 1);
   box-shadow: 1px 1px 1px gray;

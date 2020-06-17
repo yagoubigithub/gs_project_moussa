@@ -158,7 +158,7 @@ export const undoDeleteFacture     = (id) =>{
   }
   
 
-  //devis  
+  //facture  
 export const removeFactureCreated = () =>{
   return (dispatch , getState)=>{
 
@@ -328,3 +328,6 @@ export const removeFactureCreated = () =>{
       })
     }
   }
+
+  
+  

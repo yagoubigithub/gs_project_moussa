@@ -5,9 +5,9 @@ const mainWindow = require("./mainWindow");
 const methode = Facture.prototype;
 
 function Facture() {
-  //db.run('DROP TABLE facture');
-  //db.run('DROP TABLE facture_phases_projets');
-  //db.run('DROP TABLE paye');
+  db.run('DROP TABLE facture');
+  db.run('DROP TABLE facture_phases_projets');
+  db.run('DROP TABLE paye');
 
   db.run(`CREATE TABLE IF NOT EXISTS facture (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -18,7 +18,6 @@ function Facture() {
     duree_phase INTEGER ,
     prix_totale  REAL ,
     remise REAL,
-   
     date_facture TEXT,
     maitreDouvrage_id INTEGER ,
     tva REAL,
@@ -139,47 +138,111 @@ function Facture() {
   ipcMain.on("facture:ajouter", (event, value) => {
     const factures = [];
     
+    console.log(value)
+
+    //ajouter projet
     db.run(
-      `INSERT INTO facture(projet_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, date_facture ,  maitreDouvrage_id , tva , status) VALUES (${value.projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_facture}' , ${value.maitreDouvrage_id} , ${value.tva} , 'undo') `,
+      `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , remise  , tva ,  status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.delais},'${value.date_debut}','${value.date_depot}' , 'en cours',${value.duree_phase},${value.maitreDouvrage_id} , ${value.remise}  ,  ${value.tva} , 'undo') `,
       function (err) {
         if (err) mainWindow.webContents.send("facture:ajouter", err);
-      
-        //add phase de facture
-        const facture_id = this.lastID;
 
-        db.run(
-          `INSERT INTO paye(facture_id  , paye  ) VALUES (${facture_id},${value.paye} ) `,
-          function (err) {
-            if (err) mainWindow.webContents.send("facture:ajouter", err);
+        console.log("ajouter projet",err)
+        //add phase de projet
+        const projet_id = this.lastID;
+        
+        let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , status) VALUES   `;
 
-            let sql = `INSERT INTO facture_phases_projets(facture_id , phases_facture_id , status) VALUES   `;
+        value.phasesProjetsSelected.forEach((phase) => {
+          const placeholder = ` (${projet_id},'${phase.value}' , 'undo') ,`;
+          sql = sql + placeholder;
+        });
 
-            /*phases_facture_id:
-             */
+        sql = sql.slice(0, sql.lastIndexOf(",") - 1);
 
-            value.phasesProjetsSelected.forEach((phase) => {
-              const placeholder = ` (${facture_id},'${phase.value.id}' , 'undo') ,`;
-              sql = sql + placeholder;
-            });
-
-            sql = sql.slice(0, sql.lastIndexOf(",") - 1);
-
-            db.run(sql, function (err) {
-             
-
+        db.run(sql, function (err) {
+          if (err) mainWindow.webContents.send("facture:ajouter", err);
+          
+          db.run(
+            `INSERT INTO devis(projet_id  ,nom , objet , adresse  , duree_phase , prix_totale , remise, date_devis ,  maitreDouvrage_id ,  tva , status) VALUES (${projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_facture}' , ${value.maitreDouvrage_id} , ${value.tva}  , 'undo') `,
+            function (err) {
               if (err) mainWindow.webContents.send("facture:ajouter", err);
-              ReturnAllFacture()
-                .then((factures) =>
-                  mainWindow.webContents.send("facture:ajouter", factures)
-                )
-                .catch((err) =>
-                  mainWindow.webContents.send("facture:ajouter", err)
-                );
-            });
-          }
-        );
+             
+      
+              //add phase de devis
+              const devis_id = this.lastID;
+              let sql = `INSERT INTO devis_phases_projets(devis_id , phases_devis_id , status) VALUES   `;
+      
+              
+            
+              value.phasesProjetsSelected.forEach((phase) => {
+                const placeholder = ` (${devis_id},'${phase.value.id}' , 'undo') ,`;
+                sql = sql + placeholder;
+              });
+      
+              sql = sql.slice(0, sql.lastIndexOf(",") - 1);
+      
+              db.run(sql, function (err) {
+                if (err) mainWindow.webContents.send("facture:ajouter", err);
+
+              
+                
+             //ajouter facture 
+        
+ //ajouter facture
+ db.run(
+  `INSERT INTO facture(projet_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, date_facture ,  maitreDouvrage_id , tva , status) VALUES (${projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_facture}' , ${value.maitreDouvrage_id} , ${value.tva} , 'undo') `,
+  function (err) {
+    if (err) mainWindow.webContents.send("facture:ajouter", err);
+  
+    //add phase de facture
+    const facture_id = this.lastID;
+
+    db.run(
+      `INSERT INTO paye(facture_id  , paye  ) VALUES (${facture_id},${value.paye} ) `,
+      function (err) {
+        if (err) mainWindow.webContents.send("facture:ajouter", err);
+
+        let sql = `INSERT INTO facture_phases_projets(facture_id , phases_facture_id , status) VALUES   `;
+
+        /*phases_facture_id:
+         */
+
+        value.phasesProjetsSelected.forEach((phase) => {
+          const placeholder = ` (${facture_id},'${phase.value.id}' , 'undo') ,`;
+          sql = sql + placeholder;
+        });
+
+        sql = sql.slice(0, sql.lastIndexOf(",") - 1);
+
+        db.run(sql, function (err) {
+         
+
+          if (err) mainWindow.webContents.send("facture:ajouter", err);
+          ReturnAllFacture()
+            .then((factures) =>
+              mainWindow.webContents.send("facture:ajouter", factures)
+            )
+            .catch((err) =>
+              mainWindow.webContents.send("facture:ajouter", err)
+            );
+        });
       }
     );
+  }
+);
+
+              });
+             
+            }
+          );
+        });
+
+       
+      
+      }
+    );
+
+   
 
     /*
                 

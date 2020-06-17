@@ -19,14 +19,9 @@ import MuiSelect from "@material-ui/core/Select";
 //redux
 import { connect } from "react-redux";
 
-import {
-  getPhasesProjetDeDevis,
-  addToCorbeille,
-  transformDevisAProjet,
-  removeDevisTransformProjet
-} from "../../store/actions/devisAction";
 
-import {ajouterPaiement , removePaiementAdded}  from '../../store/actions/factureAction'
+
+import {ajouterPaiement , removePaiementAdded , addToCorbeille}  from '../../store/actions/factureAction'
 
 //utils
 import { getCurrentDateTime } from "../../utils/methods";
@@ -41,12 +36,12 @@ import SearchIcon from "@material-ui/icons/Search";
 import PrintIcon from "@material-ui/icons/Print";
 
 import LoadingComponent from "../../utils/loadingComponent";
-import PrintDevis from "../print/PrintDevis";
+
 
 class FactureTable extends Component {
   state = {
     addToCorbeilleDialog: false,
-    transformDialog: false,
+    
     deletedId: null,
     facture: null,
     rowsSelected: this.props.rowsSelected,
@@ -74,24 +69,8 @@ class FactureTable extends Component {
     if (nextProps.rows.length !== this.props.rows.length) {
       this.setState({ selectedAll: false });
     }
-    if (nextProps.devis_phases_projets) {
-      this.setState({
-        devis_phases_projets: nextProps.devis_phases_projets,
-      });
-    }
-    if (nextProps.devisTransformProject) {
-      this.setState({
-        transformDialog: false,
-        devis: {
-          duree_phase: 0,
-          delais: 0,
-          date_debut: "",
-          date_depot: "",
-          prix_totale: 0,
-        },
-      });
-      this.props.removeDevisTransformProjet();
-    }
+    
+   
 
     if(nextProps.paiementAdded){
       this.props.removePaiementAdded()
@@ -114,26 +93,14 @@ class FactureTable extends Component {
   handleOpenCloseaddToCorbeilleDialog = () => {
     this.setState({ addToCorbeilleDialog: !this.state.addToCorbeilleDialog });
   };
-  handleOpenCloseatransformDialog = () => {
-    this.setState({ transformDialog: !this.state.transformDialog });
-  };
+ 
   add_To_Corbeille = (id) => {
     this.setState({ deletedId: id });
     //popup
     this.handleOpenCloseaddToCorbeilleDialog();
   };
 
-  transform = (devis) => {
-    this.props.getPhasesProjetDeDevis(devis.devis_phases_projets);
-    this.setState(
-      {
-        devis: { ...this.state.devis, ...devis },
-      },
-      () => {
-        this.handleOpenCloseatransformDialog();
-      }
-    );
-  };
+ 
   ajouter = () => {
     const d = { ...this.state.devis };
 
@@ -151,7 +118,7 @@ class FactureTable extends Component {
       date_depot: d.date_depot,
     };
 
-    this.props.transformDevisAProjet(data);
+    this.props.transformFactureAProjet(data);
   };
 
   handeleCheckCheckboxRow = (e, id) => {
@@ -232,6 +199,7 @@ class FactureTable extends Component {
   };
 
   ajouter_paiement = (facture) => {
+    
     this.setState({ facture });
     //popup
     this.handleOpenCloseAjouterPaiementDialog();
@@ -282,7 +250,7 @@ class FactureTable extends Component {
   calculImpaye = (total_net, tva, remise, paye) =>{
    
 
-    console.log(total_net,tva,remise,paye);
+   
 
     return round(((parseFloat(total_net * tva / 100) + total_net) - remise) - paye)
   }
@@ -614,19 +582,12 @@ class FactureTable extends Component {
                   </Link>
                 </IconButton>
 
-                {props.original.projet_id == 0 ? (
-                  <Button
-                    size="small"
-                    onClick={() => this.transform(props.original)}
-                    style={{ fontSize: 10, textTransform: "capitalize" }}
-                    color="primary"
-                    variant="contained"
-                  >
-                    Transformez-le en projet
-                  </Button>
-                ) : null}
+               
 
-                <Button
+{this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? null : 
+
+
+  <Button
                   size="small"
                   onClick={() => this.ajouter_paiement(props.original)}
                   color="primary"
@@ -639,6 +600,8 @@ class FactureTable extends Component {
                 >
                   Ajouter un paiement
                 </Button>
+
+}
               </div>
             );
           }
@@ -740,14 +703,14 @@ class FactureTable extends Component {
           <h2>Transformez-le en projet</h2>
 
           <ul>
-            <li>Nom du projet : </li>
-            <li>Adresse du projet : </li>
-            <li>Objet du projet : </li>
+            <li>Nom du projet : {this.state.facture && this.state.facture.nom} </li>
+            <li>Adresse du projet : {this.state.facture && this.state.facture.nom} </li>
+            <li>Objet du projet :  {this.state.facture && this.state.facture.nom}</li>
             <li>
-              Maitre d'ouvrage :
+              Maitre d'ouvrage :{ this.state.facture && this.state.facture.nom}
               <ul>
-                <li>Nom du Maitre d'ouvrage : </li>
-                <li>Prénom du Maitre d'ouvrage : </li>
+                <li>Nom du Maitre d'ouvrage : {this.state.facture && this.state.facture.nom} </li>
+                <li>Prénom du Maitre d'ouvrage : {this.state.facture && this.state.facture.nom} </li>
               </ul>
             </li>
 
@@ -824,7 +787,7 @@ class FactureTable extends Component {
             </Grid>
           </ul>
 
-          <h1> {this.state.devis && this.state.devis.nom}</h1>
+         
           <button onClick={this.handleOpenCloseatransformDialog}>Cancel</button>
         </Dialog>
 
@@ -907,9 +870,6 @@ class FactureTable extends Component {
 const mapActionToProps = (dispatch) => {
   return {
     addToCorbeille: (id) => dispatch(addToCorbeille(id)),
-    getPhasesProjetDeDevis: (data) => dispatch(getPhasesProjetDeDevis(data)),
-    transformDevisAProjet: (data) => dispatch(transformDevisAProjet(data)),
-    removeDevisTransformProjet: () => dispatch(removeDevisTransformProjet()),
     ajouterPaiement : (data) => dispatch(ajouterPaiement(data)),
     removePaiementAdded : () => dispatch(removePaiementAdded())
   };
