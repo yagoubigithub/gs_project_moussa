@@ -43,9 +43,9 @@ function Facture() {
       const factures = [];
 
       db.all(
-        `SELECT f.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM facture f   JOIN maitre_douvrage m ON m.id=f.maitreDouvrage_id   WHERE f.id=${value.id}`,
+        `SELECT f.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom , m.rg maitre_douvrage_rg , m.raison_social maitre_douvrage_raison_social,m.telephone maitre_douvrage_telephone , m.email   maitre_douvrage_email, m.adresse maitre_douvrage_adresse ,m.logo maitre_douvrage_logo  FROM facture f   JOIN maitre_douvrage m ON m.id=f.maitreDouvrage_id   WHERE f.id=${value.id}`,
         function (err, factures_rows) {
-          console.log(err);
+        
           if (err) mainWindow.webContents.send("facture", err);
           if (factures_rows !== undefined) {
             if (factures_rows.length === 0) {
@@ -136,9 +136,9 @@ function Facture() {
 
   //AJOUTER
   ipcMain.on("facture:ajouter", (event, value) => {
-    const factures = [];
+   
     
-    console.log(value)
+  
 
     //ajouter projet
     db.run(

@@ -47,7 +47,7 @@ export default class PageFacture extends Component {
               <p>Projet  : {this.props.row[0].facture.nom}</p>
             </div>
             <div className="page-col">
-              <h5>Maitre d'ouvrage  {this.props.row[0].facture.maitre_douvrage_prenom} {" "} {this.props.row[0].facture.maitre_douvrage_prenom}</h5>
+              <h5>Maitre d'ouvrage  {this.props.row[0].facture.maitre_douvrage_nom} {" "} {this.props.row[0].facture.maitre_douvrage_prenom}</h5>
               
               <p>raison social  : {this.props.row[0].facture.maitre_douvrage_raison_social}</p>
               <p>Adresse : {this.props.row[0].facture.maitre_douvrage_adresse}</p>

@@ -257,18 +257,18 @@ class FactureTable extends Component {
   render() {
     const columns = [
       {
-        Header: "Référence",
-        accessor: "id",
+        Header: "Référence du projet",
+        accessor: "projet_id",
         width: 100,
         filterMethod: (filter, row) => {
           const regx = `.*${filter.value}.*`;
 
-          return ("D-" + row[filter.id].toString()).match(regx);
+          return ("P-" + row[filter.id].toString()).match(regx);
         },
 
         Cell: (props) => (
           <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
-            {props.value !== "undefined" ? "D-" + props.value : ""}
+            {props.value !== "undefined" ? "P-" + props.value : ""}
           </div>
         ),
         Filter: ({ filter, onChange }) => (

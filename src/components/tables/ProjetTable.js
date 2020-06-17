@@ -123,7 +123,7 @@ class ProjetTable extends Component {
     const columns = [
       {
         Header: 'Référence',
-        accessor: 'number',
+        accessor: 'id',
         width : 100,
         filterMethod: (filter, row) =>
         {
