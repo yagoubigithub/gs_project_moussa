@@ -314,6 +314,25 @@ export const removeFactureCreated = () =>{
       
    
 
+ipcRenderer.once("facture:etat:ajouterPaiement", function (event,res) {
+     
+  dispatch({
+    type : "STOP_LOADING_FACTURE"
+});
+
+if(Array.isArray(res)){
+  dispatch({
+      type : "AJOUTER_PAIEMENT_ETAT_FACTURE",
+      payload : res
+  });
+}else{
+  dispatch({
+    type : "ERROR_FACTURE",
+    payload : res
+});
+}
+});
+
 
 
 

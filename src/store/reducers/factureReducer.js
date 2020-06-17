@@ -83,6 +83,16 @@ const initStat = {
                   etat_factures : action.payload,
                   error : null
                 }
+
+                case 'AJOUTER_PAIEMENT_ETAT_FACTURE' :
+                  return {
+                    ...state,
+                    etat_factures : action.payload,
+                    error : null,
+                    paiementAdded : true
+
+
+                  }
   
       default:
         return {

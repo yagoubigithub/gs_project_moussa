@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from "react";
 
-import { Link } from "react-router-dom";
 
 //utils
 import { round } from "../../utils/methods";
@@ -19,74 +18,36 @@ import MuiSelect from "@material-ui/core/Select";
 //redux
 import { connect } from "react-redux";
 
-
-
-import {ajouterPaiement , removePaiementAdded , addToCorbeille}  from '../../store/actions/factureAction'
+import {
+  ajouterPaiement,
+  removePaiementAdded,
+} from "../../store/actions/factureAction";
 
 //utils
 import { getCurrentDateTime } from "../../utils/methods";
 
 //icons
 
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
-import SaveIcon from "@material-ui/icons/Save";
-import UndoIcon from "@material-ui/icons/Undo";
 import SearchIcon from "@material-ui/icons/Search";
-import PrintIcon from "@material-ui/icons/Print";
 
 import LoadingComponent from "../../utils/loadingComponent";
 
-
 class EtatDuFactureTable extends Component {
   state = {
-    addToCorbeilleDialog: false,
-    
-    deletedId: null,
     facture: null,
-    rowsSelected: this.props.rowsSelected,
-    selectedAll: false,
-    devis: {
-      duree_phase: 0,
-      delais: 0,
-      date_debut: "",
-      date_depot: "",
-      prix_totale: 0,
-    },
 
-    maitreDouvrageSelected: {},
-    devis_phases_projets: [],
     paye: 0,
     unite_paye: "%",
-    selectedAll: false,
-    printDialog: false,
+
     ajouterPaiement: false,
   };
   componentWillReceiveProps(nextProps) {
-    if (nextProps.rowsSelected) {
-      this.setState({ rowsSelected: nextProps.rowsSelected });
+    if (nextProps.paiementAdded) {
+      this.props.removePaiementAdded();
+      this.handleOpenCloseAjouterPaiementDialog();
     }
-    if (nextProps.rows.length !== this.props.rows.length) {
-      this.setState({ selectedAll: false });
-    }
-    
-   
-
-    if(nextProps.paiementAdded){
-      this.props.removePaiementAdded()
-      this.handleOpenCloseAjouterPaiementDialog()
-    }
-
   }
 
- 
- 
-
-
- 
-  
-
- 
   handleChange = (e) => {
     this.setState({
       [e.target.name]: e.target.value,
@@ -94,7 +55,6 @@ class EtatDuFactureTable extends Component {
   };
 
   ajouter_paiement = (facture) => {
-    
     this.setState({ facture });
     //popup
     this.handleOpenCloseAjouterPaiementDialog();
@@ -114,10 +74,10 @@ class EtatDuFactureTable extends Component {
         d.paye,
         d.unite_paye
       ),
-      date_paye :  getCurrentDateTime(new Date().getTime())
+      date_paye: getCurrentDateTime(new Date().getTime()),
     };
-   
-    this.props.ajouterPaiement(data)
+
+    this.props.ajouterPaiement(data);
   };
   calculPaye = (total_net, tva, remise, paye, unite_paye) => {
     if (unite_paye === "%") {
@@ -137,25 +97,21 @@ class EtatDuFactureTable extends Component {
     }
   };
 
-  isPaye  = (paye , total_net , tva ,remise) =>{
+  isPaye = (paye, total_net, tva, remise) => {
+    return paye >= (total_net * tva) / 100 + total_net - remise;
+  };
 
-    return paye >= (total_net * tva /100) + total_net - remise;
-
-  }
-
-  calculImpaye = (total_net, tva, remise, paye) =>{
-   
-
-   
-
-    return round(((parseFloat(total_net * tva / 100) + total_net) - remise) - paye)
-  }
+  calculImpaye = (total_net, tva, remise, paye) => {
+    return round(
+      parseFloat((total_net * tva) / 100) + total_net - remise - paye
+    );
+  };
   render() {
     const columns = [
       {
         Header: "Référence du projet",
         accessor: "projet_id",
-        width: 100,
+        width: 150,
         filterMethod: (filter, row) => {
           const regx = `.*${filter.value}.*`;
 
@@ -163,7 +119,18 @@ class EtatDuFactureTable extends Component {
         },
 
         Cell: (props) => (
-          <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
+          <div
+            className={`cell ${
+              this.isPaye(
+                props.original.paye,
+                props.original.prix_totale,
+                props.original.tva,
+                props.original.remise
+              )
+                ? "bg-green"
+                : ""
+            }`}
+          >
             {props.value !== "undefined" ? "P-" + props.value : ""}
           </div>
         ),
@@ -186,13 +153,25 @@ class EtatDuFactureTable extends Component {
       {
         Header: "Nom du projet",
         accessor: "nom",
+        width: 150,
         filterMethod: (filter, row) => {
           const regx = `.*${filter.value}.*`;
           return row[filter.id].match(regx);
         },
 
         Cell: (props) => (
-          <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
+          <div
+            className={`cell ${
+              this.isPaye(
+                props.original.paye,
+                props.original.prix_totale,
+                props.original.tva,
+                props.original.remise
+              )
+                ? "bg-green"
+                : ""
+            }`}
+          >
             {props.value !== "undefined" ? props.value : ""}
           </div>
         ),
@@ -212,7 +191,6 @@ class EtatDuFactureTable extends Component {
           </div>
         ),
       },
-  
 
       {
         Header: "Maitre d'ouvrage Nom",
@@ -225,7 +203,18 @@ class EtatDuFactureTable extends Component {
         width: 250,
         Cell: (props) => {
           return (
-            <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
+            <div
+              className={`cell ${
+                this.isPaye(
+                  props.original.paye,
+                  props.original.prix_totale,
+                  props.original.tva,
+                  props.original.remise
+                )
+                  ? "bg-green"
+                  : ""
+              }`}
+            >
               {props.value !== "undefined" ? props.value : ""}
             </div>
           );
@@ -256,7 +245,18 @@ class EtatDuFactureTable extends Component {
         },
         width: 250,
         Cell: (props) => (
-          <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
+          <div
+            className={`cell ${
+              this.isPaye(
+                props.original.paye,
+                props.original.prix_totale,
+                props.original.tva,
+                props.original.remise
+              )
+                ? "bg-green"
+                : ""
+            }`}
+          >
             {props.value !== "undefined" ? props.value : ""}
           </div>
         ),
@@ -276,9 +276,7 @@ class EtatDuFactureTable extends Component {
           </div>
         ),
       },
-    
-    
-  
+
       {
         Header: "Payé",
         accessor: "paye",
@@ -288,7 +286,18 @@ class EtatDuFactureTable extends Component {
         },
 
         Cell: (props) => (
-          <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
+          <div
+            className={`cell ${
+              this.isPaye(
+                props.original.paye,
+                props.original.prix_totale,
+                props.original.tva,
+                props.original.remise
+              )
+                ? "bg-green"
+                : ""
+            }`}
+          >
             {props.value !== "undefined"
               ? round(Number.parseFloat(props.value)).toString()
               : ""}
@@ -310,7 +319,7 @@ class EtatDuFactureTable extends Component {
           </div>
         ),
       },
-  
+
       {
         Header: "imPayé",
         accessor: "id",
@@ -320,9 +329,25 @@ class EtatDuFactureTable extends Component {
         },
 
         Cell: (props) => (
-          <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
+          <div
+            className={`cell ${
+              this.isPaye(
+                props.original.paye,
+                props.original.prix_totale,
+                props.original.tva,
+                props.original.remise
+              )
+                ? "bg-green"
+                : ""
+            }`}
+          >
             {props.value !== "undefined"
-              ? this.calculImpaye(props.original.prix_totale, props.original.tva,props.original.remise, props.original.paye)
+              ? this.calculImpaye(
+                  props.original.prix_totale,
+                  props.original.tva,
+                  props.original.remise,
+                  props.original.paye
+                )
               : ""}
           </div>
         ),
@@ -342,27 +367,75 @@ class EtatDuFactureTable extends Component {
           </div>
         ),
       },
-  
+
+      {
+        Header: "Date de paiement",
+        accessor: "date_paye",
+        width: 250,
+        filterMethod: (filter, row) => {
+            const regx = `.*${filter.value}.*`;
+            return row[filter.id].match(regx);
+          },
+        Cell: (props) => (
+          <div  className={`cell ${
+            this.isPaye(
+              props.original.paye,
+              props.original.prix_totale,
+              props.original.tva,
+              props.original.remise
+            )
+              ? "bg-green"
+              : ""
+          }`}>
+            {props.value !== "undefined" ? props.value.toString().split('T')[0] : ""}
+          </div>
+        ),
+        Filter: ({ filter, onChange }) => (
+          <div className="searchtable-container">
+            <label htmlFor="date-input-date_payement">
+              <SearchIcon className="searchtable-icon" />
+            </label>
+
+            <input
+              type="date"
+              id="date-input-date_payement"
+              className="searchtable-input"
+              onChange={(event) => onChange(event.target.value)}
+              value={filter ? filter.value : new Date().toDateString()}
+            />
+          </div>
+        ),
+      },
     ];
 
     if (this.props.IconsColumn) {
       columns.unshift({
         Header: "  ",
         accessor: "id",
-        width: 200,
+        width: 150,
         sortable: false,
         filterable: false,
         Cell: (props) => {
-        
-            return (
-              <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
-    
-               
-
-{this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? null : 
-
-
-  <Button
+          return (
+            <div
+              className={`cell ${
+                this.isPaye(
+                  props.original.paye,
+                  props.original.prix_totale,
+                  props.original.tva,
+                  props.original.remise
+                )
+                  ? "bg-green"
+                  : ""
+              }`}
+            >
+              {this.isPaye(
+                props.original.paye,
+                props.original.prix_totale,
+                props.original.tva,
+                props.original.remise
+              ) ? null : (
+                <Button
                   size="small"
                   onClick={() => this.ajouter_paiement(props.original)}
                   color="primary"
@@ -375,16 +448,12 @@ class EtatDuFactureTable extends Component {
                 >
                   Ajouter un paiement
                 </Button>
-
-}
-              </div>
-            );
-          
+              )}
+            </div>
+          );
         },
       });
     }
-
-  
 
     return (
       <Fragment>
@@ -405,8 +474,20 @@ class EtatDuFactureTable extends Component {
             </small>
           </h3>
           <br />
-          <h4>A été payé { this.state.facture && round(this.state.facture.paye)} DA</h4>
-          <h4>imPayé { this.state.facture && this.calculImpaye(this.state.facture.prix_totale,this.state.facture.tva,this.state.facture.remise,this.state.facture.paye)} DA</h4>
+          <h4>
+            A été payé {this.state.facture && round(this.state.facture.paye)} DA
+          </h4>
+          <h4>
+            imPayé{" "}
+            {this.state.facture &&
+              this.calculImpaye(
+                this.state.facture.prix_totale,
+                this.state.facture.tva,
+                this.state.facture.remise,
+                this.state.facture.paye
+              )}{" "}
+            DA
+          </h4>
           {this.state.unite_paye === "DA" ? (
             <TextField
               type="number"
@@ -472,19 +553,15 @@ class EtatDuFactureTable extends Component {
 
 const mapActionToProps = (dispatch) => {
   return {
-    addToCorbeille: (id) => dispatch(addToCorbeille(id)),
-    ajouterPaiement : (data) => dispatch(ajouterPaiement(data)),
-    removePaiementAdded : () => dispatch(removePaiementAdded())
+    ajouterPaiement: (data) => dispatch(ajouterPaiement(data)),
+    removePaiementAdded: () => dispatch(removePaiementAdded()),
   };
 };
 
 const mapStateToProps = (state) => {
   return {
-    loading: state.devis.loading,
-    devis: state.devis.devis,
-    devis_phases_projets: state.devis.devis_phases_projets,
-    devisTransformProject: state.devis.devisTransformProject,
-    paiementAdded : state.facture.paiementAdded
+    loading: state.facture.loading,
+    paiementAdded: state.facture.paiementAdded,
   };
 };
 export default connect(mapStateToProps, mapActionToProps)(EtatDuFactureTable);
