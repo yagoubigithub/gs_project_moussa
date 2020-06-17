@@ -273,6 +273,12 @@ class FactureTable extends Component {
     }
   };
 
+  isPaye  = (paye , total_net , tva ,remise) =>{
+
+    return paye >= (total_net * tva /100) + total_net - remise;
+
+  }
+
   render() {
     const columns = [
       {
@@ -286,7 +292,7 @@ class FactureTable extends Component {
         },
 
         Cell: (props) => (
-          <div className="cell">
+          <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
             {props.value !== "undefined" ? "D-" + props.value : ""}
           </div>
         ),
@@ -315,7 +321,7 @@ class FactureTable extends Component {
         },
 
         Cell: (props) => (
-          <div className="cell">
+          <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
             {props.value !== "undefined" ? props.value : ""}
           </div>
         ),
@@ -343,7 +349,7 @@ class FactureTable extends Component {
           return row[filter.id].match(regx);
         },
         Cell: (props) => (
-          <div className="cell">
+          <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
             {props.value !== "undefined" ? props.value : ""}
           </div>
         ),
@@ -375,7 +381,7 @@ class FactureTable extends Component {
         width: 250,
         Cell: (props) => {
           return (
-            <div className="cell">
+            <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
               {props.value !== "undefined" ? props.value : ""}
             </div>
           );
@@ -406,7 +412,7 @@ class FactureTable extends Component {
         },
         width: 250,
         Cell: (props) => (
-          <div className="cell">
+          <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
             {props.value !== "undefined" ? props.value : ""}
           </div>
         ),
@@ -438,7 +444,7 @@ class FactureTable extends Component {
 
         Cell: (props) => {
           return (
-            <div className="cell">
+            <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
               {props.value !== "undefined"
                 ? round(Number.parseFloat(props.original.prix_totale))
                 : ""}
@@ -470,7 +476,7 @@ class FactureTable extends Component {
         },
 
         Cell: (props) => (
-          <div className="cell">
+          <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
             {props.value !== "undefined"
               ? round(Number.parseFloat(props.value)).toString()
               : ""}
@@ -501,7 +507,7 @@ class FactureTable extends Component {
         },
 
         Cell: (props) => (
-          <div className="cell">
+          <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
             {props.value !== "undefined"
               ? round(Number.parseFloat(props.value)).toString()
               : ""}
@@ -535,7 +541,7 @@ class FactureTable extends Component {
         Cell: (props) => {
           if (this.props.type === "corbeille") {
             return (
-              <div className="cell">
+              <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
                 <IconButton
                   size="small"
                   onClick={() =>
@@ -548,7 +554,7 @@ class FactureTable extends Component {
             );
           } else {
             return (
-              <div className="cell">
+              <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
                 <IconButton
                   size="small"
                   onClick={() => this.add_To_Corbeille(props.value)}
@@ -624,7 +630,7 @@ class FactureTable extends Component {
         width: 50,
 
         Cell: (props) => (
-          <div className="cell">
+          <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
             <Checkbox
               value={props.value}
               key={`key-checkbox-table-voiture-${props.value}`}
@@ -646,7 +652,7 @@ class FactureTable extends Component {
         filterable: false,
         Cell: (props) => {
           return (
-            <div className="cell">
+            <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
               <input
                 type="radio"
                 name="select-voiture"

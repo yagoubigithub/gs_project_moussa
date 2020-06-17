@@ -30,6 +30,10 @@
 .black {
   color: var(--black);
 }
+.bg-green{
+  background-color: forestgreen;
+  height : 100%;
+}
 
 /****************************************************************************/
 /*nav styling*/
@@ -186,6 +190,10 @@ background-repeat: no-repeat;
   background: var(--white);
  
   margin-top: 25px;
+}
+.ReactTable .rt-th, .ReactTable .rt-td{
+  padding:  0 !important;
+ 
 }
 
 .search-form {
