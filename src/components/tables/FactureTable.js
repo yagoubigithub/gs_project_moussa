@@ -279,6 +279,13 @@ class FactureTable extends Component {
 
   }
 
+  calculImpaye = (total_net, tva, remise, paye) =>{
+   
+
+    console.log(total_net,tva,remise,paye);
+
+    return round(((parseFloat(total_net * tva / 100) + total_net) - remise) - paye)
+  }
   render() {
     const columns = [
       {
@@ -498,6 +505,7 @@ class FactureTable extends Component {
           </div>
         ),
       },
+  
       {
         Header: "Payé",
         accessor: "paye",
@@ -529,6 +537,39 @@ class FactureTable extends Component {
           </div>
         ),
       },
+  
+      {
+        Header: "imPayé",
+        accessor: "id",
+        filterMethod: (filter, row) => {
+          const regx = `.*${filter.value}.*`;
+          return row[filter.id].match(regx);
+        },
+
+        Cell: (props) => (
+          <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
+            {props.value !== "undefined"
+              ? this.calculImpaye(props.original.prix_totale, props.original.tva,props.original.remise, props.original.paye)
+              : ""}
+          </div>
+        ),
+        Filter: ({ filter, onChange }) => (
+          <div className="searchtable-container">
+            <label htmlFor="impaye-input-rg">
+              <SearchIcon className="searchtable-icon" />
+            </label>
+
+            <input
+              type="text"
+              id="impaye-input-rg"
+              className="searchtable-input"
+              onChange={(event) => onChange(event.target.value)}
+              value={filter ? filter.value : ""}
+            />
+          </div>
+        ),
+      },
+  
     ];
 
     if (this.props.IconsColumn) {
@@ -797,6 +838,9 @@ class FactureTable extends Component {
               <span className="red">(Unité : {this.state.unite_paye} )</span>
             </small>
           </h3>
+          <br />
+          <h4>A été payé { this.state.facture && round(this.state.facture.paye)} DA</h4>
+          <h4>imPayé { this.state.facture && this.calculImpaye(this.state.facture.prix_totale,this.state.facture.tva,this.state.facture.remise,this.state.facture.paye)} DA</h4>
           {this.state.unite_paye === "DA" ? (
             <TextField
               type="number"
