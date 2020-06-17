@@ -156,7 +156,7 @@ tva : 0,
       remise : d.remise,
       unite_remise : d.unite_remise,
       tva : d.tva,
-      date_devis : getCurrentDateTime(new Date().getTime())
+      date_projet : getCurrentDateTime(new Date().getTime())
     };
 
     this.props.ajouterProjet(data);
