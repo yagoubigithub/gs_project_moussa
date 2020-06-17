@@ -68,7 +68,7 @@ class Navbar extends Component {
               <AccessTimeIcon />
             </span>
 
-            <span>Etat de Projet</span>
+            <span>Etat du Projet</span>
           </NavLink>
 
           <NavLink
@@ -91,6 +91,18 @@ class Navbar extends Component {
               <DescriptionIcon />
             </span>
             <span>Facture</span>
+          </NavLink>
+
+          <NavLink
+            activeClassName="nav-active"
+            to="/etat_facture"
+            className="nav-link"
+          >
+            <span>
+              
+              <DescriptionIcon />
+            </span>
+            <span>Etat du Facture</span>
           </NavLink>
           <NavLink
             activeClassName="nav-active"

@@ -6,7 +6,7 @@ const methode = Projet.prototype;
 
 function Projet() {
  // db.run('DROP TABLE projet');
- // db.run('DROP TABLE phases_projets');
+//  db.run('DROP TABLE phases_projets');
 
 
   db.run(`CREATE TABLE IF NOT EXISTS projet (

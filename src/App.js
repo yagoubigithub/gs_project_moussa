@@ -21,6 +21,7 @@ import PhasesProjet from "./components/PhasesProjet";
 import EtatProjet from "./components/EtatProjet";
 import Devis from "./components/Devis";
 import Facture from "./components/Facture";
+import EtatDuFacture from "./components/EtatDuFacture";
 
 class App extends Component {
   render() {
@@ -41,6 +42,7 @@ class App extends Component {
               <Route path="/phases_projet" component={PhasesProjet} />
               <Route path="/devis" component={Devis} />
               <Route path="/facture" component={Facture} />
+              <Route path="/etat_facture" component={EtatDuFacture} />    
               <Route path="/agence" component={Agence} />
             </Switch>
           </div>

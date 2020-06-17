@@ -330,4 +330,31 @@ export const removeFactureCreated = () =>{
   }
 
   
-  
+  export const getAllEtatFacture = () =>{
+    return (dispatch , getState) =>{
+      dispatch({
+        type : "LOADING_FACTURE"
+    })
+    ipcRenderer.send("facture:etat", {});
+
+    ipcRenderer.once("facture:etat", function (event,res) {
+     
+      dispatch({
+        type : "STOP_LOADING_FACTURE"
+    });
+    
+    if(Array.isArray(res)){
+      dispatch({
+          type : "READ_ALL_ETAT_FACTURE",
+          payload : res
+      });
+    }else{
+      dispatch({
+        type : "ERROR_FACTURE",
+        payload : res
+    });
+    }
+});
+      
+    }
+  }

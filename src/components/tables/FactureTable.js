@@ -218,7 +218,8 @@ class FactureTable extends Component {
         d.facture.remise,
         d.paye,
         d.unite_paye
-      )
+      ),
+      date_paye :  getCurrentDateTime(new Date().getTime())
     };
    
     this.props.ajouterPaiement(data)

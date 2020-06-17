@@ -77,6 +77,12 @@ const initStat = {
                   ...state,
                   paiementAdded : false
                 }
+              case 'READ_ALL_ETAT_FACTURE' :
+                return {
+                  ...state,
+                  etat_factures : action.payload,
+                  error : null
+                }
   
       default:
         return {

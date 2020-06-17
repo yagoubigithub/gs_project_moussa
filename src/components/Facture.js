@@ -43,6 +43,7 @@ class Facture extends Component {
       componentWillReceiveProps(nextProps) {
         
         if (nextProps.factures) {
+         
           const factureCorebeille = [];
           const factures = [];
           let facturesCounter = 1 ;

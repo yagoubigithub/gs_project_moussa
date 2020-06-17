@@ -5,9 +5,9 @@ const mainWindow = require("./mainWindow");
 const methode = Facture.prototype;
 
 function Facture() {
- /// db.run('DROP TABLE facture');
- // db.run('DROP TABLE facture_phases_projets');
- // db.run('DROP TABLE paye');
+// db.run('DROP TABLE facture');
+// db.run('DROP TABLE facture_phases_projets');
+//  db.run('DROP TABLE paye');
 
   db.run(`CREATE TABLE IF NOT EXISTS facture (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -34,7 +34,8 @@ function Facture() {
   db.run(`CREATE TABLE IF NOT EXISTS paye (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     facture_id INTEGER NOT NULL,
-    paye REAL 
+    paye REAL,
+    date_paye TEXT
   )`);
 
   //get
@@ -198,7 +199,7 @@ function Facture() {
     const facture_id = this.lastID;
 
     db.run(
-      `INSERT INTO paye(facture_id  , paye  ) VALUES (${facture_id},${value.paye} ) `,
+      `INSERT INTO paye(facture_id  , paye ,date_paye  ) VALUES (${facture_id},${value.paye} ,  '${value.date_facture}' ) `,
       function (err) {
         if (err) mainWindow.webContents.send("facture:ajouter", err);
 
@@ -254,7 +255,7 @@ function Facture() {
 
     if(value.facture_id){
       db.run(
-        `INSERT INTO paye(facture_id  , paye ) VALUES (${value.facture_id},${value.paye}) `,
+        `INSERT INTO paye(facture_id  , paye , date_paye ) VALUES (${value.facture_id},${value.paye} , '${value.date_paye}')  `,
         function (err) {
           if (err) mainWindow.webContents.send("facture:ajouterPaiement", err);
           ReturnAllFacture()
@@ -272,46 +273,8 @@ function Facture() {
 
   })
 
-  //AJOUTER
-  ipcMain.on("devis:transform", (event, value) => {
-    db.run(
-      `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , remise , unite_remise , status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.delais},'${value.date_debut}','${value.date_depot}' , 'en cours',${value.duree_phase},${value.maitreDouvrage_id} , ${value.remise} , '${value.unite_remise}' , 'undo') `,
-      function (err) {
-        if (err) mainWindow.webContents.send("devis:transform", err);
 
-        //add phase de projet
-        const projet_id = this.lastID;
-
-        let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , status) VALUES   `;
-
-        value.phasesProjetsSelected.forEach((phase) => {
-          const placeholder = ` (${projet_id},'${phase.value}' , 'undo') ,`;
-          sql = sql + placeholder;
-        });
-
-        sql = sql.slice(0, sql.lastIndexOf(",") - 1);
-
-        db.run(sql, function (err) {
-          if (err) mainWindow.webContents.send("devis:transform", err);
-
-          db.run(
-            `
-                 UPDATE devis SET projet_id=${projet_id}  WHERE id=${value.id} `,
-
-            function (err) {
-              ReturnAllDevis()
-                .then((projets) =>
-                  mainWindow.webContents.send("devis:transform", projets)
-                )
-                .catch((err) =>
-                  mainWindow.webContents.send("devis:transform", err)
-                );
-            }
-          );
-        });
-      }
-    );
-  });
+  
 
   ipcMain.on("devis:delete", (event, value) => {
     if (value.id !== undefined) {
@@ -333,30 +296,14 @@ function Facture() {
   });
 
   //get Phases
-  ipcMain.on("phaseProjetDevis:get", (event, value) => {
-    if (Object.keys(value).length > 0) {
-      const phases = [];
-      const promise = new Promise((resolve, reject) => {
-        Object.keys(value).map((key) => {
-          db.get(
-            `SELECT * FROM phases_projet WHERE id=${value[key].phases_devis_id}`,
-            function (err, result) {
-              if (err) reject(err);
-              phases.push(result);
-              if (phases.length === Object.keys(value).length) resolve(phases);
-            }
-          );
-        });
-      })
-        .then((phases) => {
-          mainWindow.webContents.send("phaseProjetDevis:get", phases);
-        })
-        .catch((err) => {
-          mainWindow.webContents.send("phaseProjetDevis:get", err);
-        });
-    } else {
-      mainWindow.webContents.send("phaseProjetDevis:get", []);
-    }
+  ipcMain.on("facture:etat", (event, value) => {
+   
+    ReturnAllEtatDuFacture()
+        .then((factures) => mainWindow.webContents.send("facture:etat", factures))
+        .catch((err) => mainWindow.webContents.send("facture:etat", err));
+
+   
+
   });
 
   //MODIFIER
@@ -382,6 +329,59 @@ function Facture() {
                 
                               */
     }
+  });
+}
+
+
+function ReturnAllEtatDuFacture  () {
+  const factures = [];
+  return new Promise((resolve, reject) => {
+    db.all(
+      `SELECT f.*,p.paye , p.date_paye, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM facture f   JOIN maitre_douvrage m ON m.id=f.maitreDouvrage_id LEFT JOIN paye p ON f.id=p.facture_id  ORDER BY f.id DESC `,
+      function (err, factures_rows) {
+       
+        if (err) reject(err);
+        if (factures_rows !== undefined) {
+          if (factures_rows.length === 0) {
+            resolve(factures);
+          } else {
+            factures_rows.forEach((facture) => {
+              let paye = [],
+                facture_phases_projets = [];
+              db.all(
+                `SELECT *  FROM facture_phases_projets WHERE facture_id=${facture.id} ORDER BY id DESC`,
+                function (err, rows) {
+                  if (rows !== undefined) {
+                    facture_phases_projets = [...rows];
+                  }
+
+                  db.all(
+                    `SELECT *  FROM paye WHERE facture_id=${facture.id} ORDER BY id DESC`,
+                    function (err, rows) {
+                      if (rows !== undefined) {
+                        paye = [...rows];
+
+                        factures.push({
+                          ...facture,
+                          facture_phases_projets,
+                          payeObject: paye,
+                          paye: paye.reduce(
+                            (total, num) => (toal = total + num.paye),
+                            0
+                          ),
+                        });
+                        if (factures.length === factures_rows.length)
+                          resolve(factures);
+                      }
+                    }
+                  );
+                }
+              );
+            });
+          }
+        }
+      }
+    );
   });
 }
 function ReturnAllFacture() {
