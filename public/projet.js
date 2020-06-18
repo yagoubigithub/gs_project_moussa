@@ -1,6 +1,7 @@
 const { ipcMain } = require("electron");
 const db = require("./db");
 const mainWindow = require("./mainWindow");
+var os = require('os');
 
 const methode = Projet.prototype;
 
@@ -154,7 +155,9 @@ function Projet() {
   ipcMain.on("projet:delete", (event, value) => {
     if (value.id !== undefined) {
       // delete  projet
-
+     
+      console.log(value.id);
+      
       db.run(
         `UPDATE projet  SET status='${value.status}' WHERE id = ${value.id};`,
         function (err) {
@@ -162,11 +165,43 @@ function Projet() {
 
        
           ReturnAllProject()
-          .then((projets) => mainWindow.webContents.send("projet:delete", projets))
-          .catch((err) => mainWindow.webContents.send("projet:delete", err));
+          .then((projets) => {mainWindow.webContents.send("projet:delete", projets)
+        
+        })
+          .catch((err) => {mainWindow.webContents.send("projet:delete", err)
+          
+        });
         }
       );
+   
     }
+  });
+
+
+  ipcMain.on('projet:delete-multi',
+  (event, value)=>{
+
+
+          
+    let sql = `UPDATE projet  SET status='${value.status}' WHERE id IN(${value.projets.join(",")})    `;
+
+    
+
+   
+    console.log(sql)
+
+    db.run(sql, function (err) {
+      if (err) mainWindow.webContents.send("projet:delete-multi", err);
+      console.log(err)
+      
+
+      ReturnAllProject()
+      .then((projets) => {mainWindow.webContents.send("projet:delete-multi", projets)
+    
+    })
+      .catch((err) => {mainWindow.webContents.send("projet:delete-multi", err)
+  })
+    })
   });
 
   //MODIFIER

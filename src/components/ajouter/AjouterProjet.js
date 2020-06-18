@@ -159,7 +159,11 @@ tva : 0,
       date_projet : getCurrentDateTime(new Date().getTime())
     };
 
-    this.props.ajouterProjet(data);
+   
+      this.props.ajouterProjet(data);
+      
+    
+    
   };
 
   handleChange = (e) => {

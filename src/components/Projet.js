@@ -15,8 +15,8 @@ import LoadingComponent from "../utils/loadingComponent";
 //redux
 import {
   getAllProjet,
-  addToCorbeille,
-  undoDeleteProjet,
+  addToCorbeilleMultiple,
+  undoDeleteProjetMultiple,
 } from "../store/actions/projetAction";
 import { connect } from "react-redux";
 import AjouterProjet from "./ajouter/AjouterProjet";
@@ -107,18 +107,18 @@ class Projet extends Component {
         this.handleOpenCloseaddToCorbeilleDialog();
       }
       if (this.state.tab === "projetCorebeille") {
-        this.state.rowsSelected.map((projet) => {
-          this.props.undoDeleteProjet(projet);
-        });
+        console.log(this.state.rowsSelected)
+        this.props.undoDeleteProjetMultiple([...this.state.rowsSelected])
+        
         this.setState({ rowsSelected: [] });
       }
     }
   };
   addToCorbeille = () => {
     const rowsSelected = [...this.state.rowsSelected];
-    rowsSelected.map((projet) => {
-      this.props.addToCorbeille(projet);
-    });
+    this.props.addToCorbeilleMultiple(rowsSelected);
+   
+
     this.setState({ rowsSelected: [] });
   };
   render() {
@@ -201,8 +201,8 @@ class Projet extends Component {
 }
 const mapActionToProps = (dispatch) => ({
   getAllProjet: () => dispatch(getAllProjet()),
-  addToCorbeille: (id) => dispatch(addToCorbeille(id)),
-  undoDeleteProjet: (id) => dispatch(undoDeleteProjet(id)),
+  addToCorbeilleMultiple: (id) => dispatch(addToCorbeilleMultiple(id)),
+  undoDeleteProjetMultiple: (id) => dispatch(undoDeleteProjetMultiple(id)),
 });
 const mapStateToProps = (state) => ({
   projets: state.projet.projets,

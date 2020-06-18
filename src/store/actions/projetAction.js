@@ -63,6 +63,38 @@ export const addToCorbeille = (id) =>{
     }
   }
 
+
+  //delete (mettre dans le corbeille)
+export const addToCorbeilleMultiple = (projets) =>{
+  return (dispatch , getState)=>{
+
+    dispatch({
+      type : "LOADING_PROJET"
+  })
+  ipcRenderer.send("projet:delete-multi", {projets, status :  "corbeille"});
+
+  ipcRenderer.once('projet:delete-multi', function (event,data) {
+   
+    dispatch({
+      type : "STOP_LOADING_PROJET"
+  });
+  if(Array.isArray(data)){
+    dispatch({
+        type : "ADD_TO_CORBEILLE_PROJET",
+        payload : data
+    });
+  }else{
+    dispatch({
+      type : "ERROR_PROJET",
+      payload :data
+  });
+  }
+});
+    
+
+  }
+}
+
   
 export const getAllProjet = () =>{
     return (dispatch ,getState)=>{
@@ -126,6 +158,38 @@ export const undoDeleteProjet = (id) =>{
     }
   }
   
+
+   
+//undo delete
+export const undoDeleteProjetMultiple = (projets) =>{
+  return (dispatch ,getState)=>{
+
+    dispatch({
+      type : "LOADING_PROJET"
+  })
+  ipcRenderer.send("projet:delete-multi", {projets, status :  "undo"});
+
+  ipcRenderer.once('projet:delete-multi', function (event,data) {
+   
+    dispatch({
+      type : "STOP_LOADING_PROJET"
+  });
+  if(Array.isArray(data)){
+    dispatch({
+        type : "UNDO_DELETE_PROJET",
+        payload : data
+    });
+  }else{
+    dispatch({
+      type : "ERROR_PROJET",
+      payload :data
+  });
+  }
+});
+
+  }
+}
+
 
   //projet  
 export const removeProjetCreated = () =>{

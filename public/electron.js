@@ -4,13 +4,14 @@ require('v8-compile-cache');
 
 
 
-const { app } = electron;
+const { app  } = electron;
 
-
-
+app.disableDomainBlockingFor3DAPIs()
 
 app.on("ready", () => {
-  
+
+
+
   const mainWindow = require('./mainWindow');
   mainWindow.maximize();
   // mainWindow.setMenu(null);
