@@ -39,9 +39,14 @@ class EtatDuFacture extends Component {
       }
       componentWillReceiveProps(nextProps) {
         
+        
         if (nextProps.etat_factures) {
         
-           this.setState({etat_factures : nextProps.etat_factures})
+          
+          const etat_factures = [...nextProps.etat_factures];
+          etat_factures.sort((a,b )=> new Date(a.date_facture).getTime() -  new Date(b.date_facture).getTime())
+          etat_factures.reverse()
+           this.setState({etat_factures })
      
         }
       }

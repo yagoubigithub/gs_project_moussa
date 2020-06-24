@@ -68,6 +68,10 @@ class EtatProjet extends Component {
         }
       });
 
+      projetCorebeille.sort((a,b )=> parseInt(a.id) -  parseInt(b.id))
+      projets.sort((a,b )=> parseInt(a.id) -  parseInt(b.id))
+      projetRetards.sort((a,b )=> parseInt(a.id) -  parseInt(b.id))
+
       this.setState({ projetCorebeille, projets,projetRetards });
     }
   }

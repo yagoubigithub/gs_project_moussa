@@ -167,8 +167,6 @@ function Projet() {
     if (value.id !== undefined) {
       // delete  projet
 
-    
-
       db.run(
         `UPDATE projet  SET etat='en cours' WHERE id = ${value.id};`,
         function (err) {

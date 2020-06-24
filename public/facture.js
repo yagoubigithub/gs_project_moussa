@@ -345,39 +345,41 @@ function ReturnAllEtatDuFacture  () {
           if (factures_rows.length === 0) {
             resolve(factures);
           } else {
-            factures_rows.forEach((facture) => {
+            for (let i = 0; i < factures_rows.length; i++) {
+              const facture = factures_rows[i];
               let paye = [],
-                facture_phases_projets = [];
-              db.all(
-                `SELECT *  FROM facture_phases_projets WHERE facture_id=${facture.id} ORDER BY id DESC`,
-                function (err, rows) {
-                  if (rows !== undefined) {
-                    facture_phases_projets = [...rows];
-                  }
-
-                  db.all(
-                    `SELECT *  FROM paye WHERE facture_id=${facture.id} ORDER BY id DESC`,
-                    function (err, rows) {
-                      if (rows !== undefined) {
-                        paye = [...rows];
-
-                        factures.push({
-                          ...facture,
-                          facture_phases_projets,
-                          payeObject: paye,
-                          paye: paye.reduce(
-                            (total, num) => (toal = total + num.paye),
-                            0
-                          ),
-                        });
-                        if (factures.length === factures_rows.length)
-                          resolve(factures);
-                      }
-                    }
-                  );
+              facture_phases_projets = [];
+            db.all(
+              `SELECT *  FROM facture_phases_projets WHERE facture_id=${facture.id}`,
+              function (err, rows) {
+                if (rows !== undefined) {
+                  facture_phases_projets = [...rows];
                 }
-              );
-            });
+
+                db.all(
+                  `SELECT *  FROM paye WHERE facture_id=${facture.id} `,
+                  function (err, rows) {
+                    if (rows !== undefined) {
+                      paye = [...rows];
+
+                      factures.push({
+                        ...facture,
+                        facture_phases_projets,
+                        payeObject: paye,
+                        paye: paye.reduce(
+                          (total, num) => (toal = total + num.paye),
+                          0
+                        ),
+                      });
+                      if (factures.length === factures_rows.length)
+                        resolve(factures);
+                    }
+                  }
+                );
+              }
+            );
+            }
+          
           }
         }
       }

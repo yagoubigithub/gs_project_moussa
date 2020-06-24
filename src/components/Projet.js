@@ -107,7 +107,7 @@ class Projet extends Component {
         this.handleOpenCloseaddToCorbeilleDialog();
       }
       if (this.state.tab === "projetCorebeille") {
-        console.log(this.state.rowsSelected)
+       
         this.props.undoDeleteProjetMultiple([...this.state.rowsSelected])
         
         this.setState({ rowsSelected: [] });

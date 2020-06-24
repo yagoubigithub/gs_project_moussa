@@ -560,6 +560,8 @@ class EtatDeProjet extends Component {
 
           <ReactTable
             className="table"
+           
+         
             data={this.props.rows}
             filterable
             defaultFilterMethod={(filter, row) =>
