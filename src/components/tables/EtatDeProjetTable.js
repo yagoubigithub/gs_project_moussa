@@ -14,6 +14,8 @@ import {
   Grid,
   DialogContent,
   Checkbox,
+  FormControlLabel,
+  Button,
 } from "@material-ui/core";
 
 //redux
@@ -25,6 +27,8 @@ import {
   undoDeleteMaitreDouvrage,
 } from "../../store/actions/maitreDouvrageAction";
 
+import {projetFini , undoProjetFini} from '../../store/actions/projetAction'
+
 //icons
 
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -32,6 +36,8 @@ import EditIcon from "@material-ui/icons/Edit";
 
 import UndoIcon from "@material-ui/icons/Undo";
 import SearchIcon from "@material-ui/icons/Search";
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@material-ui/icons/CheckBox'
 
 import LoadingComponent from "../../utils/loadingComponent";
 
@@ -121,6 +127,16 @@ class EtatDeProjet extends Component {
       maitreDouvrageSelected,
     });
   };
+
+  fini = (id, etat) =>{
+    if(etat !== "fini"){
+      this.props.projetFini(id)
+    }else{
+      this.props.undoProjetFini(id)
+    }
+
+   
+  }
   render() {
     const columns = [
       {
@@ -399,7 +415,7 @@ class EtatDeProjet extends Component {
       columns.unshift({
         Header: "  ",
         accessor: "id",
-        width: 100,
+        width: 150,
         sortable: false,
         filterable: false,
         Cell: (props) => {
@@ -430,6 +446,21 @@ class EtatDeProjet extends Component {
                     <EditIcon className="black" fontSize="small"></EditIcon>
                   </Link>
                 </IconButton>
+                <FormControlLabel
+        control={
+          <Checkbox
+            icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+            checkedIcon={<CheckBoxIcon fontSize="small" />}
+            size="small"
+            color="primary"
+            onClick={()=>this.fini(props.value,props.original.etat)}
+            checked={props.original.etat === "fini"}
+          />
+        }
+        style={{fontSize : "11px"}}
+        label="Projet fini"
+      />
+              
               </div>
             );
           }
@@ -549,6 +580,8 @@ const mapActionToProps = (dispatch) => {
     getLogo: (id) => dispatch(getLogo(id)),
     undoDeleteMaitreDouvrage: (id) => dispatch(undoDeleteMaitreDouvrage(id)),
     getMaitreDouvrage: (id) => dispatch(getMaitreDouvrage(id)),
+    projetFini : (id) => dispatch(projetFini(id)),
+    undoProjetFini :  (id) => dispatch(undoProjetFini(id))
   };
 };
 

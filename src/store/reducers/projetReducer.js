@@ -59,6 +59,11 @@ const ProjetReducer = (state = initStat, action) =>{
                         projets : action.payload
                     }
 
+                    case 'FINI_PROJET' : 
+                    return {
+                        ...state,
+                        projets : action.payload
+                    }
             default :
             return {
                 ...state

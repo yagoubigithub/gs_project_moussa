@@ -1,14 +1,13 @@
 const { ipcMain } = require("electron");
 const db = require("./db");
 const mainWindow = require("./mainWindow");
-var os = require('os');
+var os = require("os");
 
 const methode = Projet.prototype;
 
 function Projet() {
- // db.run('DROP TABLE projet');
-//  db.run('DROP TABLE phases_projets');
-
+  // db.run('DROP TABLE projet');
+  //  db.run('DROP TABLE phases_projets');
 
   db.run(`CREATE TABLE IF NOT EXISTS projet (
     id INTEGER PRIMARY KEY AUTOINCREMENT ,
@@ -51,19 +50,16 @@ function Projet() {
     }
   });
 
-  
   //AJOUTER
   ipcMain.on("projet:ajouter", (event, value) => {
-  
     db.run(
       `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , remise  , tva ,  status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.delais},'${value.date_debut}','${value.date_depot}' , 'en cours',${value.duree_phase},${value.maitreDouvrage_id} , ${value.remise} ,   ${value.tva} , 'undo') `,
       function (err) {
-     
         if (err) mainWindow.webContents.send("projet:ajouter", err);
 
         //add phase de projet
         const projet_id = this.lastID;
-        
+
         let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , status) VALUES   `;
 
         value.phasesProjetsSelected.forEach((phase) => {
@@ -75,75 +71,65 @@ function Projet() {
 
         db.run(sql, function (err) {
           if (err) mainWindow.webContents.send("projet:ajouter", err);
-          
+
           db.run(
             `INSERT INTO devis(projet_id  ,nom , objet , adresse  , duree_phase , prix_totale , remise, date_devis ,  maitreDouvrage_id ,  tva , status) VALUES (${projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_devis}' , ${value.maitreDouvrage_id} , ${value.tva}  , 'undo') `,
             function (err) {
               if (err) mainWindow.webContents.send("projet:ajouter", err);
-             
-      
+
               //add phase de devis
               const devis_id = this.lastID;
               let sql = `INSERT INTO devis_phases_projets(devis_id , phases_devis_id , status) VALUES   `;
-      
-              
-            
+
               value.phasesProjetsSelected.forEach((phase) => {
                 const placeholder = ` (${devis_id},'${phase.value.id}' , 'undo') ,`;
                 sql = sql + placeholder;
               });
-      
+
               sql = sql.slice(0, sql.lastIndexOf(",") - 1);
-      
+
               db.run(sql, function (err) {
                 if (err) mainWindow.webContents.send("projet:ajouter", err);
 
-              
-             
- //ajouter facture
- db.run(
-  `INSERT INTO facture(projet_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, date_facture ,  maitreDouvrage_id , tva , status) VALUES (${projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_projet}' , ${value.maitreDouvrage_id} , ${value.tva} , 'undo') `,
-  function (err) {
+                //ajouter facture
+                db.run(
+                  `INSERT INTO facture(projet_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, date_facture ,  maitreDouvrage_id , tva , status) VALUES (${projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_projet}' , ${value.maitreDouvrage_id} , ${value.tva} , 'undo') `,
+                  function (err) {
+                    if (err) mainWindow.webContents.send("projet:ajouter", err);
 
-    if (err) mainWindow.webContents.send("projet:ajouter", err);
-  
-    //add phase de facture
-    const facture_id = this.lastID;
+                    //add phase de facture
+                    const facture_id = this.lastID;
 
-    let sql = `INSERT INTO facture_phases_projets(facture_id , phases_facture_id , status) VALUES   `;
+                    let sql = `INSERT INTO facture_phases_projets(facture_id , phases_facture_id , status) VALUES   `;
 
-    /*phases_facture_id:
-     */
+                    /*phases_facture_id:
+                     */
 
-    value.phasesProjetsSelected.forEach((phase) => {
-      const placeholder = ` (${facture_id},'${phase.value.id}' , 'undo') ,`;
-      sql = sql + placeholder;
-    });
+                    value.phasesProjetsSelected.forEach((phase) => {
+                      const placeholder = ` (${facture_id},'${phase.value.id}' , 'undo') ,`;
+                      sql = sql + placeholder;
+                    });
 
-    sql = sql.slice(0, sql.lastIndexOf(",") - 1);
+                    sql = sql.slice(0, sql.lastIndexOf(",") - 1);
 
-    db.run(sql, function (err) {
-     
+                    db.run(sql, function (err) {
+                      if (err)
+                        mainWindow.webContents.send("projet:ajouter", err);
 
-      if (err) mainWindow.webContents.send("projet:ajouter", err);
-     
-      ReturnAllProject()
-      .then((projets) => mainWindow.webContents.send("projet:ajouter", projets))
-      .catch((err) => mainWindow.webContents.send("projet:ajouter", err));
-    });
-  }
-);
-
-
-        
+                      ReturnAllProject()
+                        .then((projets) =>
+                          mainWindow.webContents.send("projet:ajouter", projets)
+                        )
+                        .catch((err) =>
+                          mainWindow.webContents.send("projet:ajouter", err)
+                        );
+                    });
+                  }
+                );
               });
-             
             }
           );
         });
-
-       
-      
       }
     );
 
@@ -152,56 +138,96 @@ function Projet() {
                               */
   });
 
+  ipcMain.on("projet:fini", (event, value) => {
+    if (value.id !== undefined) {
+      // delete  projet
+
+    
+
+      db.run(
+        `UPDATE projet  SET etat='fini' WHERE id = ${value.id};`,
+        function (err) {
+          if (err) mainWindow.webContents.send("projet:fini", err);
+
+          ReturnAllProject()
+            .then((projets) => {
+              mainWindow.webContents.send("projet:fini", projets);
+            })
+            .catch((err) => {
+              mainWindow.webContents.send("projet:fini", err);
+            });
+        }
+      );
+    }
+  });
+
+
+
+  ipcMain.on("projet:undo-fini", (event, value) => {
+    if (value.id !== undefined) {
+      // delete  projet
+
+    
+
+      db.run(
+        `UPDATE projet  SET etat='en cours' WHERE id = ${value.id};`,
+        function (err) {
+          if (err) mainWindow.webContents.send("projet:undo-fini", err);
+
+          ReturnAllProject()
+            .then((projets) => {
+              mainWindow.webContents.send("projet:undo-fini", projets);
+            })
+            .catch((err) => {
+              mainWindow.webContents.send("projet:undo-fini", err);
+            });
+        }
+      );
+    }
+  });
+
+
+
+
   ipcMain.on("projet:delete", (event, value) => {
     if (value.id !== undefined) {
       // delete  projet
-     
+
       console.log(value.id);
-      
+
       db.run(
         `UPDATE projet  SET status='${value.status}' WHERE id = ${value.id};`,
         function (err) {
           if (err) mainWindow.webContents.send("projet:delete", err);
 
-       
           ReturnAllProject()
-          .then((projets) => {mainWindow.webContents.send("projet:delete", projets)
-        
-        })
-          .catch((err) => {mainWindow.webContents.send("projet:delete", err)
-          
-        });
+            .then((projets) => {
+              mainWindow.webContents.send("projet:delete", projets);
+            })
+            .catch((err) => {
+              mainWindow.webContents.send("projet:delete", err);
+            });
         }
       );
-   
     }
   });
 
-
-  ipcMain.on('projet:delete-multi',
-  (event, value)=>{
-
-
-          
-    let sql = `UPDATE projet  SET status='${value.status}' WHERE id IN(${value.projets.join(",")})    `;
-
-    
-
-   
-    console.log(sql)
-
+  ipcMain.on("projet:delete-multi", (event, value) => {
+    let sql = `UPDATE projet  SET status='${
+      value.status
+    }' WHERE id IN(${value.projets.join(",")})    `;
     db.run(sql, function (err) {
       if (err) mainWindow.webContents.send("projet:delete-multi", err);
-      console.log(err)
-      
+      console.log(err);
 
       ReturnAllProject()
-      .then((projets) => {mainWindow.webContents.send("projet:delete-multi", projets)
-    
-    })
-      .catch((err) => {mainWindow.webContents.send("projet:delete-multi", err)
-  })
-    })
+        .then((projets) => {
+          mainWindow.webContents.send("projet:delete-multi", projets);
+        })
+        .catch((err) => {
+          mainWindow.webContents.send("projet:delete-multi", err);
+        });
+    });
   });
 
   //MODIFIER
@@ -237,25 +263,25 @@ function ReturnAllProject() {
       `SELECT p.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM projet p  JOIN maitre_douvrage m ON m.id=p.maitreDouvrage_id  ORDER BY p.id DESC`,
       function (err, rows) {
         if (err) reject(err);
-        if(rows !== undefined){
-          if(rows.length === 0){
+        if (rows !== undefined) {
+          if (rows.length === 0) {
             resolve(projets);
-          }else{
+          } else {
             rows.forEach((projet) => {
               db.all(
                 `SELECT *  FROM phases_projets WHERE projet_id=${projet.id}`,
                 function (err, phases_projets) {
-                  if(phases_projets !== undefined)
-                  projets.push({ phases_projets: [...phases_projets], ...projet });
+                  if (phases_projets !== undefined)
+                    projets.push({
+                      phases_projets: [...phases_projets],
+                      ...projet,
+                    });
                   if (projets.length === rows.length) resolve(projets);
                 }
               );
             });
           }
-  
         }
-     
-        
       }
     );
   });

@@ -232,3 +232,62 @@ export const removeProjetCreated = () =>{
       
   }
   }
+
+
+  export const projetFini = (id) =>{
+
+    return (dispatch , getState)=>{
+      dispatch({
+        type : "LOADING_PROJET"
+    })
+    ipcRenderer.send("projet:fini", {id});
+  
+    ipcRenderer.once('projet:fini', function (event,data) {
+     
+      dispatch({
+        type : "STOP_LOADING_PROJET"
+    });
+    if(Array.isArray(data)){
+      dispatch({
+          type : "FINI_PROJET",
+          payload : data
+      });
+    }else{
+      dispatch({
+        type : "ERROR_PROJET",
+        payload : data
+    });
+    }
+  });
+    }
+  }
+
+
+
+  export const undoProjetFini = (id) =>{
+
+    return (dispatch , getState)=>{
+      dispatch({
+        type : "LOADING_PROJET"
+    })
+    ipcRenderer.send("projet:undo-fini", {id});
+  
+    ipcRenderer.once('projet:undo-fini', function (event,data) {
+     
+      dispatch({
+        type : "STOP_LOADING_PROJET"
+    });
+    if(Array.isArray(data)){
+      dispatch({
+          type : "FINI_PROJET",
+          payload : data
+      });
+    }else{
+      dispatch({
+        type : "ERROR_PROJET",
+        payload : data
+    });
+    }
+  });
+    }
+  }
