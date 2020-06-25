@@ -30,7 +30,7 @@ function User(){
         );
        }else
         db.all(
-          `SELECT * FROM user WHERE username='${value.username}' AND password='${value.password}' `,
+          `SELECT * FROM user WHERE username='${value.username}' AND password='${value.password}'  AND (status='undo' OR status='admin') `,
           function(err, rows) {
             if (err) mainWindow.webContents.send("user", err);
             mainWindow.webContents.send("user", rows);
@@ -53,7 +53,7 @@ function User(){
 
               db.run(
                 `
-                    INSERT INTO user(nom , prenom  , username ,  password , status  ) VALUES ('${value.nom}','${value.prenom}','${value.username}','${value.password}' , 'undo') `,
+                    INSERT INTO user(nom , prenom  , username ,  password , ='undo'  ) VALUES ('${value.nom}','${value.prenom}','${value.username}','${value.password}' , 'undo') `,
                 function(err) {
                   if (err) mainWindow.webContents.send("user:ajouter", err);
                   db.all(
@@ -72,6 +72,44 @@ function User(){
        }
        
       });
+
+
+      ipcMain.on("user:delete", (event, value)=>{
+        if (value.id !== undefined) {
+          // delete  projet
+    
+          console.log(value.id);
+    
+          db.run(
+            `UPDATE user  SET status='${value.status}' WHERE id = ${value.id};`,
+            function (err) {
+              if (err) mainWindow.webContents.send("user:delete", err);
+    
+
+              ReturnAllUser()
+                .then((users) => {
+                  console.log(users)
+                  mainWindow.webContents.send("user:delete", users);
+                })
+                .catch((err) => {
+                  mainWindow.webContents.send("user:delete", err);
+                });
+            }
+          );
+        }
+      })
+}
+
+function ReturnAllUser(){
+  return  new Promise(( resolve , reject )=>{
+    db.all(
+      `SELECT * FROM user`,
+      function(err, rows) {
+        if (err) reject(err);
+       resolve(rows)
+      }
+    );
+  })
 }
 module.exports = User;
 

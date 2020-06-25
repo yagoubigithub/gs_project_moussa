@@ -142,23 +142,23 @@ export const addToCorbeille = (id) =>{
   return (dispatch , getState)=>{
 
     dispatch({
-      type : "LOADING_USER"
+      type : "LOADING_AUTH"
   })
   ipcRenderer.send("user:delete", {id, status :  "corbeille"});
 
   ipcRenderer.once('user:delete', function (event,data) {
    
     dispatch({
-      type : "STOP_LOADING_USER"
+      type : "STOP_LOADING_AUTH"
   });
   if(Array.isArray(data)){
     dispatch({
-        type : "ADD_TO_CORBEILLE_USER",
+        type : "ADD_TO_CORBEILLE_AUTH",
         payload : data
     });
   }else{
     dispatch({
-      type : "ERROR_USER",
+      type : "ERROR_AUTH",
       payload :data
   });
   }
@@ -174,23 +174,23 @@ export const undoDeleteUser = (id) =>{
   return (dispatch ,getState)=>{
 
     dispatch({
-      type : "LOADING_USER"
+      type : "LOADING_AUTH"
   })
   ipcRenderer.send("user:delete", {id, status :  "undo"});
 
   ipcRenderer.once('user:delete', function (event,data) {
    
     dispatch({
-      type : "STOP_LOADING_USER"
+      type : "STOP_LOADING_AUTH"
   });
   if(Array.isArray(data)){
     dispatch({
-        type : "UNDO_DELETE_USER",
+        type : "UNDO_DELETE_AUTH",
         payload : data
     });
   }else{
     dispatch({
-      type : "ERROR_USER",
+      type : "ERROR_AUTH",
       payload :data
   });
   }

@@ -55,6 +55,16 @@ const authReducer = (state = initStat, action) =>{
                 ...state,
                 userCreated : false
             }
+        case 'ADD_TO_CORBEILLE_AUTH' : 
+        return {
+            ...state,
+            users : action.payload
+        }
+        case 'UNDO_DELETE_AUTH' : 
+        return {
+            ...state,
+            users : action.payload
+        }
         default :
         return {
             ...state

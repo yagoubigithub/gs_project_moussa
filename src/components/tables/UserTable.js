@@ -20,10 +20,8 @@ import {
 import { connect } from "react-redux";
 import {
   addToCorbeille,
-  getMaitreDouvrage,
-  getLogo,
-  undoDeleteMaitreDouvrage,
-} from "../../store/actions/maitreDouvrageAction";
+  undoDeleteUser
+} from "../../store/actions/authAction";
 
 //icons
 
@@ -104,7 +102,65 @@ class UserTable extends Component {
   };
   render() {
     const columns = [
-        {
+      {
+        Header: "N°",
+        accessor: "number",
+        filterMethod: (filter, row) => {
+          const regx = `.*${filter.value}.*`;
+          return row[filter.id].toString().match(regx);
+        },
+
+        Cell: (props) => (
+          <div className="cell">
+            {props.value !== "undefined" ? props.value : ""}
+          </div>
+        ),
+        Filter: ({ filter, onChange }) => (
+          <div className="searchtable-container">
+            <label htmlFor="date-input-nom">
+              <SearchIcon className="searchtable-icon" />
+            </label>
+
+            <input
+              type="text"
+              id="date-input-nom"
+              className="searchtable-input"
+              onChange={(event) => onChange(event.target.value)}
+              value={filter ? filter.value : ""}
+            />
+          </div>
+        ),
+      },
+      
+      {
+        Header: "Nom d'utilisateur",
+        accessor: "username",
+        filterMethod: (filter, row) => {
+          const regx = `.*${filter.value}.*`;
+          return row[filter.id].match(regx);
+        },
+
+        Cell: (props) => (
+          <div className="cell">
+            {props.value !== "undefined" ? props.value : ""}
+          </div>
+        ),
+        Filter: ({ filter, onChange }) => (
+          <div className="searchtable-container">
+            <label htmlFor="date-input-nom">
+              <SearchIcon className="searchtable-icon" />
+            </label>
+
+            <input
+              type="text"
+              id="date-input-nom"
+              className="searchtable-input"
+              onChange={(event) => onChange(event.target.value)}
+              value={filter ? filter.value : ""}
+            />
+          </div>
+        ),
+      },{
         Header: "Nom",
         accessor: "nom",
         filterMethod: (filter, row) => {
@@ -179,7 +235,7 @@ class UserTable extends Component {
                 <IconButton
                   size="small"
                   onClick={() =>
-                    this.props.undoDeleteMaitreDouvrage(props.value)
+                    this.props.undoDeleteUser(props.value)
                   }
                 >
                   <UndoIcon className="black" fontSize="small"></UndoIcon>
@@ -295,6 +351,11 @@ class UserTable extends Component {
 
     return (
       <Fragment>
+       <LoadingComponent
+          loading={
+            this.props.loading !== undefined ? this.props.loading : false
+          }
+        />
         <Dialog
           open={this.state.addToCorbeilleDialog}
           onClose={this.handleOpenCloseaddToCorbeilleDialog}
@@ -338,17 +399,14 @@ class UserTable extends Component {
 const mapActionToProps = (dispatch) => {
   return {
     addToCorbeille: (id) => dispatch(addToCorbeille(id)),
-    getLogo: (id) => dispatch(getLogo(id)),
-    undoDeleteMaitreDouvrage: (id) => dispatch(undoDeleteMaitreDouvrage(id)),
-    getMaitreDouvrage: (id) => dispatch(getMaitreDouvrage(id)),
+    undoDeleteUser: (id) => dispatch(undoDeleteUser(id)),
+    
   };
 };
 
 const mapStateToProps = (state) => {
   return {
-    loading: state.maitre_douvrage.loading,
-    maitre_douvrage: state.maitre_douvrage.maitre_douvrage,
-    direname: state.maitre_douvrage.direname,
+    loading: state.auth.loading,
     user: state.auth.user,
   };
 };
