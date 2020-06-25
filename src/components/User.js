@@ -49,8 +49,7 @@ class User extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.users) {
-      console.log(nextProps.users);
-
+     
       const userCorebeille = [];
       const users = [];
       let usersCounter = 1;
@@ -71,7 +70,7 @@ class User extends Component {
         }
       });
 
-      console.log(users);
+   
 
       this.setState({ userCorebeille, users });
     }

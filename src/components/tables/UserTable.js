@@ -189,8 +189,9 @@ class UserTable extends Component {
           } else {
             let render = null;
             if(this.props.user.status === "admin"){
+              
               if(props.original.status === "admin"){
-                render =<div>
+                render =(<div>
 
                   <IconButton size="small">
                     <Link to={`/user/modifier/${props.value}`}>
@@ -198,10 +199,11 @@ class UserTable extends Component {
                     </Link>
                   </IconButton>
                 
-                </div>
+                </div>);
 
               }else{
-                render =<div>
+                
+                render =(<div>
                 <IconButton
                     size="small"
                     onClick={() => this.add_To_Corbeille(props.value)}
@@ -214,14 +216,16 @@ class UserTable extends Component {
                     </Link>
                   </IconButton>
                 
-                </div>
+                </div>);
               }
 
+            }else{
+              render = null;
             }
             return (
               <div className="cell">
 
-              {this.props.user.status === "admin" && props.original.status === "admin" ?render :null}
+              {render}
             </div>
             );
           }
@@ -295,14 +299,14 @@ class UserTable extends Component {
           open={this.state.addToCorbeilleDialog}
           onClose={this.handleOpenCloseaddToCorbeilleDialog}
         >
-          <h2>Deleted</h2>
+          <h2>Suprimer</h2>
           <button
             onClick={() => {
               this.props.addToCorbeille(this.state.deletedId);
               this.handleOpenCloseaddToCorbeilleDialog();
             }}
           >
-            Delete
+            Suprimer
           </button>
           <button onClick={this.handleOpenCloseaddToCorbeilleDialog}>
             Cancel
