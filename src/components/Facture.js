@@ -20,7 +20,7 @@ import {
 } from "../store/actions/factureAction";
 import { connect } from "react-redux";
 
-import ProjetTable from "./tables/ProjetTable";
+
 import AjouterFacture from "./ajouter/AjouterFacture";
 import FactureTable from "./tables/FactureTable";
 import PrintFacture from "./print/PrintFacture";
@@ -60,6 +60,12 @@ class Facture extends Component {
             }
           });
          
+
+          factureCorebeille.sort((a,b )=> new Date(a.date_facture).getTime() -  new Date(b.date_facture).getTime())
+          factureCorebeille.reverse()
+
+          factures.sort((a,b )=> new Date(a.date_facture).getTime() -  new Date(b.date_facture).getTime())
+          factures.reverse()
     
           this.setState({ factureCorebeille, factures });
         }
@@ -166,6 +172,7 @@ class Facture extends Component {
                 Cancel
               </button>
             </Dialog>
+          
             <Route path="/facture/ajouter/:buttonReturn" component={AjouterFacture} />
             <Route   path="/facture/print/:id/:buttonReturn" component={PrintFacture} />
     

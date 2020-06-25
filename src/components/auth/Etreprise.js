@@ -22,6 +22,8 @@ import { Grid, TextField, Button } from '@material-ui/core';
         email : "",
         nom : "",
         password :  "",
+        prenom  :"",
+        username :  "",
        error : ""
 
     }
@@ -29,11 +31,12 @@ import { Grid, TextField, Button } from '@material-ui/core';
         this.props.getEtreprise();
     }
     componentWillReceiveProps(nextProps){
-        if(nextProps.entreprise !== undefined){
+        if(nextProps.entreprise ){
+            console.log(nextProps.entreprise)
             
-           this.props.sendData(true)
-        }
-        this.props.sendData(false)
+           this.props.sendData(false)
+        }else
+        this.props.sendData(true)
     }
     handleChange=(e) =>{
         this.setState({[e.target.name] : e.target.value})
@@ -65,7 +68,7 @@ import { Grid, TextField, Button } from '@material-ui/core';
             this.setState({error :  ""})
         }
         this.props.ajouterntreprise({entreprise : {nom : data.nom_agence, telephone : data.telephone,email : data.email,adresse : data.adresse }
-        ,user  : {username : data.nom, password : data.password}})
+        ,user  : {nom : data.nom, prenom  :data.prenom, username : data.username ,  password : data.password}})
        
 
       
@@ -95,6 +98,9 @@ import { Grid, TextField, Button } from '@material-ui/core';
                   name="email" variant="outlined"  onChange={this.handleChange} fullWidth margin="normal" />
                 <TextField placeholder="Adresse *"  error={this.state.error !== ""} value={this.state.adresse} name="adresse" variant="outlined"  onChange={this.handleChange} fullWidth margin="normal" />
                 <TextField placeholder="Nom de l'admin "  value={this.state.nom} name="nom" variant="outlined"  onChange={this.handleChange} fullWidth margin="normal" />
+                <TextField placeholder="Prénom de l'admin "  value={this.state.prenom} name="prenom" variant="outlined"  onChange={this.handleChange} fullWidth margin="normal" />
+
+                <TextField placeholder="Nom d'utilisateur de l'admin "  value={this.state.username} name="username" variant="outlined"  onChange={this.handleChange} fullWidth margin="normal" />
                 <TextField placeholder="Mot de passe  " value={this.state.password} name="password" variant="outlined"  onChange={this.handleChange} type="password" fullWidth margin="normal" />
                 
                

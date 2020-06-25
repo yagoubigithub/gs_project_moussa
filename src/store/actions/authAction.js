@@ -18,8 +18,7 @@ export const connexion = (data) =>{
       dispatch({
         type : "AUTH_SUCCESS",
         payload : {
-          username : data[0].username,
-          password :  data[0].password
+         ...data[0]
         }
     });
     }else{
@@ -64,5 +63,138 @@ export const modifier_user  = (data) =>{
 });
 
   
+  }
+}
+
+
+export const ajouterUser = (data) =>{
+  return (dispatch, getState)  =>{
+    dispatch({
+      type : "LOADING_AUTH"
+  })
+  ipcRenderer.send("user:ajouter", {...data});
+
+  ipcRenderer.once('user:ajouter', function (event,data) {
+   
+    dispatch({
+      type : "STOP_LOADING_AUTH"
+  });dispatch({
+    type : "STOP_LOADING_AUTH"
+});
+  if(Array.isArray(data)){
+    dispatch({
+        type : "AJOUTER_AUTH",
+        payload : data
+    });
+  }else{
+    dispatch({
+      type : "ERROR_AUTH",
+      payload : data.error
+  });
+  }
+});
+
+  }
+}
+
+
+
+export const removeUserCreated = (data) =>{
+  return (dispatch, getState)  =>{
+    dispatch({
+      type : "REMOVE_USER_CREATED"
+  })
+  }}
+
+export const getAllUser  = () =>{
+  return (dispatch, getState)=>{
+
+    dispatch({
+      type : "LOADING_AUTH"
+  })
+  ipcRenderer.send("user", {});
+  
+  ipcRenderer.once('user', function (event,data) {
+    dispatch({
+      type : "STOP_LOADING_AUTH"
+  });
+  
+  if(Array.isArray(data)){
+    dispatch({
+      type : "GET_ALL_USERS",
+      payload : data
+  });
+  }else{
+    dispatch({
+      type : "AUTH_ERROR",
+      payload : data
+  });
+  }
+    
+  });
+ 
+  
+  }
+}
+
+//delete (mettre dans le corbeille)
+export const addToCorbeille = (id) =>{
+  return (dispatch , getState)=>{
+
+    dispatch({
+      type : "LOADING_USER"
+  })
+  ipcRenderer.send("user:delete", {id, status :  "corbeille"});
+
+  ipcRenderer.once('user:delete', function (event,data) {
+   
+    dispatch({
+      type : "STOP_LOADING_USER"
+  });
+  if(Array.isArray(data)){
+    dispatch({
+        type : "ADD_TO_CORBEILLE_USER",
+        payload : data
+    });
+  }else{
+    dispatch({
+      type : "ERROR_USER",
+      payload :data
+  });
+  }
+});
+    
+
+  }
+}
+
+
+//undo delete
+export const undoDeleteUser = (id) =>{
+  return (dispatch ,getState)=>{
+
+    dispatch({
+      type : "LOADING_USER"
+  })
+  ipcRenderer.send("user:delete", {id, status :  "undo"});
+
+  ipcRenderer.once('user:delete', function (event,data) {
+   
+    dispatch({
+      type : "STOP_LOADING_USER"
+  });
+  if(Array.isArray(data)){
+    dispatch({
+        type : "UNDO_DELETE_USER",
+        payload : data
+    });
+  }else{
+    dispatch({
+      type : "ERROR_USER",
+      payload :data
+  });
+  }
+});
+
   }
 }

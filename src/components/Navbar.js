@@ -128,6 +128,20 @@ class Navbar extends Component {
 
             <span> Statistique</span>
           </NavLink>
+
+
+          <NavLink
+            activeClassName="nav-active"
+            to="/user"
+            className="nav-link"
+          >
+            <span className="nav-link-icon">
+              
+              <AssessmentIcon />
+            </span>
+
+            <span> Utilisateur</span>
+          </NavLink>
         </div>
       </nav>
     );

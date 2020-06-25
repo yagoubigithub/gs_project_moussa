@@ -19,6 +19,7 @@ import Entreprise from './Etreprise';
 
      }
      getData = (openEntrepriseDialog)=>{
+         
          this.setState({openEntrepriseDialog})
      }
      componentWillReceiveProps(nextProps){

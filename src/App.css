@@ -32,7 +32,9 @@
   background-color: forestgreen;
   height : 100%;
 }
-
+iframe{
+  display: none;
+}
 /****************************************************************************/
 /*nav styling*/
 .navbar {

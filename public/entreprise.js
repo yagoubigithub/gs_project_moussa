@@ -8,7 +8,7 @@ const methode = Entreprise.prototype;
 function Entreprise(){
  //Entreprise
 
-  //db.run('DROP TABLE entreprise');
+ // db.run('DROP TABLE entreprise');
 
   db.run(`CREATE TABLE IF NOT EXISTS entreprise (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -39,7 +39,7 @@ function Entreprise(){
         function(err) {
           db.run(
             `
-                INSERT INTO user(username  , password  ) VALUES ('${value.user.username}','${value.user.password}') `,
+                INSERT INTO user(nom , prenom  , username ,  password , status  ) VALUES ('${value.user.nom}','${value.user.prenom}','${value.user.username}','${value.user.password}' , 'admin') `,
             function(err) {
               db.all("SELECT * FROM entreprise ", function(err, rows) {
                 if (err) mainWindow.webContents.send("entreprise:ajouter", err);

@@ -43,6 +43,7 @@ export const getEtreprise = ()=>{
           dispatch({
             type : "STOP_LOADING_ENTREPRISE"
         });
+        console.log(data)
         if(Array.isArray(data)){
           dispatch({
               type : "GET_ONE_ENTREPRISE",
