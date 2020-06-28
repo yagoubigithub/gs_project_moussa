@@ -24,7 +24,7 @@ db.run(`CREATE TABLE IF NOT EXISTS phases_projet (
   //get
   ipcMain.on("phases_projet", (event, value) => {
     if(value.id){
-      db.get(`SELECT * FROM phases_projet WHERE id=${value.id} ORDER BY id`, function (err, result) {
+      db.get(`SELECT * FROM phases_projet WHERE id=${value.id} `, function (err, result) {
         if (err) mainWindow.webContents.send("phases_projet", err);
         mainWindow.webContents.send("phases_projet", result);
       });
@@ -47,13 +47,13 @@ db.run(`CREATE TABLE IF NOT EXISTS phases_projet (
         function (err) {
          
           if (err) mainWindow.webContents.send("phases_projet:ajouter", err);
-          console.log(err)
+         
          
         
           
           db.all( `SELECT * FROM phases_projet ORDER BY id`, function (err, rows) {
             if (err) mainWindow.webContents.send("phases_projet:ajouter", err);
-            console.log(err,rows)
+            
            
             mainWindow.webContents.send("phases_projet:ajouter", rows);
           });
@@ -89,19 +89,40 @@ db.run(`CREATE TABLE IF NOT EXISTS phases_projet (
   });
 
 
+
+  ipcMain.on("phases_projet:delete-multi", (event, value) => {
+    let sql = `UPDATE phases_projet  SET status='${
+      value.status
+    }' WHERE id IN(${value.phases_projets.join(",")})    `;
+    db.run(sql, function (err) {
+
+      if (err) mainWindow.webContents.send("phases_projet:delete-multi", err);
+      db.all( `SELECT * FROM phases_projet ORDER BY id`, function (err, rows) {
+        if (err) mainWindow.webContents.send("phases_projet:delete-multi", err);
+        
+       
+        mainWindow.webContents.send("phases_projet:delete-multi", rows);
+      });
+
+     
+    });
+  });
+
   
   //MODIFIER
   ipcMain.on("phases_projet:modifier", (event, value) => {
-    if (value.nom !== undefined) {
+    if (value.titre !== undefined) {
+      
       db.run(
         `
-               UPDATE phases_projet SET titre='${value.titre}', description='${value.description}' duree=${value.duree} , prix=${value.prix}  WHERE id=${value.id} `,
+               UPDATE phases_projet SET titre='${value.titre}', description='${value.description}' , duree=${value.duree} , prix=${value.prix}  WHERE id=${value.id} `,
         function (err) {
+          console.log(err)
           if (err) mainWindow.webContents.send("phases_projet:modifier", err);
           db.all(`SELECT * FROM phases_projet ORDER BY id`, function (err, rows) {
             if (err)
               mainWindow.webContents.send("phases_projet:modifier", err);
-            mainWindow.webContents.send("phases_projet:modifier", {maitreDouvrages : rows, maitreDouvrage : value});
+            mainWindow.webContents.send("phases_projet:modifier", {phasesProjets : rows, phasesProjet : value});
           });
         }
       );

@@ -16,12 +16,13 @@ import Dialog from '@material-ui/core/Dialog'
 //redux
 import {
   getAllPhasesProjet,
-  addToCorbeille,
-  undoDeletePhasesProjet,
+  addToCorbeilleMultiple,
+  undoDeleteProjetMultiple,
 } from "../store/actions/pahsesProjetAction";
 import { connect } from "react-redux";
 import AjouterPhasesProjet from "./ajouter/AjouterPhasesProjet";
 import PhasesProjetTable from "./tables/PhasesProjetTable";
+import ModfierPhaseProjet from "./modifier/ModfierPhaseProjet";
 
 class PhasesProjet extends Component {
   state = {
@@ -104,18 +105,15 @@ class PhasesProjet extends Component {
         this.handleOpenCloseaddToCorbeilleDialog();
       }
       if (this.state.tab === "phasesProjetCorebeille") {
-        this.state.rowsSelected.map((phasesProjet) => {
-          this.props.undoDeletePhasesProjet(phasesProjet);
-        });
+        this.props.undoDeleteProjetMultiple(this.state.rowsSelected);
         this.setState({ rowsSelected: [] });
       }
     }
   };
   addToCorbeille = () => {
     const rowsSelected = [...this.state.rowsSelected];
-    rowsSelected.map((phasesProjet) => {
-      this.props.addToCorbeille(phasesProjet);
-    });
+    this.props.addToCorbeilleMultiple(rowsSelected)
+ 
     this.setState({ rowsSelected: [] });
   };
 
@@ -160,6 +158,7 @@ class PhasesProjet extends Component {
         </div>
 
         <Route path="/phases_projet/ajouter" component={AjouterPhasesProjet} />
+        <Route path="/phases_projet/modifier/:id" component={ModfierPhaseProjet} />
 
         <Tabs>
           <Tab
@@ -196,8 +195,8 @@ class PhasesProjet extends Component {
 }
 const mapActionToProps = (dispatch) => ({
   getAllPhasesProjet: () => dispatch(getAllPhasesProjet()),
-  addToCorbeille: (id) => dispatch(addToCorbeille(id)),
-  undoDeletePhasesProjet: (id) => dispatch(undoDeletePhasesProjet(id)),
+  addToCorbeilleMultiple: (id) => dispatch(addToCorbeilleMultiple(id)),
+  undoDeleteProjetMultiple: (id) => dispatch(undoDeleteProjetMultiple(id)),
 });
 const mapStateToProps = (state) => ({
   phasesProjets: state.phases_projet.phasesProjets,

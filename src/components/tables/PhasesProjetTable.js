@@ -296,7 +296,7 @@ handleSelectOneChange =  (PhasesProjetSelected) =>{
                   <DeleteIcon className="red" fontSize="small"></DeleteIcon>
                 </IconButton>
                 <IconButton size="small">
-                  <Link to={`/projet/modifier/${props.value}`}><EditIcon className="black" fontSize="small"></EditIcon></Link>
+                  <Link to={`/phases_projet/modifier/${props.value}`}><EditIcon className="black" fontSize="small"></EditIcon></Link>
                 </IconButton>
       
               </div>)

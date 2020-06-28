@@ -38,15 +38,31 @@ const PhasesProjetReducer = (state = initStat, action) =>{
                         phasesProjet : action.payload.phasesProjet,
                         phasesProjetEdited : true
                     }
+                    case 'REMOVE_PHASES_PROJET_EDITED' : 
+                    return {
+                        ...state,
+                        phasesProjetEdited : false,
+                        phasesProjet : undefined
+                    }
                     case 'REMOVE_PHASES_PROJET_CREATED' : 
                     return {
                         ...state,
                         phasesProjetCreated : false
                     }
+                    case 'ADD_TO_CORBEILLE_PROJET' : 
+                    return {
+                        ...state,
+                        phasesProjets : action.payload
+                    }
                     case 'READ_ALL_PHASES_PROJET' :
                         return {
                             ...state,
                             phasesProjets : action.payload
+                        }
+                    case 'READ_ONE_PHASES_PROJET' :
+                        return {
+                            ...state,
+                            phasesProjet : action.payload
                         }
                         case 'ADD_TO_CORBEILLE_PHASES_PROJET' : 
                         return {

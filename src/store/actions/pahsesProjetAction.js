@@ -105,7 +105,7 @@ export const getAllPhasesProjet = () =>{
       dispatch({
         type : "STOP_LOADING_PHASES_PROJET"
     });
-    if(data.nom){
+    if(data.titre){
       dispatch({
           type : "READ_ONE_PHASES_PROJET",
           payload : data
@@ -181,7 +181,7 @@ export const removePhasesProjetCreated = () =>{
       dispatch({
         type : "STOP_LOADING_PHASES_PROJET"
     });
-    if(data){
+    if(data.phasesProjets){
       dispatch({
           type : "MODIFIER_PHASES_PROJET",
           payload : data
@@ -196,3 +196,77 @@ export const removePhasesProjetCreated = () =>{
       
   }
   }
+
+   //projet  
+export const removePhasesProjetEdited = () =>{
+  return (dispatch , getState)=>{
+
+    dispatch({
+      type : "REMOVE_PHASES_PROJET_EDITED"
+  })
+  
+  }
+}
+
+
+  //delete (mettre dans le corbeille)
+  export const addToCorbeilleMultiple = (phases_projets) =>{
+    return (dispatch , getState)=>{
+  
+      dispatch({
+        type : "LOADING_PHASES_PROJET"
+    })
+    ipcRenderer.send("phases_projet:delete-multi", {phases_projets, status :  "corbeille"});
+  
+    ipcRenderer.once('phases_projet:delete-multi', function (event,data) {
+     
+      dispatch({
+        type : "STOP_LOADING_PHASES_PROJET"
+    });
+    if(Array.isArray(data)){
+      dispatch({
+          type : "ADD_TO_CORBEILLE_PROJET",
+          payload : data
+      });
+    }else{
+      dispatch({
+        type : "ERROR_PROJET",
+        payload :data
+    });
+    }
+  });
+      
+  
+    }
+  }
+
+  
+//undo delete
+export const undoDeleteProjetMultiple = (phases_projets) =>{
+  return (dispatch ,getState)=>{
+
+    dispatch({
+      type : "LOADING_PHASES_PROJET"
+  })
+  ipcRenderer.send("phases_projet:delete-multi", {phases_projets, status :  "undo"});
+
+  ipcRenderer.once('phases_projet:delete-multi', function (event,data) {
+   
+    dispatch({
+      type : "STOP_LOADING_PHASES_PROJET"
+  });
+  if(Array.isArray(data)){
+    dispatch({
+        type : "UNDO_DELETE_PHASES_PROJET",
+        payload : data
+    });
+  }else{
+    dispatch({
+      type : "ERROR_PROJET",
+      payload :data
+  });
+  }
+});
+
+  }
+}

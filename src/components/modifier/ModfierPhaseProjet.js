@@ -23,59 +23,71 @@ import LoadingComponent from "../../utils/loadingComponent";
 
 //redux
 import { connect } from "react-redux";
-import {removePhasesProjetCreated,ajouterPahsesProjet} from '../../store/actions/pahsesProjetAction'
- class AjouterPhaseProjet extends Component {
+import { getPhasesProjet,modifierPhasesProjet ,removePhasesProjetEdited} from '../../store/actions/pahsesProjetAction'
+ class ModifierPhaseProjet extends Component {
   state = {
     open: true,
     error  : "",
     success : "",
-
-
-
-
+   
     titre : "",
     description : "",
     duree : 0,
     prix : 0,
-   
   };
 
 
-  componentWillReceiveProps(nextProps){
 
-    if(nextProps.phasesProjetCreated){
-      this.setState({
-        error :  "",
-        success : "Phase de projet a été ajouter",
-
-        titre : "",
-        description : "",
-        duree : 0,
-        prix : 0,
-      })
-    }
+  componentDidMount() {
+    const id = this.props.match.params.id;
+    this.setState({
+        success :"",
+        error : ""
+    })
+    this.props.getPhasesProjet(id)
+   
+  }
+  componentWillUnmount(){
+      this.props.removePhasesProjetEdited()
   }
 
-  ajouter = () =>{
+  componentWillReceiveProps(nextProps){
+
+    if (nextProps.phasesProjet) {
+        this.setState({ ...nextProps.phasesProjet });
+      }
+
+      if(nextProps.phasesProjetEdited){
+          this.setState({
+            ...nextProps.phasesProjet,
+            success :"Phase de projet a été modifier",
+            error : null,
+          })
+      }
+
+  }
+
+  modifier = () =>{
       const data  = {...this.state};
       delete data.open;
       if(data.titre.trim().length  === 0){
-        this.setState({error : "le titre et obligatoire"});
+        this.setState({error : "le Désignation et obligatoire"});
         return;
       }
       
-      this.props.ajouterPahsesProjet(data);
+      this.props.modifierPhasesProjet(data);
 
   }
 
+  
  
-
+ 
     handleChange = (e) =>{
       this.setState({
           [e.target.name] : e.target.value
       })
   }
-
+  
   render() {
     return (
       <Dialog fullScreen open={this.state.open}>
@@ -93,12 +105,13 @@ import {removePhasesProjetCreated,ajouterPahsesProjet} from '../../store/actions
             </Link>
           </Toolbar>
         </AppBar>
-        <div style={{ marginTop: 30, padding: 15 }}></div>
-        <h1 style={{ textAlign: "center" }}>Ajouter Une Phase du projet</h1>
+        <div style={{ marginTop: 50, padding: 15 }}></div>
+        <h1 style={{ textAlign: "center" }}>Modifier Phase du projet</h1>
         <div className="alert error">{this.state.error} </div>
         <div className="alert success">{this.state.success} </div>
         <Grid container spacing={2} style={{ padding: 25 }}>
-          <Grid item xs={12}>
+     
+        <Grid item xs={12}>
             <h3 style={{ margin: 0 }}>Désignation * </h3>
 
             <TextField
@@ -154,13 +167,14 @@ import {removePhasesProjetCreated,ajouterPahsesProjet} from '../../store/actions
      
        
 
-          <Grid item xs={12}>
+ 
+    <Grid item xs={12}>
             <br />
             <Button
               color="primary"
               variant="contained"
               fullWidth
-              onClick={this.ajouter}
+              onClick={this.modifier}
             >
               <SaveIcon />
             </Button>
@@ -173,15 +187,18 @@ import {removePhasesProjetCreated,ajouterPahsesProjet} from '../../store/actions
 
 const mapActionToProps = dispatch => {
     return {
-      ajouterPahsesProjet: data => dispatch(ajouterPahsesProjet(data)),
-      removePhasesProjetCreated: () => dispatch(removePhasesProjetCreated())
+      getPhasesProjet: id => dispatch(getPhasesProjet(id)),
+      modifierPhasesProjet: data => dispatch(modifierPhasesProjet(data)),   
+      removePhasesProjetEdited : () => dispatch(removePhasesProjetEdited())
     };
   };
   const mapStateToProps = state => {
     
     return {
       loading: state.phases_projet.loading,
-      phasesProjetCreated: state.phases_projet.phasesProjetCreated
+      phasesProjetEdited: state.phases_projet.phasesProjetEdited,
+      phasesProjet: state.phases_projet.phasesProjet,
+      
     };
   };
-export default connect(mapStateToProps,mapActionToProps)(AjouterPhaseProjet);
+export default connect(mapStateToProps,mapActionToProps)(ModifierPhaseProjet);
