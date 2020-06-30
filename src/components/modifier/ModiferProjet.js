@@ -1,11 +1,10 @@
 import React, { Component } from "react";
 
 import { Link } from "react-router-dom";
-import { withRouter } from "react-router-dom";
-
 
 //utils
 import { getCurrentDateTime } from "../../utils/methods";
+import { round } from "../../utils/methods";
 
 //Mui
 import Dialog from "@material-ui/core/Dialog";
@@ -13,43 +12,40 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Grid from "@material-ui/core/Grid";
-import MenuItem from '@material-ui/core/MenuItem';
-
+import Select from "react-select";
+import MuiSelect from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import Select from "react-select";
-import MuiSelect from '@material-ui/core/Select';
 
 //icons
+import AddIcon from "@material-ui/icons/Add";
 
 import SaveIcon from "@material-ui/icons/Save";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
-import AddIcon from "@material-ui/icons/Add";
 import LoadingComponent from "../../utils/loadingComponent";
 
 //redux
 import { connect } from "react-redux";
 import {
-  removeProjetCreated,
-  ajouterProjet,
+  getProjet,
+  modifierProjet,
+  removeProjetEdited,
 } from "../../store/actions/projetAction";
 
 import { getAllPhasesProjet } from "../../store/actions/pahsesProjetAction";
 
 //tables
 import MaitreDouvrageTable from "../tables/MaitreDouvrageTable";
-
-class AjouterProjet extends Component {
+class ModifierProjet extends Component {
   state = {
     open: true,
     error: "",
     success: "",
     maitreDouvrageDialog: false,
 
-    buttonReturn : "/projet/",
-
-
+    buttonReturn: "/projet/",
 
     nom: "",
     objet: "",
@@ -58,50 +54,69 @@ class AjouterProjet extends Component {
     delais: 0,
     date_debut: "",
     date_depot: "",
-    prix_totale : 0,
-    unite_remise : "%",
- remise :0,
-tva : 0,
+    prix_totale: 0,
+    unite_remise: "DA",
+    remise: 0,
+    tva: 0,
     prix_totale: 0,
 
-
-    maitreDouvrages: [],
+    maitreDouvrages : [],
     phasesProjetsSelected: [],
+    
   };
+
   componentDidMount() {
-    this.props.getAllPhasesProjet();
-    const buttonReturn = "/"+this.props.match.params.buttonReturn+"/";
-        this.setState({buttonReturn})
-  
+    const id = this.props.match.params.id;
+    this.setState({
+      success: "",
+      error: "",
+    });
+    this.props.getAllPhasesProjet()
+    this.props.getProjet(id);
   }
   componentWillUnmount() {
-    this.props.removeProjetCreated();
+    this.props.removeProjetEdited();
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.projetCreated) {
-      this.setState({
-        error: "",
-        success: "Projet a été ajouter",
-        nom: "",
-        objet: "",
-        adresse: "",
-        maitreDouvrage: undefined,
-        duree_phase: 0,
-        delais: 0,
-        date_debut: "",
-        date_depot: "",
-        unite_remise : "%",
-        prix_totale : 0,
-        remise :0,
-        tva : 0,
-       
-        phasesProjetsSelected: [],
-      });
+    if (nextProps.projet) {
+      this.setState({ ...nextProps.projet});
+     const  phasesProjetsSelected = []
+      nextProps.projet.phasesProjets.map((phase) => {
+        phasesProjetsSelected.push({
+            value: { ...phase },
+            label: phase.titre,
+            className: "react-select-option",
+          });
+        });
+
+        let duree_phase = 0;
+        let prix_totale = 0;
+        
+        this.setState({ phasesProjetsSelected }, () => {
+          if (phasesProjetsSelected !== null) {
+            phasesProjetsSelected.map((phase) => {
+              duree_phase =
+                Number.parseInt(duree_phase) + Number.parseInt(phase.value.duree);
+              prix_totale = prix_totale + (Number.parseFloat(phase.value.prix)  + (Number.parseFloat(phase.value.prix) * this.state.tva)/100);
+            });
+          }
+    
+          this.setState({ duree_phase, prix_totale });
+        });
+      
     }
-    if (nextProps.phasesProjets) {
+    if(nextProps.phasesProjets){
       this.setState({
-        phasesProjets: nextProps.phasesProjets,
+        phasesProjets :  [...nextProps.phasesProjets]
+      })
+    }
+
+    if (nextProps.projetEdited) {
+      this.setState({
+        ...nextProps.projet,
+        success: "projet a été modifier",
+        error: null,
       });
     }
   }
@@ -109,6 +124,7 @@ tva : 0,
   handleSelectChange = (phasesProjetsSelected) => {
     let duree_phase = 0;
     let prix_totale = 0;
+    
     this.setState({ phasesProjetsSelected }, () => {
       if (phasesProjetsSelected !== null) {
         phasesProjetsSelected.map((phase) => {
@@ -121,7 +137,7 @@ tva : 0,
       this.setState({ duree_phase, prix_totale });
     });
   };
-  ajouter = () => {
+  modifier = () => {
     const d = { ...this.state };
     if (d.nom.trim().length === 0) {
       this.setState({ error: "le champ nom et obligatoire *" });
@@ -135,17 +151,14 @@ tva : 0,
       this.setState({ error: "le champ Phase du projet et obligatoire *" });
       return;
     }
-    if(d.unite_remise === "%" && d.remise > 100){
-      this.setState({ error: "le champ Remise et superieur de 100%" }); 
+    if (d.unite_remise === "%" && d.remise > 100) {
+      this.setState({ error: "le champ Remise et superieur de 100%" });
       return;
     }
-   
-   
-   const remise = this.calculRemise(d.prix_totale,d.tva ,d.remise, d.unite_remise);
-
 
     const data = {
-    
+      id: d.id,
+
       nom: d.nom,
       objet: d.objet,
       maitreDouvrage_id: d.maitreDouvrage.id,
@@ -155,30 +168,15 @@ tva : 0,
       delais: d.delais,
       date_debut: d.date_debut,
       date_depot: d.date_depot,
-      prix_totale : d.prix_totale - d.remise,
-      remise : remise,
-      tva : d.tva,
-      date_projet : getCurrentDateTime(new Date().getTime())
+      prix_totale: d.prix_totale - d.remise,
+      remise: d.remise,
+      unite_remise: d.unite_remise,
+      tva: d.tva,
+      date_projet: getCurrentDateTime(new Date().getTime()),
     };
 
-   
-      this.props.ajouterProjet(data);
-      
-    
-    
+    this.props.modifierProjet(data);
   };
-
-  
-  calculRemise = (total_net, tva,remise, unite_remise) =>{
-
-    if(unite_remise === "%"){
-      return parseFloat(remise*(total_net  + parseFloat(tva*total_net/100))/100)
-    }else{
-
-      return remise
-    }
-
-  }
 
   handleChange = (e) => {
     this.setState({
@@ -236,8 +234,10 @@ tva : 0,
       unite_remise : e.target.value
     })
   }
+
   render() {
     const options = [];
+    
     if (this.state.phasesProjets) {
       this.state.phasesProjets.map((phase) => {
         options.push({
@@ -247,7 +247,7 @@ tva : 0,
         });
       });
     }
-
+   
     return (
       <Dialog fullScreen open={this.state.open}>
         <LoadingComponent
@@ -255,7 +255,6 @@ tva : 0,
             this.props.loading !== undefined ? this.props.loading : false
           }
         />
-
         <Dialog
           open={this.state.maitreDouvrageDialog}
           maxWidth="lg"
@@ -279,7 +278,13 @@ tva : 0,
 
         <AppBar className="bg-dark">
           <Toolbar style={{ display: "flax", justifyContent: "space-between" }}>
-            <Link to={this.state.buttonReturn !== undefined ? this.state.buttonReturn : "/projet/"}>
+            <Link
+              to={
+                this.state.buttonReturn !== undefined
+                  ? this.state.buttonReturn
+                  : "/projet/"
+              }
+            >
               <IconButton onClick={this.handleClose} style={{ color: "white" }}>
                 <ArrowBackIcon />
               </IconButton>
@@ -287,7 +292,7 @@ tva : 0,
           </Toolbar>
         </AppBar>
         <div style={{ marginTop: 50, padding: 15 }}></div>
-        <h1 style={{ textAlign: "center" }}>Ajouter Projet</h1>
+        <h1 style={{ textAlign: "center" }}>Modifier Projet</h1>
         <div className="alert error">{this.state.error} </div>
         <div className="alert success">{this.state.success} </div>
         <Grid container spacing={2} style={{ padding: 25 }}>
@@ -354,51 +359,57 @@ tva : 0,
               options={options}
               fullWidth
               isMulti
-            />
-
         
-              <h3>La durée des phases : {this.state.duree_phase} (jours)</h3>
-            <h3>Total net : {this.state.prix_totale} (DA)</h3>
-           
-          </Grid>
-          
-          <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}>Remise Sur le Totale <small><span className="red">(Unité : {this.state.unite_remise} )</span></small></h3>
-            {
-              this.state.unite_remise === "DA"? 
-              
-              <TextField
-              type="number"
-              placeholder="Remise"
-              value={this.state.remise}
-              name="remise"
-              variant="outlined"
-              onChange={this.handleChange}
-              fullWidth
             />
-              :   <TextField
-              type="number"
-              placeholder="Remise"
-              value={this.state.remise}
-              name="remise"
-              variant="outlined"
-              onChange={this.handleChange}
-              fullWidth
-              InputProps={{inputProps : {min  : 0, step : 1, max : 100 }}}
-            />
-            }
-            
 
-<MuiSelect value={this.state.unite_remise} onChange={this.handleUniteRemiseChange}>
-            <MenuItem value={"%"}>%</MenuItem>
-          <MenuItem value={"DA"}>DA</MenuItem>
+            <h3>La durée des phases : {this.state.duree_phase} (jours)</h3>
+            <h3>Total net : {this.state.prix_totale} (DA)</h3>
+          </Grid>
+
+          <Grid item xs={6}>
+            <h3 style={{ margin: 0 }}>
+              Remise Sur le Totale{" "}
+              <small>
+                <span className="red">
+                  (Unité : {this.state.unite_remise} )
+                </span>
+              </small>
+            </h3>
+            {this.state.unite_remise === "DA" ? (
+              <TextField
+                type="number"
+                placeholder="Remise"
+                value={ round(Number.parseFloat(this.state.remise))}
+                name="remise"
+                variant="outlined"
+                onChange={this.handleChange}
+                fullWidth
+              />
+            ) : (
+              <TextField
+                type="number"
+                placeholder="Remise"
+                value={ round(Number.parseFloat(this.state.remise))}
+                name="remise"
+                variant="outlined"
+                onChange={this.handleChange}
+                fullWidth
+                InputProps={{ inputProps: { min: 0, step: 1, max: 100 } }}
+              />
+            )}
+
+            <MuiSelect
+              value={this.state.unite_remise}
+              onChange={this.handleUniteRemiseChange}
+            >
+              <MenuItem value={"%"}>%</MenuItem>
+              <MenuItem value={"DA"}>DA</MenuItem>
             </MuiSelect>
           </Grid>
-         
 
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}> TVA (%)</h3>
-           
+
             <TextField
               name="tva"
               value={this.state.tva}
@@ -406,14 +417,13 @@ tva : 0,
               type="number"
               variant="outlined"
               fullWidth
-              InputProps={{inputProps : {min  : 0, step : 1 , max : 100}}}
+              InputProps={{ inputProps: { min: 0, step: 1, max: 100 } }}
             />
           </Grid>
 
-
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}> délais de Maitre d’ouvrage (jours)</h3>
-           
+
             <TextField
               name="delais"
               value={this.state.delais}
@@ -421,7 +431,7 @@ tva : 0,
               type="number"
               variant="outlined"
               fullWidth
-              InputProps={{inputProps : {min  : 0, step : 1 }}}
+              InputProps={{ inputProps: { min: 0, step: 1 } }}
             />
           </Grid>
           <Grid item xs={6}>
@@ -454,7 +464,7 @@ tva : 0,
               color="primary"
               variant="contained"
               fullWidth
-              onClick={this.ajouter}
+              onClick={this.modifier}
             >
               <SaveIcon />
             </Button>
@@ -467,17 +477,19 @@ tva : 0,
 
 const mapActionToProps = (dispatch) => {
   return {
-    ajouterProjet: (data) => dispatch(ajouterProjet(data)),
-    removeProjetCreated: () => dispatch(removeProjetCreated()),
-    getAllPhasesProjet: () => dispatch(getAllPhasesProjet()),
+    getProjet: (id) => dispatch(getProjet(id)),
+    modifierProjet: (data) => dispatch(modifierProjet(data)),
+    removeProjetEdited: () => dispatch(removeProjetEdited()),
+    getAllPhasesProjet :() => dispatch(getAllPhasesProjet())
   };
 };
 const mapStateToProps = (state) => {
   return {
     loading: state.projet.loading,
-    projetCreated: state.projet.projetCreated,
+    projetEdited: state.projet.projetEdited,
+    projet: state.projet.projet,
+    phasesProjets : state.phases_projet.phasesProjets,
     maitreDouvrages: state.maitre_douvrage.maitreDouvrages,
-    phasesProjets: state.phases_projet.phasesProjets,
   };
 };
-export default connect(mapStateToProps, mapActionToProps)(withRouter(AjouterProjet));
+export default connect(mapStateToProps, mapActionToProps)(ModifierProjet);

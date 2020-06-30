@@ -337,7 +337,7 @@ function ReturnAllEtatDuFacture  () {
   const factures = [];
   return new Promise((resolve, reject) => {
     db.all(
-      `SELECT f.*,p.paye , p.date_paye, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM facture f   JOIN maitre_douvrage m ON m.id=f.maitreDouvrage_id LEFT JOIN paye p ON f.id=p.facture_id  ORDER BY f.id DESC `,
+      `SELECT f.*,p.paye paiement , p.date_paye, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM facture f   JOIN maitre_douvrage m ON m.id=f.maitreDouvrage_id  LEFT JOIN paye p ON f.id=p.facture_id  ORDER BY f.id DESC `,
       function (err, factures_rows) {
        
         if (err) reject(err);

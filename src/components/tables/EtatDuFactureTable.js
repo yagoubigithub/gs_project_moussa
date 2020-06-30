@@ -367,7 +367,46 @@ class EtatDuFactureTable extends Component {
           </div>
         ),
       },
+      {
+        Header: " paiement",
+        accessor: "paiement",
+        width: 250,
+        filterMethod: (filter, row) => {
+            const regx = `.*${filter.value}.*`;
+            return row[filter.id].match(regx);
+          },
+        Cell: (props) => (
+          <div  className={`cell ${
+            this.isPaye(
+              props.original.paye,
+              props.original.prix_totale,
+              props.original.tva,
+              props.original.remise
+            )
+              ? "bg-green"
+              : ""
+          }`}>
+            {props.value !== null
+              ? round(Number.parseFloat(props.value)).toString()
+              : ""}
+          </div>
+        ),
+        Filter: ({ filter, onChange }) => (
+          <div className="searchtable-container">
+            <label htmlFor="date-input-date_payement">
+              <SearchIcon className="searchtable-icon" />
+            </label>
 
+            <input
+              type="date"
+              id="date-input-date_payement"
+              className="searchtable-input"
+              onChange={(event) => onChange(event.target.value)}
+              value={filter ? filter.value : new Date().toDateString()}
+            />
+          </div>
+        ),
+      },
       {
         Header: "Date de paiement",
         accessor: "date_paye",
@@ -387,21 +426,21 @@ class EtatDuFactureTable extends Component {
               ? "bg-green"
               : ""
           }`}>
-            {props.value !== "undefined" ? props.value.toString().split('T')[0] : ""}
+            { props.value !== null ? props.value.toString().split('T')[0] : ""}
           </div>
         ),
         Filter: ({ filter, onChange }) => (
           <div className="searchtable-container">
-            <label htmlFor="date-input-date_payement">
+            <label htmlFor="impaye-input-rg">
               <SearchIcon className="searchtable-icon" />
             </label>
 
             <input
-              type="date"
-              id="date-input-date_payement"
+              type="text"
+              id="impaye-input-rg"
               className="searchtable-input"
               onChange={(event) => onChange(event.target.value)}
-              value={filter ? filter.value : new Date().toDateString()}
+              value={filter ? filter.value : ""}
             />
           </div>
         ),

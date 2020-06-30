@@ -43,11 +43,23 @@ const ProjetReducer = (state = initStat, action) =>{
                         ...state,
                         projetCreated : false
                     }
+                    case 'REMOVE_PROJET_EDITED':
+                        return{
+                            ...state,
+                            projetEdited : false,
+                            projet : undefined
+                        }
                     case 'READ_ALL_PROJET' :
                         return {
                             ...state,
                             projets : action.payload
                         }
+                    case 'READ_ONE_PROJET' : 
+                    return {
+                        ...state,
+                        projet : action.payload,
+                        error : null,
+                    }
                     case 'UNDO_DELETE_PROJET' : 
                     return {
                         ...state,

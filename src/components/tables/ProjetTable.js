@@ -330,7 +330,7 @@ class ProjetTable extends Component {
                   <DeleteIcon className="red" fontSize="small"></DeleteIcon>
                 </IconButton>
                 <IconButton size="small">
-                  <Link to={`/projet/modifier/${props.value}`}>
+                  <Link to={`/projet/modifier/${this.props.buttonReturn}/${props.value}`}>
                     <EditIcon className="black" fontSize="small"></EditIcon>
                   </Link>
                 </IconButton>

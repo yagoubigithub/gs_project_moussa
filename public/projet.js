@@ -6,8 +6,8 @@ var os = require("os");
 const methode = Projet.prototype;
 
 function Projet() {
-  // db.run('DROP TABLE projet');
-  //  db.run('DROP TABLE phases_projets');
+   //db.run('DROP TABLE projet');
+   // db.run('DROP TABLE phases_projets');
 
   db.run(`CREATE TABLE IF NOT EXISTS projet (
     id INTEGER PRIMARY KEY AUTOINCREMENT ,
@@ -36,11 +36,35 @@ function Projet() {
   ipcMain.on("projet", (event, value) => {
     if (value.id) {
       db.get(
-        "SELECT p.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM projet p  JOIN maitre_douvrage m ON m.id=p.maitreDouvrage_id WHERE id=" +
+        "SELECT p.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM projet p  JOIN maitre_douvrage m ON m.id=p.maitreDouvrage_id WHERE p.id=" +
           value.id,
         function (err, result) {
+          
           if (err) mainWindow.webContents.send("projet", err);
-          mainWindow.webContents.send("projet", result);
+          db.get(`SELECT * FROM  maitre_douvrage WHERE id=${result.maitreDouvrage_id}` , (err,maitreDouvrage)=>{
+            if(err) mainWindow.webContents.send("projet", err);
+            db.all(`SELECT * FROM phases_projets WHERE projet_id=${result.id}`, (err,rows)=>{
+              if (err) mainWindow.webContents.send("projet", err);
+  
+              if(rows.length !== 0){
+                let sql = 'SELECT * FROM phases_projet WHERE '
+                sql = sql +  rows.map(phase=>  {  return `id=${phase.phases_projet_id}` }).join(' OR ')
+                
+               
+                db.all(sql, (err, rows) =>{
+                  if(err)   mainWindow.webContents.send("projet", err);
+                  mainWindow.webContents.send("projet", {...result,phasesProjets : rows,maitreDouvrage});
+                })
+              }else{
+                mainWindow.webContents.send("projet", {...result,phasesProjets : [],maitreDouvrage});
+              }
+             
+             
+            });
+          })
+
+          
+        
         }
       );
     } else {
@@ -60,76 +84,89 @@ function Projet() {
         //add phase de projet
         const projet_id = this.lastID;
 
-        let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , status) VALUES   `;
+       
 
-        value.phasesProjetsSelected.forEach((phase) => {
-          const placeholder = ` (${projet_id},'${phase.value}' , 'undo') ,`;
-          sql = sql + placeholder;
-        });
+        new Promise((resolve, reject)=>{
+          let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , status) VALUES   `;
+          let count = 0;
+          value.phasesProjetsSelected.forEach((phase) => {
+          
+            const placeholder = ` (${projet_id},${phase.value.id} , 'undo') ,`;
+            sql = sql + placeholder;
+            count++;
 
-        sql = sql.slice(0, sql.lastIndexOf(",") - 1);
-
-        db.run(sql, function (err) {
-          if (err) mainWindow.webContents.send("projet:ajouter", err);
-
-          db.run(
-            `INSERT INTO devis(projet_id  ,nom , objet , adresse  , duree_phase , prix_totale , remise, date_devis ,  maitreDouvrage_id ,  tva , status) VALUES (${projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_devis}' , ${value.maitreDouvrage_id} , ${value.tva}  , 'undo') `,
-            function (err) {
-              if (err) mainWindow.webContents.send("projet:ajouter", err);
-
-              //add phase de devis
-              const devis_id = this.lastID;
-              let sql = `INSERT INTO devis_phases_projets(devis_id , phases_devis_id , status) VALUES   `;
-
-              value.phasesProjetsSelected.forEach((phase) => {
-                const placeholder = ` (${devis_id},'${phase.value.id}' , 'undo') ,`;
-                sql = sql + placeholder;
-              });
-
-              sql = sql.slice(0, sql.lastIndexOf(",") - 1);
-
-              db.run(sql, function (err) {
+            if(count === value.phasesProjetsSelected.length) {resolve(sql)}
+          })
+        }).then((sql)=>{
+         
+          sql = sql.slice(0, sql.lastIndexOf(",") - 1);
+          console.log(sql)
+          db.run(sql, function (err) {
+            if (err) mainWindow.webContents.send("projet:ajouter", err);
+            console.log(err)
+  
+            db.run(
+              `INSERT INTO devis(projet_id  ,nom , objet , adresse  , duree_phase , prix_totale , remise, date_devis ,  maitreDouvrage_id ,  tva , status) VALUES (${projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_projet}' , ${value.maitreDouvrage_id} , ${value.tva}  , 'undo') `,
+              function (err) {
                 if (err) mainWindow.webContents.send("projet:ajouter", err);
+  
+                //add phase de devis
+                const devis_id = this.lastID;
+                let sql = `INSERT INTO devis_phases_projets(devis_id , phases_devis_id , status) VALUES   `;
+  
+                value.phasesProjetsSelected.forEach((phase) => {
+                  const placeholder = ` (${devis_id},'${phase.value.id}' , 'undo') ,`;
+                  sql = sql + placeholder;
+                });
+  
+                sql = sql.slice(0, sql.lastIndexOf(",") - 1);
+  
+                db.run(sql, function (err) {
+                  if (err) mainWindow.webContents.send("projet:ajouter", err);
+  
+                  //ajouter facture
+                  db.run(
+                    `INSERT INTO facture(projet_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, date_facture ,  maitreDouvrage_id , tva , status) VALUES (${projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_projet}' , ${value.maitreDouvrage_id} , ${value.tva} , 'undo') `,
+                    function (err) {
+                      if (err) mainWindow.webContents.send("projet:ajouter", err);
+  
+                      //add phase de facture
+                      const facture_id = this.lastID;
+  
+                      let sql = `INSERT INTO facture_phases_projets(facture_id , phases_facture_id , status) VALUES   `;
+  
+                      /*phases_facture_id:
+                       */
+  
+                      value.phasesProjetsSelected.forEach((phase) => {
+                        const placeholder = ` (${facture_id},'${phase.value.id}' , 'undo') ,`;
+                        sql = sql + placeholder;
+                      });
+  
+                      sql = sql.slice(0, sql.lastIndexOf(",") - 1);
+  
+                      db.run(sql, function (err) {
+                        if (err)
+                          mainWindow.webContents.send("projet:ajouter", err);
+  
+                        ReturnAllProject()
+                          .then((projets) =>
+                            mainWindow.webContents.send("projet:ajouter", projets)
+                          )
+                          .catch((err) =>
+                            mainWindow.webContents.send("projet:ajouter", err)
+                          );
+                      });
+                    }
+                  );
+                });
+              }
+            );
+          });
+        })
+      
 
-                //ajouter facture
-                db.run(
-                  `INSERT INTO facture(projet_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, date_facture ,  maitreDouvrage_id , tva , status) VALUES (${projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_projet}' , ${value.maitreDouvrage_id} , ${value.tva} , 'undo') `,
-                  function (err) {
-                    if (err) mainWindow.webContents.send("projet:ajouter", err);
-
-                    //add phase de facture
-                    const facture_id = this.lastID;
-
-                    let sql = `INSERT INTO facture_phases_projets(facture_id , phases_facture_id , status) VALUES   `;
-
-                    /*phases_facture_id:
-                     */
-
-                    value.phasesProjetsSelected.forEach((phase) => {
-                      const placeholder = ` (${facture_id},'${phase.value.id}' , 'undo') ,`;
-                      sql = sql + placeholder;
-                    });
-
-                    sql = sql.slice(0, sql.lastIndexOf(",") - 1);
-
-                    db.run(sql, function (err) {
-                      if (err)
-                        mainWindow.webContents.send("projet:ajouter", err);
-
-                      ReturnAllProject()
-                        .then((projets) =>
-                          mainWindow.webContents.send("projet:ajouter", projets)
-                        )
-                        .catch((err) =>
-                          mainWindow.webContents.send("projet:ajouter", err)
-                        );
-                    });
-                  }
-                );
-              });
-            }
-          );
-        });
+       
       }
     );
 

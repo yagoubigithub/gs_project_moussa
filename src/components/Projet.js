@@ -17,11 +17,12 @@ import {
   getAllProjet,
   addToCorbeilleMultiple,
   undoDeleteProjetMultiple,
+  
 } from "../store/actions/projetAction";
 import { connect } from "react-redux";
 import AjouterProjet from "./ajouter/AjouterProjet";
 import ProjetTable from "./tables/ProjetTable";
-import EtatDeProjetTable from "./tables/EtatDeProjetTable";
+import ModifierProjet from "./modifier/ModiferProjet";
 
 class Projet extends Component {
   state = {
@@ -162,6 +163,8 @@ class Projet extends Component {
         </Dialog>
         <Route path="/projet/ajouter/:buttonReturn" component={AjouterProjet} />
 
+        <Route path="/projet/modifier/:buttonReturn/:id" component={ModifierProjet} />
+
 
         <Tabs>
           <Tab
@@ -175,6 +178,7 @@ class Projet extends Component {
               rowsSelected={this.state.rowsSelected}
               sendData={this.getData}
               rows={this.state.projets}
+              buttonReturn="projet"
             />
           </Tab>
         
@@ -191,6 +195,7 @@ class Projet extends Component {
               sendData={this.getData}
               rows={this.state.projetCorebeille}
               type={"corbeille"}
+              buttonReturn="projet"
             />
           </Tab>
         </Tabs>

@@ -2,6 +2,10 @@ import React, { Component } from "react";
 import logo from "../../utils/logo";
 import {floatToDrahem} from 'drahem'
 
+
+//utils
+import { round } from "../../utils/methods";
+
 export default class PageFacture extends Component {
   state = {
     row: {},
@@ -126,62 +130,37 @@ export default class PageFacture extends Component {
             </div>
             <div className="page-col " style={{flex : 4}}>
           
-              <h5>Total net : {this.props.row[0].prixTotale} DA</h5>
+              <h5>Total net : {round(this.props.row[0].prixTotale)} DA</h5>
 
-              <h5>Total TVA : {(Number.parseFloat(this.props.row[0].prixTotale) * this.props.row[0].facture["tva"]) / 100} DA</h5>
+              <h5>Total TVA : {round((Number.parseFloat(this.props.row[0].prixTotale) * this.props.row[0].facture["tva"]) / 100)} DA</h5>
             
             
-              <h5>Total TTC : {(Number.parseFloat(this.props.row[0].prixTotale))  + ((Number.parseFloat(this.props.row[0].prixTotale) * this.props.row[0].facture["tva"]) / 100)} DA</h5>
+              <h5>Total TTC : {round((Number.parseFloat(this.props.row[0].prixTotale))  + ((Number.parseFloat(this.props.row[0].prixTotale) * this.props.row[0].facture["tva"]) / 100))} DA</h5>
 
-              {this.props.row[0].facture.unite_remise === "DA" ?
               
-              <h5>Remise sur le Total : {this.props.row[0].facture.remise} DA
+              
+              <h5>Remise sur le Total : {round(this.props.row[0].facture.remise)} DA
            </h5>
-               : <h5>Remise sur le Total : {(Number.parseFloat(this.props.row[0].prixTotale) * 
-                Number.parseFloat(this.props.row[0].facture.remise) / 100)} DA
-           </h5>}
+              
            <hr />
 
-{
-  this.props.row[0].facture.unite_remise === "DA"
-  ?
-  <h5>
-                Total a Payer :{" "}
-                {(Number.parseFloat(this.props.row[0].prixTotale))  + ((Number.parseFloat(this.props.row[0].prixTotale) * this.props.row[0].facture["tva"]) / 100) -
-                  Number.parseFloat(this.props.row[0].facture.remise)}{" "}
-                DA
-              </h5>
-  :
 
   <h5>
                 Total a Payer :{" "}
-                {(Number.parseFloat(this.props.row[0].prixTotale))  + ((Number.parseFloat(this.props.row[0].prixTotale) * this.props.row[0].facture["tva"]) / 100) -
-                  (Number.parseFloat(this.props.row[0].prixTotale) * 
-                Number.parseFloat(this.props.row[0].facture.remise) / 100)}{" "}
+                {round((Number.parseFloat(this.props.row[0].prixTotale))  + ((Number.parseFloat(this.props.row[0].prixTotale) * this.props.row[0].facture["tva"]) / 100) -
+                  Number.parseFloat(this.props.row[0].facture.remise))}
                 DA
               </h5>
-}
+  
 
-{
-  this.props.row[0].facture.unite_remise === "DA"
-  ?
+
   <h6>
                 Total a Payer :{" "}
                 {floatToDrahem((Number.parseFloat(this.props.row[0].prixTotale))  + ((Number.parseFloat(this.props.row[0].prixTotale) * this.props.row[0].facture["tva"]) / 100) -
                   Number.parseFloat(this.props.row[0].facture.remise))}
                 
               </h6>
-  :
-
-  <h6>
-                Total a Payer :{" "}
-                {floatToDrahem((Number.parseFloat(this.props.row[0].prixTotale))  + ((Number.parseFloat(this.props.row[0].prixTotale) * this.props.row[0].facture["tva"]) / 100) -
-                  (Number.parseFloat(this.props.row[0].prixTotale) * 
-                Number.parseFloat(this.props.row[0].facture.remise) / 100))}
-                
-              </h6>
-}
-
+ 
              
    
             </div>

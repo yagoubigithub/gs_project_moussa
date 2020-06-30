@@ -96,7 +96,39 @@ export const addToCorbeilleMultiple = (projets) =>{
 }
 
   
-export const getAllProjet = () =>{
+export const getProjet = (id) =>{
+    return (dispatch ,getState)=>{
+  
+      
+      dispatch({
+        type : "LOADING_PROJET"
+    })
+    ipcRenderer.send("projet", {id});
+  
+    
+    ipcRenderer.once('projet', function (event,data) {
+      dispatch({
+        type : "STOP_LOADING_PROJET"
+    });
+   
+    if(data.id !== undefined){
+      dispatch({
+          type : "READ_ONE_PROJET",
+          payload : data
+      });
+    }else{
+      dispatch({
+        type : "ERROR_PROJET",
+        payload :data
+    });
+    }
+  });
+
+    }
+  }
+
+  
+  export const getAllProjet = () =>{
     return (dispatch ,getState)=>{
   
       
@@ -128,6 +160,7 @@ export const getAllProjet = () =>{
   }
 
   
+
 //undo delete
 export const undoDeleteProjet = (id) =>{
     return (dispatch ,getState)=>{
@@ -202,6 +235,18 @@ export const removeProjetCreated = () =>{
   }
 }
 
+  //projet  
+  export const removeProjetEdited = () =>{
+    return (dispatch , getState)=>{
+  
+      dispatch({
+        type : "REMOVE_PROJET_EDITED"
+    })
+    
+    }
+  }
+  
+  
 
   export const modifierProjet = (data) =>{
     return (dispatch ,getState)=>{
