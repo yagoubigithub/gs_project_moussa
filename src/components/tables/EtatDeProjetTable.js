@@ -442,7 +442,7 @@ class EtatDeProjet extends Component {
                   <DeleteIcon className="red" fontSize="small"></DeleteIcon>
                 </IconButton>
                 <IconButton size="small">
-                  <Link to={`/projet/modifier/${props.value}`}>
+                  <Link to={`/etat_projet/modifier/${this.props.buttonReturn}/${props.value}`}>
                     <EditIcon className="black" fontSize="small"></EditIcon>
                   </Link>
                 </IconButton>

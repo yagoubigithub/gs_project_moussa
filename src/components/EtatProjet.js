@@ -20,8 +20,8 @@ import {
 } from "../store/actions/projetAction";
 import { connect } from "react-redux";
 import AjouterProjet from "./ajouter/AjouterProjet";
-import ProjetTable from "./tables/ProjetTable";
 import EtatDeProjetTable from "./tables/EtatDeProjetTable";
+import ModifierProjet from "./modifier/ModiferProjet";
 
 class EtatProjet extends Component {
   state = {
@@ -144,11 +144,11 @@ class EtatProjet extends Component {
           }
         />
         <div className="sous-nav-container">
-          <NavLink onClick={this.props.getAllProjet} to="/projet">
+          <NavLink onClick={this.props.getAllProjet} to="/etat_projet">
             <button className="btn btn-nav">Actualisé</button>
           </NavLink>
 
-          <NavLink to="/projet/ajouter/etat_projet">
+          <NavLink to="/etat_projet/ajouter/etat_projet">
             <button className="btn btn-nav">Ajouter</button>
           </NavLink>
 
@@ -174,6 +174,12 @@ class EtatProjet extends Component {
             Cancel
           </button>
         </Dialog>
+
+
+        <Route path="/etat_projet/ajouter/:buttonReturn" component={AjouterProjet} />
+
+<Route path="/etat_projet/modifier/:buttonReturn/:id" component={ModifierProjet} />
+
        
         <Tabs>
           <Tab
@@ -187,6 +193,7 @@ class EtatProjet extends Component {
               rowsSelected={this.state.rowsSelected}
               sendData={this.getData}
               rows={this.state.projets}
+              buttonReturn="etat_projet"
             />
           </Tab>
 
@@ -201,7 +208,7 @@ class EtatProjet extends Component {
               rowsSelected={this.state.rowsSelected}
               sendData={this.getData}
               rows={this.state.projetRetards}
-              
+              buttonReturn="etat_projet"
             />
           </Tab>
           <Tab
@@ -217,6 +224,7 @@ class EtatProjet extends Component {
               sendData={this.getData}
               rows={this.state.projetCorebeille}
               type={"corbeille"}
+              buttonReturn="etat_projet"
             />
           </Tab>
         </Tabs>
@@ -225,7 +233,7 @@ class EtatProjet extends Component {
   }
 }
 const mapActionToProps = (dispatch) => ({
-  getAllProjet: () => dispatch(getAllProjet()),
+  getAllProjet : () => dispatch(getAllProjet()),
   addToCorbeille: (id) => dispatch(addToCorbeille(id)),
   undoDeleteProjet: (id) => dispatch(undoDeleteProjet(id)),
 });

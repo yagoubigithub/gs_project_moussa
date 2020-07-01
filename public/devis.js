@@ -28,6 +28,10 @@ function Devis() {
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   devis_id INTEGER NOT NULL,
   phases_devis_id INTEGER NOT NULL,
+  titre TEXT,
+  description TEXT,
+  duree INTEGER ,
+  prix REAL ,
  status TEXT
 )`);
 

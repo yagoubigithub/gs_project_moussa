@@ -5,9 +5,9 @@ const mainWindow = require("./mainWindow");
 const methode = Facture.prototype;
 
 function Facture() {
-// db.run('DROP TABLE facture');
-// db.run('DROP TABLE facture_phases_projets');
-//  db.run('DROP TABLE paye');
+ //db.run('DROP TABLE facture');
+/// db.run('DROP TABLE facture_phases_projets');
+ // db.run('DROP TABLE paye');
 
   db.run(`CREATE TABLE IF NOT EXISTS facture (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,6 +28,10 @@ function Facture() {
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   facture_id INTEGER NOT NULL,
   phases_facture_id INTEGER NOT NULL,
+  titre TEXT,
+  description TEXT,
+  duree INTEGER ,
+  prix REAL ,
  status TEXT
 )`);
 
@@ -153,6 +157,7 @@ function Facture() {
         
         let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , status) VALUES   `;
 
+        
         value.phasesProjetsSelected.forEach((phase) => {
           const placeholder = ` (${projet_id},'${phase.value}' , 'undo') ,`;
           sql = sql + placeholder;
@@ -171,12 +176,12 @@ function Facture() {
       
               //add phase de devis
               const devis_id = this.lastID;
-              let sql = `INSERT INTO devis_phases_projets(devis_id , phases_devis_id , status) VALUES   `;
-      
-              
+              let sql = `INSERT INTO devis_phases_projets(devis_id , phases_devis_id , titre ,description , duree , prix , status) VALUES   `;
             
               value.phasesProjetsSelected.forEach((phase) => {
-                const placeholder = ` (${devis_id},'${phase.value.id}' , 'undo') ,`;
+
+                const placeholder = ` (${devis_id},'${phase.value.id}' ,  '${phase.value.titre}' , '${phase.value.description}' , ${phase.value.duree} , ${phase.value.prix} , 'undo') ,`;
+
                 sql = sql + placeholder;
               });
       
@@ -203,13 +208,13 @@ function Facture() {
       function (err) {
         if (err) mainWindow.webContents.send("facture:ajouter", err);
 
-        let sql = `INSERT INTO facture_phases_projets(facture_id , phases_facture_id , status) VALUES   `;
-
+        let sql = `INSERT INTO facture_phases_projets(facture_id , phases_facture_id , titre ,description , duree , prix , status) VALUES   `;
         /*phases_facture_id:
          */
 
         value.phasesProjetsSelected.forEach((phase) => {
-          const placeholder = ` (${facture_id},'${phase.value.id}' , 'undo') ,`;
+          const placeholder = ` (${facture_id},'${phase.value.id}' ,  '${phase.value.titre}' , '${phase.value.description}' , ${phase.value.duree} , ${phase.value.prix} , 'undo') ,`;
+
           sql = sql + placeholder;
         });
 

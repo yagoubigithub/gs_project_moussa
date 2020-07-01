@@ -45,7 +45,7 @@ class ModifierProjet extends Component {
     success: "",
     maitreDouvrageDialog: false,
 
-    buttonReturn: "/projet/",
+    buttonReturn: "projet",
 
     nom: "",
     objet: "",
@@ -67,9 +67,12 @@ class ModifierProjet extends Component {
 
   componentDidMount() {
     const id = this.props.match.params.id;
+    const buttonReturn = this.props.match.params.buttonReturn;
+    
     this.setState({
       success: "",
       error: "",
+      buttonReturn
     });
     this.props.getAllPhasesProjet()
     this.props.getProjet(id);
@@ -280,9 +283,7 @@ class ModifierProjet extends Component {
           <Toolbar style={{ display: "flax", justifyContent: "space-between" }}>
             <Link
               to={
-                this.state.buttonReturn !== undefined
-                  ? this.state.buttonReturn
-                  : "/projet/"
+              "/"  + this.state.buttonReturn 
               }
             >
               <IconButton onClick={this.handleClose} style={{ color: "white" }}>
