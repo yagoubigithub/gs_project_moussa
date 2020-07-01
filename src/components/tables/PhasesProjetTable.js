@@ -60,7 +60,7 @@ class PhasesProjetTable extends Component {
   }
 
  
-  componentWillUnmount(){
+  componentWillUnmount = () =>{
     switch(this.props.type){
       case "choose-one":
           const PhasesProjetSelected = {...this.state.PhasesProjetSelected};
