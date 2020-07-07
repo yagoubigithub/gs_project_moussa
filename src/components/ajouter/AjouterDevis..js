@@ -15,10 +15,10 @@ import Grid from "@material-ui/core/Grid";
 
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import Select from "react-select";
 import MenuItem from '@material-ui/core/MenuItem';
 
 import MuiSelect from '@material-ui/core/Select';
+import Paper from '@material-ui/core/Paper';
 //icons
 
 import SaveIcon from "@material-ui/icons/Save";
@@ -26,6 +26,7 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 
 import AddIcon from "@material-ui/icons/Add";
+import CloseIcon from "@material-ui/icons/Close";
 import LoadingComponent from "../../utils/loadingComponent";
 
 //redux
@@ -39,6 +40,7 @@ import { getAllPhasesProjet } from "../../store/actions/pahsesProjetAction";
 
 //tables
 import MaitreDouvrageTable from "../tables/MaitreDouvrageTable";
+import PhasesProjetTable from '../tables/PhasesProjetTable'
 
 class AjouterDevis extends Component {
   state = {
@@ -55,10 +57,8 @@ class AjouterDevis extends Component {
     duree_phase: 0,
     unite_remise : "%",
     remise :0,
-
     prix_totale: 0,
     tva : 0,
-
     maitreDouvrages: [],
     phasesProjetsSelected: [],
   };
@@ -169,17 +169,62 @@ class AjouterDevis extends Component {
       });
   };
   
-  render() {
-    const options = [];
-    if (this.state.phasesProjets) {
-      this.state.phasesProjets.map((phase) => {
-        options.push({
-          value: { ...phase },
-          label: phase.titre,
-          className: "react-select-option",
-        });
-      });
+
+  handlePhasesProjetOpenClose = () => {
+    this.setState({
+      phasesProjetDialog: !this.state.phasesProjetDialog,
+    });
+  };
+  
+  removePhaseProjet = (index) =>{
+    const  phasesProjetsSelected = [...this.state.phasesProjetsSelected];
+    phasesProjetsSelected.splice(index,1);
+    this.setState({
+      phasesProjetsSelected
+    }, ()=>{
+     let duree_phase = 0;
+     let prix_totale = 0;
+  if (phasesProjetsSelected !== null) {
+         phasesProjetsSelected.map((phase) => {
+           duree_phase =
+             Number.parseInt(duree_phase) + Number.parseInt(phase.duree);
+           prix_totale =
+             prix_totale +
+             (Number.parseFloat(phase.prix) +
+               (Number.parseFloat(phase.prix) * this.state.tva) / 100);
+         });
+       }
+ 
+       this.setState({ duree_phase, prix_totale });
+    })
+   }
+   getPhasesProjetData = (phasesProjet) => {
+    if (phasesProjet.titre) {
+      const phasesProjetsSelected = [...this.state.phasesProjetsSelected];
+     
+
+      phasesProjetsSelected.push(phasesProjet);
+      this.setState({ phasesProjetsSelected }  , ()=>{
+        let duree_phase = 0;
+        let prix_totale = 0;
+     if (phasesProjetsSelected !== null) {
+            phasesProjetsSelected.map((phase) => {
+              duree_phase =
+                Number.parseInt(duree_phase) + Number.parseInt(phase.duree);
+              prix_totale =
+                prix_totale +
+                (Number.parseFloat(phase.prix) +
+                  (Number.parseFloat(phase.prix) * this.state.tva) / 100);
+            });
+          }
+    
+          this.setState({ duree_phase, prix_totale });
+       });
     }
+  };
+
+  render() {
+   
 
     return (
       <Dialog fullScreen open={this.state.open}>
@@ -209,6 +254,31 @@ class AjouterDevis extends Component {
             Select
           </Button>
         </Dialog>
+
+
+
+        <Dialog
+          open={this.state.phasesProjetDialog}
+          maxWidth="lg"
+          onClose={this.handlePhasesProjetOpenClose}
+        >
+          <PhasesProjetTable
+            type="choose-one"
+            sendData={this.getPhasesProjetData}
+            rows={this.state.phasesProjets}
+            chooseOneColumn
+          />
+
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handlePhasesProjetOpenClose}
+          >
+            Select
+          </Button>
+        </Dialog>
+
+    
 
         <AppBar className="bg-dark">
           <Toolbar style={{ display: "flax", justifyContent: "space-between" }}>
@@ -284,21 +354,54 @@ class AjouterDevis extends Component {
             ) : null}
           </Grid>
 
-          <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}>Phases du projet </h3>
-            <Select
-              onChange={this.handleSelectChange}
-              getOptionValue={(option) => option.value.id}
-              classNamePrefix="react-select"
-              value={this.state.phasesProjetsSelected}
-              options={options}
-              fullWidth
-              isMulti
-            />
+         
+          <Grid item xs={12}>
+            <h3 style={{ margin: 0 }}>Phases du projet * </h3>
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={this.handlePhasesProjetOpenClose}
+            >
+              <AddIcon />
+            </Button>
+            <br />
+            <Paper>
+            <table style={{ width: "100%" }}>
+              <thead>
+                <tr>
+                  <th>N°</th>
+                  <th>Désignation</th>
+                  <th>Description</th>
+                  <th>Durée</th>
+                  <th>Prix</th>
+                  <th></th>
+                </tr>
+              </thead>
 
-            <h3>La durée des phases : {this.state.duree_phase} (jours)</h3>
-            <h3>Total Net: {this.state.prix_totale} (DA)</h3>
+              <tbody>{
+
+                this.state.phasesProjetsSelected.map((phasesProjet,index)=>{
+                return  (<tr key={index}>
+        <td>{index + 1}</td>
+        <td>{phasesProjet.titre}</td>
+        <td>{phasesProjet.description}</td>
+        <td>{phasesProjet.duree}</td>
+        <td>{phasesProjet.prix}</td>
+        <td>
+
+          <Button onClick={()=>this.removePhaseProjet(index)}>
+            <CloseIcon></CloseIcon>
+          </Button>
+        </td>
+      </tr>)
+                })
+              }</tbody>
+            </table>
+            <br />
+            </Paper>
            
+            <h3>La durée des phases : {this.state.duree_phase} (jours)</h3>
+            <h3>Total net : {this.state.prix_totale} (DA)</h3>
           </Grid>
 
           

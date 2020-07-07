@@ -12,15 +12,16 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Grid from "@material-ui/core/Grid";
-import Select from "react-select";
 import MuiSelect from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import Paper from "@material-ui/core/Paper";
+
 
 //icons
 import AddIcon from "@material-ui/icons/Add";
-
+import CloseIcon from "@material-ui/icons/Close";
 import SaveIcon from "@material-ui/icons/Save";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
@@ -38,12 +39,14 @@ import { getAllPhasesProjet } from "../../store/actions/pahsesProjetAction";
 
 //tables
 import MaitreDouvrageTable from "../tables/MaitreDouvrageTable";
+import PhasesProjetTable from "../tables/PhasesProjetTable";
 class ModifierProjet extends Component {
   state = {
     open: true,
     error: "",
     success: "",
     maitreDouvrageDialog: false,
+    phasesProjetDialog : false,
 
     buttonReturn: "projet",
 
@@ -85,23 +88,17 @@ class ModifierProjet extends Component {
     if (nextProps.projet) {
       this.setState({ ...nextProps.projet});
      const  phasesProjetsSelected = []
-      nextProps.projet.phasesProjets.map((phase) => {
-        phasesProjetsSelected.push({
-            value: { ...phase },
-            label: phase.titre,
-            className: "react-select-option",
-          });
-        });
-
+     
         let duree_phase = 0;
         let prix_totale = 0;
         
-        this.setState({ phasesProjetsSelected }, () => {
-          if (phasesProjetsSelected !== null) {
-            phasesProjetsSelected.map((phase) => {
+       
+        this.setState({ phasesProjetsSelected : nextProps.projet.phasesProjets }, () => {
+          if (nextProps.projet.phasesProjets !== null) {
+            nextProps.projet.phasesProjets.map((phase) => {
               duree_phase =
-                Number.parseInt(duree_phase) + Number.parseInt(phase.value.duree);
-              prix_totale = prix_totale + (Number.parseFloat(phase.value.prix)  + (Number.parseFloat(phase.value.prix) * this.state.tva)/100);
+                Number.parseInt(duree_phase) + Number.parseInt(phase.duree);
+              prix_totale = prix_totale + Number.parseFloat(phase.prix)  ;
             });
           }
     
@@ -124,22 +121,7 @@ class ModifierProjet extends Component {
     }
   }
 
-  handleSelectChange = (phasesProjetsSelected) => {
-    let duree_phase = 0;
-    let prix_totale = 0;
-    
-    this.setState({ phasesProjetsSelected }, () => {
-      if (phasesProjetsSelected !== null) {
-        phasesProjetsSelected.map((phase) => {
-          duree_phase =
-            Number.parseInt(duree_phase) + Number.parseInt(phase.value.duree);
-          prix_totale = prix_totale + (Number.parseFloat(phase.value.prix)  + (Number.parseFloat(phase.value.prix) * this.state.tva)/100);
-        });
-      }
-
-      this.setState({ duree_phase, prix_totale });
-    });
-  };
+ 
   modifier = () => {
     const d = { ...this.state };
     if (d.nom.trim().length === 0) {
@@ -237,19 +219,69 @@ class ModifierProjet extends Component {
       unite_remise : e.target.value
     })
   }
+  getPhasesProjetData = (phasesProjet) => {
+    if (phasesProjet.titre) {
+      const phasesProjetsSelected = [...this.state.phasesProjetsSelected];
+     
+
+      phasesProjetsSelected.push(phasesProjet);
+      this.setState({ phasesProjetsSelected }  , ()=>{
+        let duree_phase = 0;
+        let prix_totale = 0;
+     if (phasesProjetsSelected !== null) {
+            phasesProjetsSelected.map((phase) => {
+              duree_phase =
+                Number.parseInt(duree_phase) + Number.parseInt(phase.duree);
+              prix_totale =
+                prix_totale +
+                (Number.parseFloat(phase.prix) +
+                  (Number.parseFloat(phase.prix) * this.state.tva) / 100);
+            });
+          }
+    
+          this.setState({ duree_phase, prix_totale });
+       });
+    }
+  };
+
+  handleUniteRemiseChange = (e) => {
+    this.setState({
+      unite_remise: e.target.value,
+    });
+  };
+
+
+  handlePhasesProjetOpenClose = () => {
+    this.setState({
+      phasesProjetDialog: !this.state.phasesProjetDialog,
+    });
+  };
+
+  removePhaseProjet = (index) =>{
+   const  phasesProjetsSelected = [...this.state.phasesProjetsSelected];
+   phasesProjetsSelected.splice(index,1);
+   this.setState({
+     phasesProjetsSelected
+   }, ()=>{
+    let duree_phase = 0;
+    let prix_totale = 0;
+ if (phasesProjetsSelected !== null) {
+        phasesProjetsSelected.map((phase) => {
+          duree_phase =
+            Number.parseInt(duree_phase) + Number.parseInt(phase.duree);
+          prix_totale =
+            prix_totale +
+            (Number.parseFloat(phase.prix) +
+              (Number.parseFloat(phase.prix) * this.state.tva) / 100);
+        });
+      }
+
+      this.setState({ duree_phase, prix_totale });
+   })
+  }
 
   render() {
-    const options = [];
-    
-    if (this.state.phasesProjets) {
-      this.state.phasesProjets.map((phase) => {
-        options.push({
-          value: { ...phase },
-          label: phase.titre,
-          className: "react-select-option",
-        });
-      });
-    }
+   
    
     return (
       <Dialog fullScreen open={this.state.open}>
@@ -274,6 +306,30 @@ class ModifierProjet extends Component {
             variant="contained"
             color="primary"
             onClick={this.handleMaitreDouvrageClose}
+          >
+            Select
+          </Button>
+        </Dialog>
+
+
+
+
+        <Dialog
+          open={this.state.phasesProjetDialog}
+          maxWidth="lg"
+          onClose={this.handlePhasesProjetOpenClose}
+        >
+          <PhasesProjetTable
+            type="choose-one"
+            sendData={this.getPhasesProjetData}
+            rows={this.state.phasesProjets}
+            chooseOneColumn
+          />
+
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handlePhasesProjetOpenClose}
           >
             Select
           </Button>
@@ -350,6 +406,7 @@ class ModifierProjet extends Component {
             ) : null}
           </Grid>
 
+         {/*
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}>Phases du projet </h3>
             <Select
@@ -360,12 +417,69 @@ class ModifierProjet extends Component {
               options={options}
               fullWidth
               isMulti
-        
             />
 
+        
+              <h3>La durée des phases : {this.state.duree_phase} (jours)</h3>
+            <h3>Total net : {this.state.prix_totale} (DA)</h3>
+           
+          </Grid>
+
+ */}{" "}
+ <Grid item xs={12}>
+            <h3 style={{ margin: 0 }}>Phases du projet * </h3>
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={this.handlePhasesProjetOpenClose}
+            >
+              <AddIcon />
+            </Button>
+            <br />
+            <Paper>
+            <table style={{ width: "100%" }}>
+              <thead>
+                <tr>
+                  <th>N°</th>
+                  <th>Désignation</th>
+                  <th>Description</th>
+                  <th>Durée</th>
+                  <th>Prix</th>
+                  <th></th>
+                </tr>
+              </thead>
+
+              <tbody>{
+
+                this.state.phasesProjetsSelected.map((phasesProjet,index)=>{
+                 
+                return  (<tr key={index}>
+        <td>{index + 1}</td>
+        <td>{phasesProjet.titre}</td>
+        <td>{phasesProjet.description}</td>
+        <td>{phasesProjet.duree}</td>
+        <td>{phasesProjet.prix}</td>
+        <td>
+
+          <Button onClick={()=>this.removePhaseProjet(index)}>
+            <CloseIcon></CloseIcon>
+          </Button>
+        </td>
+      </tr>)
+                })
+              }</tbody>
+            </table>
+            <br />
+            </Paper>
+           
             <h3>La durée des phases : {this.state.duree_phase} (jours)</h3>
             <h3>Total net : {this.state.prix_totale} (DA)</h3>
+            <h3>Total TVA : {round(this.state.prix_totale * (this.state.tva) / 100)} (DA)</h3>
+            <h3>Total TTC : {round(round(this.state.prix_totale * (this.state.tva) / 100)  +  this.state.prix_totale)} (DA)</h3>
+
           </Grid>
+       
+       
 
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}>

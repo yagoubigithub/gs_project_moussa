@@ -13,10 +13,13 @@ import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Grid from "@material-ui/core/Grid";
 import MenuItem from "@material-ui/core/MenuItem";
+import Paper from "@material-ui/core/Paper";
+
+
+
 
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import Select from "react-select";
 import MuiSelect from "@material-ui/core/Select";
 
 //icons
@@ -105,24 +108,7 @@ class AjouterProjet extends Component {
     }
   }
 
-  handleSelectChange = (phasesProjetsSelected) => {
-    let duree_phase = 0;
-    let prix_totale = 0;
-    this.setState({ phasesProjetsSelected }, () => {
-      if (phasesProjetsSelected !== null) {
-        phasesProjetsSelected.map((phase) => {
-          duree_phase =
-            Number.parseInt(duree_phase) + Number.parseInt(phase.value.duree);
-          prix_totale =
-            prix_totale +
-            (Number.parseFloat(phase.value.prix) +
-              (Number.parseFloat(phase.value.prix) * this.state.tva) / 100);
-        });
-      }
-
-      this.setState({ duree_phase, prix_totale });
-    });
-  };
+ 
   ajouter = () => {
     const d = { ...this.state };
     if (d.nom.trim().length === 0) {
@@ -157,8 +143,8 @@ class AjouterProjet extends Component {
       phasesProjetsSelected: [...this.state.phasesProjetsSelected],
       duree_phase: d.duree_phase,
       delais: d.delais,
-      date_debut: d.date_debut,
-      date_depot: d.date_depot,
+      date_debut: d.date_debut === "" ? getCurrentDateTime(new Date().getTime()) : d.date_debut,
+      date_depot: d.date_depot === "" ? getCurrentDateTime(new Date().getTime()) : d.date_depot,
       prix_totale: d.prix_totale - d.remise,
       remise: remise,
       tva: d.tva,
@@ -441,6 +427,8 @@ class AjouterProjet extends Component {
             >
               <AddIcon />
             </Button>
+            <br />
+            <Paper>
             <table style={{ width: "100%" }}>
               <thead>
                 <tr>
@@ -472,10 +460,14 @@ class AjouterProjet extends Component {
                 })
               }</tbody>
             </table>
-            <hr />
+            <br />
+            </Paper>
+           
             <h3>La durée des phases : {this.state.duree_phase} (jours)</h3>
             <h3>Total net : {this.state.prix_totale} (DA)</h3>
           </Grid>
+       
+       
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}>
               Remise Sur le Totale{" "}

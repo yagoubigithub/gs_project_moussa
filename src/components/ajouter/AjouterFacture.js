@@ -16,7 +16,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import Select from "react-select";
+import  Paper from "@material-ui/core/Paper";
 import MuiSelect from '@material-ui/core/Select';
 
 
@@ -41,6 +41,7 @@ import { getAllPhasesProjet } from "../../store/actions/pahsesProjetAction";
 
 //tables
 import MaitreDouvrageTable from "../tables/MaitreDouvrageTable";
+import PhasesProjetTable from '../tables/PhasesProjetTable'
 
 class AjouterFacture extends Component {
   state = {
@@ -162,8 +163,8 @@ class AjouterFacture extends Component {
       phasesProjetsSelected: [...this.state.phasesProjetsSelected],
       duree_phase: d.duree_phase,
       delais: d.delais,
-      date_debut: d.date_debut,
-      date_depot: d.date_depot,
+      date_debut: d.date_debut === "" ? getCurrentDateTime(new Date().getTime()) : d.date_debut,
+      date_depot: d.date_depot === "" ? getCurrentDateTime(new Date().getTime()) : d.date_depot,
       tva : d.tva,
       prix_totale: d.prix_totale ,
       remise:remise,
@@ -253,6 +254,59 @@ class AjouterFacture extends Component {
         maitreDouvrage,
       });
   };
+  handlePhasesProjetOpenClose = () => {
+    this.setState({
+      phasesProjetDialog: !this.state.phasesProjetDialog,
+    });
+  };
+  
+  removePhaseProjet = (index) =>{
+    const  phasesProjetsSelected = [...this.state.phasesProjetsSelected];
+    phasesProjetsSelected.splice(index,1);
+    this.setState({
+      phasesProjetsSelected
+    }, ()=>{
+     let duree_phase = 0;
+     let prix_totale = 0;
+  if (phasesProjetsSelected !== null) {
+         phasesProjetsSelected.map((phase) => {
+           duree_phase =
+             Number.parseInt(duree_phase) + Number.parseInt(phase.duree);
+           prix_totale =
+             prix_totale +
+             (Number.parseFloat(phase.prix) +
+               (Number.parseFloat(phase.prix) * this.state.tva) / 100);
+         });
+       }
+ 
+       this.setState({ duree_phase, prix_totale });
+    })
+   }
+   getPhasesProjetData = (phasesProjet) => {
+    if (phasesProjet.titre) {
+      const phasesProjetsSelected = [...this.state.phasesProjetsSelected];
+     
+
+      phasesProjetsSelected.push(phasesProjet);
+      this.setState({ phasesProjetsSelected }  , ()=>{
+        let duree_phase = 0;
+        let prix_totale = 0;
+     if (phasesProjetsSelected !== null) {
+            phasesProjetsSelected.map((phase) => {
+              duree_phase =
+                Number.parseInt(duree_phase) + Number.parseInt(phase.duree);
+              prix_totale =
+                prix_totale +
+                (Number.parseFloat(phase.prix) +
+                  (Number.parseFloat(phase.prix) * this.state.tva) / 100);
+            });
+          }
+    
+          this.setState({ duree_phase, prix_totale });
+       });
+    }
+  };
+
   render() {
     const options = [];
     if (this.state.phasesProjets) {
@@ -289,6 +343,27 @@ class AjouterFacture extends Component {
             variant="contained"
             color="primary"
             onClick={this.handleMaitreDouvrageClose}
+          >
+            Select
+          </Button>
+        </Dialog>
+
+        <Dialog
+          open={this.state.phasesProjetDialog}
+          maxWidth="lg"
+          onClose={this.handlePhasesProjetOpenClose}
+        >
+          <PhasesProjetTable
+            type="choose-one"
+            sendData={this.getPhasesProjetData}
+            rows={this.state.phasesProjets}
+            chooseOneColumn
+          />
+
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handlePhasesProjetOpenClose}
           >
             Select
           </Button>
@@ -368,7 +443,55 @@ class AjouterFacture extends Component {
             ) : null}
           </Grid>
 
-          <Grid item xs={6}>
+          <Grid item xs={12}>
+            <h3 style={{ margin: 0 }}>Phases du projet * </h3>
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={this.handlePhasesProjetOpenClose}
+            >
+              <AddIcon />
+            </Button>
+            <br />
+            <Paper>
+            <table style={{ width: "100%" }}>
+              <thead>
+                <tr>
+                  <th>N°</th>
+                  <th>Désignation</th>
+                  <th>Description</th>
+                  <th>Durée</th>
+                  <th>Prix</th>
+                  <th></th>
+                </tr>
+              </thead>
+
+              <tbody>{
+
+                this.state.phasesProjetsSelected.map((phasesProjet,index)=>{
+                return  (<tr key={index}>
+        <td>{index + 1}</td>
+        <td>{phasesProjet.titre}</td>
+        <td>{phasesProjet.description}</td>
+        <td>{phasesProjet.duree}</td>
+        <td>{phasesProjet.prix}</td>
+        <td>
+
+          <Button onClick={()=>this.removePhaseProjet(index)}>
+            <CloseIcon></CloseIcon>
+          </Button>
+        </td>
+      </tr>)
+                })
+              }</tbody>
+            </table>
+            <br />
+            </Paper>
+           
+            <h3>La durée des phases : {this.state.duree_phase} (jours)</h3>
+            <h3>Total net : {this.state.prix_totale} (DA)</h3>
+          </Grid>
+       {/*   <Grid item xs={6}>
             <h3 style={{ margin: 0 }}>Phases du projet </h3>
             <Select
               onChange={this.handleSelectChange}
@@ -384,7 +507,7 @@ class AjouterFacture extends Component {
             <h3>Total net : {this.state.prix_totale} (DA)</h3>
            
           </Grid>
-
+*/}
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}>Remise Sur le Total <small><span className="red">(Unité : {this.state.unite_remise} )</span></small></h3>
             {

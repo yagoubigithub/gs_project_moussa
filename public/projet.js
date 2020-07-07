@@ -50,18 +50,8 @@ function Projet() {
             db.all(`SELECT * FROM phases_projets WHERE projet_id=${result.id}`, (err,rows)=>{
               if (err) mainWindow.webContents.send("projet", err);
   
-              if(rows.length !== 0){
-                let sql = 'SELECT * FROM phases_projet WHERE '
-                sql = sql +  rows.map(phase=>  {  return `id=${phase.phases_projet_id}` }).join(' OR ')
-                
-               
-                db.all(sql, (err, rows) =>{
-                  if(err)   mainWindow.webContents.send("projet", err);
-                  mainWindow.webContents.send("projet", {...result,phasesProjets : rows,maitreDouvrage});
-                })
-              }else{
-                mainWindow.webContents.send("projet", {...result,phasesProjets : [],maitreDouvrage});
-              }
+              mainWindow.webContents.send("projet", {...result,phasesProjets : rows,maitreDouvrage});
+             
              
              
             });
@@ -96,7 +86,7 @@ function Projet() {
         
           value.phasesProjetsSelected.forEach((phase) => {
           
-            const placeholder = ` (${projet_id},${phase.value.id} ,  '${phase.value.titre}' , '${phase.value.description}' , ${phase.value.duree} , ${phase.value.prix}  , 'undo') ,`;
+            const placeholder = ` (${projet_id},${phase.id} ,  '${phase.titre}' , '${phase.description}' , ${phase.duree} , ${phase.prix}  , 'undo') ,`;
             sql = sql + placeholder;
             count++;
 
@@ -120,7 +110,7 @@ function Projet() {
                 let sql = `INSERT INTO devis_phases_projets(devis_id , phases_devis_id , titre ,description , duree , prix , status) VALUES   `;
   
                 value.phasesProjetsSelected.forEach((phase) => {
-                  const placeholder = ` (${devis_id},'${phase.value.id}' ,  '${phase.value.titre}' , '${phase.value.description}' , ${phase.value.duree} , ${phase.value.prix} , 'undo') ,`;
+                  const placeholder = ` (${devis_id},'${phase.id}' ,  '${phase.titre}' , '${phase.description}' , ${phase.duree} , ${phase.prix} , 'undo') ,`;
                   sql = sql + placeholder;
                 });
   
@@ -144,7 +134,7 @@ function Projet() {
                        */
   
                       value.phasesProjetsSelected.forEach((phase) => {
-                        const placeholder = ` (${facture_id},'${phase.value.id}' ,  '${phase.value.titre}' , '${phase.value.description}' , ${phase.value.duree} , ${phase.value.prix} , 'undo') ,`;
+                        const placeholder = ` (${facture_id},'${phase.id}' ,  '${phase.titre}' , '${phase.description}' , ${phase.duree} , ${phase.prix} , 'undo') ,`;
                         sql = sql + placeholder;
                       });
   
