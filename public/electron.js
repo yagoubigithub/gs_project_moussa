@@ -16,8 +16,9 @@ app.on("ready", () => {
   mainWindow.maximize();
   // mainWindow.setMenu(null);
    mainWindow.show();
+
     const DevTools = require('./devTools')
-  const devTools = new DevTools();
+  const devTools = new DevTools(isDev);
 
   const User = require('./user');
   const user = new User();

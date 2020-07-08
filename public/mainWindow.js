@@ -1,7 +1,7 @@
 const isDev = require("electron-is-dev");
 const path =  require('path')
 
-const { BrowserWindow } = require("electron");
+const { BrowserWindow, app } = require("electron");
 
 
 
@@ -21,8 +21,11 @@ let mainWindow = new BrowserWindow({
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
   
+  
  
-
+mainWindow.on('close', (e)=>{
+  app.quit()
+})
 
 module.exports = mainWindow;
 

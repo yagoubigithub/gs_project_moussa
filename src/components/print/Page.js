@@ -16,7 +16,7 @@ export default class Page extends Component {
     const info = { ...this.props.entreprise };
     const totalReporter = this.props.row.reduce((total,r)=>{
       return total + (Number.parseFloat(r.rows_to_print.prix) + Number.parseFloat((r.rows_to_print.prix)* r.devis.tva) /100)
-    },0)
+    },0) || 0
     return (
       <div className="print-page-container">
         <div className="print-page-head">

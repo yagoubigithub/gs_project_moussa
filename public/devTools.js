@@ -1,4 +1,5 @@
 const methode = DevTools.prototype;
+const {BrowserWindow} = require('electron');
 
 function DevTools(isDev){
      // devTools
@@ -16,13 +17,12 @@ function DevTools(isDev){
     installExtension(REDUX_DEVTOOLS)
       .then(name => console.log(`Added Extension:  ${name}`))
       .catch(err => console.log("An error occurred: ", err));
-    /*
-            const path = require('path')
+         /*   const path = require('path')
             const os = require('os')
             
-            
+           
             BrowserWindow.addDevToolsExtension(
-              path.join(os.homedir(), 'AppData/Local/Google/Chrome/User Data/Profile 1/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.4.0_0')
+              path.join(os.homedir(), 'AppData/Local/Google/Chrome/User Data/Profile 1/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.7.0_0')
             )
             BrowserWindow.addDevToolsExtension(
                 path.join(os.homedir(), 'AppData/Local/Google/Chrome/User Data/Profile 1/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/2.17.0_0')

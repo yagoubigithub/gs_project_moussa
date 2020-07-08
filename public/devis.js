@@ -50,55 +50,15 @@ function Devis() {
             `SELECT *  FROM devis_phases_projets WHERE devis_id=${value.id} ORDER BY phases_devis_id `,
             function (err, devis_phases_projets) {
              
+              
              
               if (devis_phases_projets !== undefined) {
+                devis.phases = [...devis_phases_projets];
                
-                if(devis_phases_projets.length === 0){
-                  mainWindow.webContents.send("devis", devis)
-                }else{
-                  
-                new Promise((resolve, reject) => {
-                  for (let i = 0; i < devis_phases_projets.length; i++) {
-                    const devis_phase = devis_phases_projets[i];
-                  
-                  
-
-
-                    db.get(
-                      `SELECT * FROM phases_projet WHERE id=${devis_phase.phases_devis_id} `,
-                      function (err, phase) {
-                        if (err) mainWindow.webContents.send("devis", err);
-                        phases.push(phase);
-                       
-                      
-                      
-                        if (phases.length === devis_phases_projets.length) {
-                          phases.sort((a,b)=>{
-                            let comparison = 0;
-                            if (a.id > b.id) {
-                              comparison = 1;
-                            } else if (a.id < b.id) {
-                              comparison = -1;
-                            }
-                            return comparison;
-                            
-                          })
-                          devis.phases = [...phases];
-                          resolve(devis);
-                        }
-                      }
-                    );
-                  }
-                  
-                 
-                }).then((devis) => {
-               
-                  
-                  mainWindow.webContents.send("devis", devis)
-                });
-                }
+                mainWindow.webContents.send("devis", devis)
               }else{
-                mainWindow.webContents.send("devis", phases)
+                devis.phases= []
+                mainWindow.webContents.send("devis", devis)
               }
             }
           );
@@ -127,7 +87,7 @@ function Devis() {
         */
        
         value.phasesProjetsSelected.forEach((phase) => {
-          const placeholder = ` (${value.projet_id},${phase.id} ,  '${phase.titre}' , '${phase.description}' , ${phase.duree} , ${phase.prix}  , 'undo') ,`;
+          const placeholder = ` (${devis_id},${phase.id} ,  '${phase.titre}' , '${phase.description}' , ${phase.duree} , ${phase.prix}  , 'undo') ,`;
 
           sql = sql + placeholder;
         });
@@ -135,6 +95,7 @@ function Devis() {
         sql = sql.slice(0, sql.lastIndexOf(",") - 1);
 
         db.run(sql, function (err) {
+          console.log(err,sql)
          
 
           if (err) mainWindow.webContents.send("devis:ajouter", err);
