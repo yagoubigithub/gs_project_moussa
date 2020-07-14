@@ -41,19 +41,22 @@ class Projet extends Component {
     if (nextProps.projets) {
       const projetCorebeille = [];
       const projets = [];
-      let projetsCounter = 1 ;
-      let  projetCorebeilleCounter = 1;
+      
       nextProps.projets.map((projet) => {
         if (projet.status === "undo") {
-          projets.push({number : projetsCounter,...projet});
-          projetsCounter++;
+          projets.push({number : projet.id,...projet});
+         
         }
 
         if (projet.status === "corbeille") {
-          projetCorebeille.push({number : projetCorebeilleCounter,...projet});
-          projetCorebeilleCounter++;
+          projetCorebeille.push({number : projet.id,...projet});
+         
         }
       });
+      projetCorebeille.sort((a,b )=> parseInt(a.id) -  parseInt(b.id))
+      projets.sort((a,b )=> parseInt(a.id) -  parseInt(b.id))
+      projets.reverse();
+      projetCorebeille.reverse()
      
 
       this.setState({ projetCorebeille, projets });

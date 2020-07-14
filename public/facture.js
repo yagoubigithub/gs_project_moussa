@@ -155,11 +155,13 @@ function Facture() {
         //add phase de projet
         const projet_id = this.lastID;
         
-        let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , status) VALUES   `;
+        let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , titre ,description , duree , prix , status) VALUES   `;
 
         
         value.phasesProjetsSelected.forEach((phase) => {
-          const placeholder = ` (${projet_id},'${phase.value}' , 'undo') ,`;
+
+          const placeholder = ` (${projet_id},'${phase.id}' ,  '${phase.titre}' , '${phase.description}' , ${phase.duree} , ${phase.prix} , 'undo') ,`;
+
           sql = sql + placeholder;
         });
 
@@ -169,7 +171,7 @@ function Facture() {
           if (err) mainWindow.webContents.send("facture:ajouter", err);
           
           db.run(
-            `INSERT INTO devis(projet_id  ,nom , objet , adresse  , duree_phase , prix_totale , remise, date_devis ,  maitreDouvrage_id ,  tva , status) VALUES (${projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_facture}' , ${value.maitreDouvrage_id} , ${value.tva}  , 'undo') `,
+            `INSERT INTO devis(projet_id  , nom , objet , adresse  , duree_phase , prix_totale , remise , date_devis ,  maitreDouvrage_id ,  tva , status) VALUES (${projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_facture}' , ${value.maitreDouvrage_id} , ${value.tva}  , 'undo') `,
             function (err) {
               if (err) mainWindow.webContents.send("facture:ajouter", err);
              
@@ -180,7 +182,7 @@ function Facture() {
             
               value.phasesProjetsSelected.forEach((phase) => {
 
-                const placeholder = ` (${devis_id},'${phase.value.id}' ,  '${phase.value.titre}' , '${phase.value.description}' , ${phase.value.duree} , ${phase.value.prix} , 'undo') ,`;
+                const placeholder = ` (${devis_id},'${phase.id}' ,  '${phase.titre}' , '${phase.description}' , ${phase.duree} , ${phase.prix} , 'undo') ,`;
 
                 sql = sql + placeholder;
               });
@@ -213,7 +215,7 @@ function Facture() {
          */
 
         value.phasesProjetsSelected.forEach((phase) => {
-          const placeholder = ` (${facture_id},'${phase.value.id}' ,  '${phase.value.titre}' , '${phase.value.description}' , ${phase.value.duree} , ${phase.value.prix} , 'undo') ,`;
+          const placeholder = ` (${facture_id},'${phase.id}' ,  '${phase.titre}' , '${phase.description}' , ${phase.duree} , ${phase.prix} , 'undo') ,`;
 
           sql = sql + placeholder;
         });

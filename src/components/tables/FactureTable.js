@@ -565,17 +565,7 @@ class FactureTable extends Component {
           } else {
             return (
               <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
-                <IconButton
-                  size="small"
-                  onClick={() => this.add_To_Corbeille(props.value)}
-                >
-                  <DeleteIcon className="red" fontSize="small"></DeleteIcon>
-                </IconButton>
-                <IconButton size="small">
-                  <Link to={`/projet/modifier/${props.value}`}>
-                    <EditIcon className="black" fontSize="small"></EditIcon>
-                  </Link>
-                </IconButton>
+               
 
                 <IconButton size="small">
                   <Link to={`/facture/print/${props.value}/facture`}>

@@ -42,35 +42,41 @@ class EtatProjet extends Component {
       const projetCorebeille = [];
       const projets = [];
       const projetRetards = [];
-      let projetsCounter = 1;
-      let projetCorebeilleCounter = 1;
-      let projetRetardCounter = 1;
+     
+     
+
       nextProps.projets.map((projet) => {
         let retard = 0;
         const retard_mils= (new Date(projet.date_depot)).getTime() - (new Date()).getTime();
         if(retard_mils < 0){
             retard = ((retard_mils / 24 /60 /60 /1000)*-1).toFixed(0);
             if (projet.status !== "corbeille" && projet.etat !== "fini") {
-            projetRetards.push({ number: projetRetardCounter, ...projet,retard })
-            projetRetardCounter++;
+            projetRetards.push({ number: projet.id, ...projet,retard })
+            
             }
         }
 
 
         if (projet.status === "undo") {
-          projets.push({ number: projetsCounter, ...projet,retard });
-          projetsCounter++;
+          projets.push({ number: projet.id, ...projet,retard });
+         
         }
 
         if (projet.status === "corbeille") {
-          projetCorebeille.push({ number: projetCorebeilleCounter, ...projet,retard });
-          projetCorebeilleCounter++;
+          projetCorebeille.push({ number: projet.id, ...projet,retard });
+         
         }
       });
 
       projetCorebeille.sort((a,b )=> parseInt(a.id) -  parseInt(b.id))
       projets.sort((a,b )=> parseInt(a.id) -  parseInt(b.id))
       projetRetards.sort((a,b )=> parseInt(a.id) -  parseInt(b.id))
+     
+      projets.reverse();
+      projetCorebeille.reverse()
+      projetRetards.reverse()
+
+    
 
       this.setState({ projetCorebeille, projets,projetRetards });
     }

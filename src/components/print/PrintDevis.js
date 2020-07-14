@@ -88,7 +88,7 @@ class PrintDevis extends Component {
   };
 
   calculRows = () => {
-    const ROW_NUMBER = 8;
+    const ROW_NUMBER = 2;
     let rows_to_print = [];
     const devis = this.state.devis;
 

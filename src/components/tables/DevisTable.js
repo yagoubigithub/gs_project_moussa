@@ -487,18 +487,21 @@ class ProjetTable extends Component {
           } else {
             return (
               <div className="cell">
-                <IconButton
+             { props.original.projet_id == 0 ?
+             <div>
+
+             <IconButton
                   size="small"
                   onClick={() => this.add_To_Corbeille(props.value)}
                 >
                   <DeleteIcon className="red" fontSize="small"></DeleteIcon>
                 </IconButton>
+
                 <IconButton size="small">
                   <Link to={`/projet/modifier/${props.value}`}>
                     <EditIcon className="black" fontSize="small"></EditIcon>
                   </Link>
                 </IconButton>
-
                 <IconButton
                   size="small"
                  
@@ -508,6 +511,19 @@ class ProjetTable extends Component {
                   </Link>
                  
                 </IconButton>
+
+             </div> :    <IconButton
+                  size="small"
+                 
+                >
+                  <Link to={`/devis/print/${props.value}/devis`}>
+                  <PrintIcon className="black" fontSize="small"></PrintIcon>
+                  </Link>
+                 
+                </IconButton>}
+               
+              
+             
 
                 {props.original.projet_id == 0 ? (
                   <Button
