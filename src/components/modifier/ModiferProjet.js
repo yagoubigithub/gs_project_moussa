@@ -156,10 +156,13 @@ class ModifierProjet extends Component {
       prix_totale: d.prix_totale - d.remise,
       remise: d.remise,
       unite_remise: d.unite_remise,
+      etat : d.etat,
       tva: d.tva,
       date_projet: getCurrentDateTime(new Date().getTime()),
+      status : d.status
     };
 
+   
     this.props.modifierProjet(data);
   };
 

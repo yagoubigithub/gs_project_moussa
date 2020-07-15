@@ -66,39 +66,7 @@ function Facture() {
                       facture_phases_projets = [...rows];
 
                       new Promise((resolve, reject) => {
-                        let phases = [];
-                        for (
-                          let i = 0;
-                          i < facture_phases_projets.length;
-                          i++
-                        ) {
-                          const facture_phase = facture_phases_projets[i];
-
-                          db.get(
-                            `SELECT * FROM phases_projet WHERE id=${facture_phase.phases_facture_id} `,
-                            function (err, phase) {
-                              if (err)
-                                mainWindow.webContents.send("facture", err);
-
-                              phases.push(phase);
-                              if (
-                                phases.length === facture_phases_projets.length
-                              ) {
-                                phases.sort((a, b) => {
-                                  let comparison = 0;
-                                  if (a.id > b.id) {
-                                    comparison = 1;
-                                  } else if (a.id < b.id) {
-                                    comparison = -1;
-                                  }
-                                  return comparison;
-                                });
-
-                                resolve(phases);
-                              }
-                            }
-                          );
-                        }
+                        resolve(facture_phases_projets);
                       }).then((phases) => {
                         db.all(
                           `SELECT *  FROM paye WHERE facture_id=${facture.id} ORDER BY id DESC`,

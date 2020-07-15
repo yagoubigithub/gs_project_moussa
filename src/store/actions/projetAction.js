@@ -262,7 +262,7 @@ export const removeProjetCreated = () =>{
       dispatch({
         type : "STOP_LOADING_PROJET"
     });
-    if(data){
+    if(data.projet){
       dispatch({
           type : "MODIFIER_PROJET",
           payload : data

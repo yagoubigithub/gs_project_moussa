@@ -35,7 +35,9 @@ const ProjetReducer = (state = initStat, action) =>{
                         ...state,
                         error : null,
                         projets :  action.payload.projets,
-                        projet : action.payload.projet,
+                        projet : {
+                            ...action.payload.projet,
+                            phasesProjets : action.payload.projet.phasesProjetsSelected},
                         projetEdited : true
                     }
                     case 'REMOVE_PROJET_CREATED' : 
