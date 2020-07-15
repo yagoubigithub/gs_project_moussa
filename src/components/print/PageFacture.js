@@ -96,14 +96,7 @@ export default class PageFacture extends Component {
                         } 
 
 
-                        if (title.access === "tva"   ) {
-                          
-                          return (
-                            <td key={`tbody-td-${index}`}>
-                              {row.facture[title.access]}%
-                            </td>
-                          );
-                        } 
+                         
                           return (
                             <td key={`tbody-td-${index}`}>
                               {row.rows_to_print[title.access]}
@@ -131,6 +124,7 @@ export default class PageFacture extends Component {
             <div className="page-col " style={{flex : 4}}>
           
               <h5>Total net : {round(this.props.row[0].prixTotale)} DA</h5>
+              <h5>TVA : {this.props.row[0].facture.tva} %</h5>
 
               <h5>Total TVA : {round((Number.parseFloat(this.props.row[0].prixTotale) * this.props.row[0].facture["tva"]) / 100)} DA</h5>
             

@@ -28,7 +28,6 @@ const head = [
   { access: "numero", value: "N°" },
   { access: "titre", value: "Désignation" },
   { access: "qte", value: "Quantité " },
-  { access: "tva", value: "TVA" },
   { access: "prix", value: "Prix" },
 ];
 
@@ -88,7 +87,7 @@ class PrintDevis extends Component {
   };
 
   calculRows = () => {
-    const ROW_NUMBER = 2;
+    const ROW_NUMBER = 8;
     let rows_to_print = [];
     const devis = this.state.devis;
 
@@ -130,7 +129,7 @@ class PrintDevis extends Component {
         
       }
     }
-    console.log(rows_to_print);
+   
     return rows_to_print;
   };
   render() {
@@ -142,7 +141,7 @@ class PrintDevis extends Component {
         open={this.state.open}
         style={{ backgroundColor: "gray" }}
       >
-        <div>
+        <div style={{overflow : "hidden"}}>
           <AppBar className="bg-dark">
             <Toolbar
               style={{ display: "flax", justifyContent: "space-between" }}
@@ -178,13 +177,13 @@ class PrintDevis extends Component {
           <div
             style={{
               backgroundColor: "gray",
-              marginTop: 70,
+              marginTop: 60,
               paddingTop: 70,
               height: "100%",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              overflow: "auto",
+              overflowY: "auto",
             }}
           >
             {rows_to_print.map((row, index) => {

@@ -25,6 +25,28 @@ import EtatDuFacture from "./components/EtatDuFacture";
 import User from "./components/User";
 
 class App extends Component {
+  componentDidMount(){
+    const {remote} = window.require('electron')
+    const {Menu, MenuItem} = remote
+
+    const menu = new Menu()
+
+    // Build menu one item at a time, unlike
+    menu.append(new MenuItem ({label: 'Cut',role: 'cut'}))
+    menu.append(new MenuItem ({label: 'Copy',role: 'copy'}))
+    menu.append(new MenuItem ({label: 'Paste',role: 'paste'}))
+    
+    menu.append(new MenuItem({type: 'separator'}))
+    menu.append(new MenuItem ({label: 'Select all',role: 'selectall'}))
+  
+   
+   
+    // Prevent default action of right click in chromium. Replace with our menu.
+    window.addEventListener('contextmenu', (e) => {
+       e.preventDefault()
+       menu.popup(remote.getCurrentWindow())
+    }, false)
+  }
   render() {
     return (
       <Router>

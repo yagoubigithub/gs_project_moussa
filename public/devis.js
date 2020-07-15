@@ -17,7 +17,6 @@ function Devis() {
     duree_phase INTEGER ,
     prix_totale  REAL ,
     remise REAL,
-    unite_remise TEXT,
     date_devis TEXT,
     maitreDouvrage_id INTEGER ,
     tva REAL,

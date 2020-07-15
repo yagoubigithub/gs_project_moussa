@@ -33,7 +33,7 @@ import PageFacture from './PageFacture';
 const head = [{ access : "numero", value: "N°" },
 { access : "titre", value: "Désignation" },
 { access : "qte", value: "Quantité " }
-,{ access : "tva", value: "TVA" } , 
+, 
 { access : "prix", value: "Prix" }]
 
  class  PrintFacture extends Component {
@@ -93,7 +93,7 @@ const head = [{ access : "numero", value: "N°" },
       }
 
       calculRows = () =>{
-        const ROW_NUMBER  = 2;
+        const ROW_NUMBER  = 8;
         let rows_to_print = [];
         const facture = this.state.facture;
         
@@ -140,7 +140,7 @@ const head = [{ access : "numero", value: "N°" },
     
         return (
             <Dialog fullScreen open={this.state.open} style={{backgroundColor : "gray"}}>
-            <div>
+            <div style={{overflowY : "hidden", backgroundColor :  "gray"}} >
                   <AppBar className="bg-dark">
           <Toolbar style={{display : "flax", justifyContent : "space-between"}}>
             <Link to={`/${this.props.match.params.buttonReturn}/`}>
@@ -149,7 +149,7 @@ const head = [{ access : "numero", value: "N°" },
               </IconButton>
             </Link>
            
-           <div>
+           <div >
 
            <Button
               color="primary"
@@ -178,7 +178,9 @@ const head = [{ access : "numero", value: "N°" },
           </Toolbar>
         </AppBar>
 
-        <div style={{backgroundColor :  "gray", marginTop : 70, paddingTop : 70, height: "100%", display: "flex", flexDirection: "column", alignItems: "center", overflow: "auto" }}>
+
+<div style={{ marginTop : 60, overflowY: "scroll", height : 622,backgroundColor :  "gray"}}>
+<div style={{  paddingTop : 70, height: "100%", display: "flex", flexDirection: "column", alignItems: "center" , marginBottom : 100, paddingBottom : 100 }}>
         {
   
    
@@ -190,6 +192,8 @@ return (<PageFacture head={head} row={row} index={index} key={index} entreprise=
   })
   }
                 </div>
+</div>
+       
             </div>
            </Dialog>
         )

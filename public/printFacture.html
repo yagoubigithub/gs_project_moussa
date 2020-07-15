@@ -6,17 +6,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Print</title>
   <style>
-   .print-page-container{
+       * {
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+    }
+      @page {
+        size: A4;
+        margin: 10mm;
+    }
+    @media print {
+        html, body {
+            width: 210mm;
+            height: 297mm;        
+        }
+        .print-page-container {
+            margin: 0;
+            border: initial;
+            border-radius: initial;
+            width: initial;
+            min-height: initial;
+            box-shadow: initial;
+            background: initial;
+            page-break-after: always;
+        }
+    }
+ .print-page-container{
   box-sizing: border-box;
   font-family: Arial, Helvetica, sans-serif;
 width: 210mm;
 min-height: 297mm;
+height: 297mm;
 background-color: white;
-margin-bottom: 20px;
-padding : 10mm;
+
+
 display: flex;
 flex-direction: column;
-border:  4px double black;
+
 }
 .print-page-head{
   flex : 10;
@@ -45,40 +70,38 @@ border:  4px double black;
   font-weight: 400;
 }
 .logo-entreprise-page{
-  max-width:  120px;
+  max-width:  100px;
   float: left;
   margin-left: auto;
   margin-right: auto;
 }
 .entreprise-fiscaux{
-  margin-top: 20px;
+  margin-top: 10px;
   
 }
 .entreprise-fiscaux p {
   font-weight: 700 !important;
-  margin : 20px !important;
+  margin : 10px !important;
 }
 
-.entreprise-info{
- 
-}
+
 .print-page-container table td,th{
   border-bottom: 1px solid rgba(0, 0, 0, 1);
-  box-shadow: 1px 1px 1px gray;
   text-align: left;
-  padding : 10px;
-  max-height: 50px;
-  max-width: 300px;
+  padding : 3px;
+  max-height: 60px;
+  max-width: 350px;
   text-align: center;
 }
 .print-page-container p,h1,h2,h3,h4,h5,h6{
-  margin: 7px;
+  margin: 5px;
   color: black;
   font-family: Arial, Helvetica, sans-serif;
 }
 .pt-1{
-  padding-top : 15px;
+  padding-top : 10px;
 }
+
 
   </style>
   
@@ -99,15 +122,20 @@ border:  4px double black;
       const pdf = new jsPDF();
       let count = 0
       new Promise((resolve, reject) => {
+        console.log(res.pages)
         res.pages.forEach((page, index) => {
           document.getElementById("pages").insertAdjacentHTML('beforeend', `<div id="page-${index}">${page.page}</div>`);
 
-          html2canvas(document.querySelector(`#page-${index}`)).then(canvas => {
+          html2canvas(document.querySelector(`#page-${index}`) , {
+    ignoreElements: (node) => {
+        return node.nodeName === 'IFRAME';
+    }
+}).then(canvas => {
             const imgData = canvas.toDataURL("image/jpeg", 1.0)
             if (count !== 0) {
               pdf.addPage();
             }
-            pdf.addImage(imgData, 'PNG', 0, 0);
+            pdf.addImage(imgData, 'JPEG', 0, 0,undefined,undefined,undefined ,'FAST');
             count++;
             if (count === res.pages.length) {
               resolve()
