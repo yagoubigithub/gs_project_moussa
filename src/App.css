@@ -297,29 +297,32 @@ div[class^="react-tabs-css-module_content"] {
 width: 210mm;
 min-height: 297mm;
 background-color: white;
-margin-bottom: 20px;
-padding : 10mm;
-display: flex;
-flex-direction: column;
-border:  4px double black;
-}
-.print-page-head{
-  flex : 10;
-}
-.print-page-footer{
-  flex: 1;
-}
-.print-page-content {
-  flex :19;
+
+padding : 5mm;
 
 }
+.print-page-head{
+height : 33.33%;
+}
+.print-page-footer{
+  height : 3.33%;
+ 
+}
+.print-page-content {
+  
+  height : 63.33%;
+
+}
+
 .page-row{
-  display:  flex;
+  
   width : 100%;
   justify-content: space-between;
 }
 .page-col{
-  flex: 5;
+ float : left;
+ width : 50%;
+ 
 }
 .print-page-container table{
   width : 100%;
@@ -329,21 +332,30 @@ border:  4px double black;
   font-size: 14px;
   font-weight: 400;
 }
+.bureau-info{
+margin-top: 25px;
+}
+hr{
+  width : 100%;
+}
 .logo-entreprise-page{
   max-width:  100px;
-  float: left;
-  margin-left: auto;
-  margin-right: auto;
+  
+ float: right;
 }
 .entreprise-fiscaux{
-  margin-top: 10px;
+ 
+  margin-top: 25px;
   
 }
 .entreprise-fiscaux p {
   font-weight: 700 !important;
   margin : 10px !important;
+  
 }
-
+.entreprise-info {
+  text-align: right;
+}
 
 .print-page-container table td,th{
   border-bottom: 1px solid rgba(0, 0, 0, 1);

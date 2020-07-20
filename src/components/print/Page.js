@@ -24,14 +24,14 @@ export default class Page extends Component {
       <div className="print-page-container">
         <div className="print-page-head">
           <div className="page-row">
-            <div className="page-col">
+            <div className="page-col bureau-info">
               <h4>Bureau d'etudes d'architecture & d'urbanisme {info.nom}</h4>
               <p>Adresse : {info.adresse}</p>
               <p>Télephpne : {info.telephone}</p>
               <p>Email : {info.email}</p>
             </div>
 
-            <div className="page-col entreprise-info">
+            <div className="page-col  entreprise-info">
               <img className="logo-entreprise-page" src={logo} />
               <div className="entreprise-fiscaux">
                 <p>RC :**********************</p>
