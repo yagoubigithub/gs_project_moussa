@@ -37,8 +37,9 @@ class PrintDevis extends Component {
   state = {
     open: true,
     devis: {},
-    search :""
-
+    search :"",
+    pagesNumber : 1,
+    rows_to_print : []
   };
   componentDidMount() {
     this.props.getDevis(this.props.match.params.id);
@@ -47,7 +48,11 @@ class PrintDevis extends Component {
     if (nextProps.devis) {
       this.setState({
         devis: { ...nextProps.devis },
+      }, ()=>{
+        const rows_to_print = this.calculRows();
+        this.setState({rows_to_print})
       });
+      
     }
     if(nextProps.found){
       //focus
@@ -57,6 +62,16 @@ class PrintDevis extends Component {
   }
   
 
+
+  handlePageChange = (e) =>{
+
+    const number = e.target.value;
+    console.log(number)
+   const page =  document.getElementById(`page-${number}`)
+   page.scrollIntoView();
+
+
+  }
 
   searchInPage = ()=>{
 
@@ -147,11 +162,12 @@ class PrintDevis extends Component {
         
       }
     }
+    this.setState({pagesNumber : rows_to_print.length})
    
     return rows_to_print;
   };
   render() {
-    const rows_to_print = this.calculRows();
+   const  rows_to_print = [...this.state.rows_to_print]
 
     return (
       <Dialog
@@ -189,7 +205,9 @@ class PrintDevis extends Component {
                   <PictureAsPdfIcon />
                 </Button>
               
-              <button onClick={this.searchInPage} >Search</button>
+             {/* <button onClick={this.searchInPage} >Search</button>  */}
+<input type="number" onChange={this.handlePageChange} max={this.state.pagesNumber} defaultValue={1} min={1} />
+            
               </div>
             </Toolbar>
           </AppBar>
@@ -212,6 +230,7 @@ class PrintDevis extends Component {
                   head={head}
                   row={row}
                   index={index}
+                  id={index+1}
                   key={index}
                   entreprise={this.props.entreprise}
                 />
