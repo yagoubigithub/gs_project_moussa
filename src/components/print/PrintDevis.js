@@ -21,7 +21,7 @@ import PictureAsPdfIcon from "@material-ui/icons/PictureAsPdf";
 
 //redux
 import { connect } from "react-redux";
-import { getDevis, printToPdf, print } from "../../store/actions/devisAction";
+import { getDevis, printToPdf, print , search } from "../../store/actions/devisAction";
 import Page from "./Page";
 
 const head = [
@@ -31,10 +31,14 @@ const head = [
   { access: "prix", value: "Prix" },
 ];
 
+
+
 class PrintDevis extends Component {
   state = {
     open: true,
     devis: {},
+    search :""
+
   };
   componentDidMount() {
     this.props.getDevis(this.props.match.params.id);
@@ -45,7 +49,20 @@ class PrintDevis extends Component {
         devis: { ...nextProps.devis },
       });
     }
+    if(nextProps.found){
+      //focus
+     // this.searchInput.focus()
+     
+    }
   }
+  
+
+
+  searchInPage = ()=>{
+
+    this.props.search({})
+  }
+
   print = () => {
     const rows_to_print = this.calculRows();
     const pages = [];
@@ -66,6 +83,7 @@ class PrintDevis extends Component {
     this.props.print({ pages });
   };
 
+  
   printToPdf = () => {
     const rows_to_print = this.calculRows();
     const pages = [];
@@ -170,6 +188,8 @@ class PrintDevis extends Component {
                 >
                   <PictureAsPdfIcon />
                 </Button>
+              
+              <button onClick={this.searchInPage} >Search</button>
               </div>
             </Toolbar>
           </AppBar>
@@ -179,7 +199,7 @@ class PrintDevis extends Component {
               backgroundColor: "gray",
               marginTop: 60,
               paddingTop: 70,
-              height: "100%",
+              height: "80%",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
@@ -209,6 +229,7 @@ const mapStateToProps = (state) => {
     devis: state.devis.devis,
     loading: state.devis.loading,
     entreprise: state.entreprise.info,
+    found : state.devis.found
   };
 };
 const mapActionToProps = (dispatch) => {
@@ -216,6 +237,7 @@ const mapActionToProps = (dispatch) => {
     getDevis: (id) => dispatch(getDevis(id)),
     printToPdf: (pages) => dispatch(printToPdf(pages)),
     print: (pages) => dispatch(print(pages)),
+    search : (data) => dispatch(search(data))
   };
 };
 export default connect(mapStateToProps, mapActionToProps)(PrintDevis);

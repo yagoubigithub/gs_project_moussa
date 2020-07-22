@@ -321,3 +321,30 @@ export const removeDevisCreated = () =>{
   });
     }
   }
+
+
+
+  export const search = (data) =>{
+    return (dispatch ,getState)=>{
+     
+    ipcRenderer.send("search:devis", {...data});
+  
+    ipcRenderer.once('search:devis', function (event,data) {
+     
+      dispatch({
+        type : "STOP_LOADING_DEVIS"
+    });
+    if(data.found){
+      dispatch({
+          type : "SEARCH_IN_DEVIS",
+          payload : data
+      });
+    }else{
+      dispatch({
+        type : "ERROR_DEVIS",
+        payload : data
+    });
+    }
+  });
+    }
+  }

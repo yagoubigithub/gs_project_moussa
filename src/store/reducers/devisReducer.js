@@ -83,6 +83,11 @@ const DevisReducer = (state = initStat, action) => {
               loading : false
             }
 
+            case 'SEARCH_IN_DEVIS' : 
+            return {
+              ...state,
+              found : action.payload.found
+            }
     default:
       return {
         ...state,

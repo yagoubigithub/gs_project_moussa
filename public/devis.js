@@ -1,7 +1,9 @@
-const { ipcMain } = require("electron");
+const { ipcMain , screen , BrowserWindow } = require("electron");
+
 const db = require("./db");
 const mainWindow = require("./mainWindow");
 
+const isDev = require("electron-is-dev");
 const methode = Devis.prototype;
 
 function Devis() {
@@ -223,6 +225,128 @@ function Devis() {
                               */
     }
   });
+
+ //search
+ ipcMain.on("search:devis", (event, value) => {
+  
+
+
+const searchWindow = require('./search')  
+
+
+let index = 0;
+  let mainWindow_Bounds = BrowserWindow.getAllWindows()[0].getBounds()
+  searchWindow.setBounds({x : mainWindow_Bounds.x + 50, y : mainWindow_Bounds.y + 50})
+
+  searchWindow.show()
+
+  ipcMain.on('search-text' ,  (event, value)=>{
+   
+    
+    mainWindow.webContents.unselect()
+    if(value.text == ""){
+      mainWindow.webContents.stopFindInPage('clearSelection')
+    }else{
+  
+      index =  mainWindow.webContents.findInPage(value.text, {
+        
+       
+      })
+      console.log(index)
+      mainWindow.webContents.once('found-in-page', (event, result) => {
+      
+        console.log(result)
+          const matches = result.matches;
+          mainWindow.webContents.stopFindInPage('keepSelection')
+          searchWindow.webContents.send("matches", {matches,index})
+        
+
+       
+      })
+     
+    
+      
+    }
+
+  })
+
+
+  ipcMain.on('backward-search' ,  (event, value)=>{
+    mainWindow.webContents.unselect()
+   
+    if(value.text == ""){
+      mainWindow.webContents.stopFindInPage('clearSelection')
+    }else{
+  
+      index =  mainWindow.webContents.findInPage(value.text, {
+       
+        forward : false
+       
+      })
+      mainWindow.webContents.once('found-in-page', (event, result) => {
+        if (result.finalUpdate){
+          const matches = result.matches;
+          searchWindow.webContents.send("matches", {matches,index})
+        }
+
+       
+      })
+     
+
+  
+  
+  
+  
+    }
+  })
+
+  ipcMain.on('forward-search' ,  (event, value)=>{
+ 
+    mainWindow.webContents.unselect()
+   
+    if(value.text == ""){
+      mainWindow.webContents.stopFindInPage('clearSelection')
+    }else{
+  
+      index =  mainWindow.webContents.findInPage(value.text, {
+       
+        forward : true
+       
+      })
+      mainWindow.webContents.once('found-in-page', (event, result) => {
+        if (result.finalUpdate){
+          const matches = result.matches;
+          searchWindow.webContents.send("matches", {matches,index})
+        }
+
+       
+      })
+     
+
+  
+  
+  
+  
+    }
+  
+  })
+/*
+  if(value.text == ""){
+    mainWindow.webContents.stopFindInPage('clearSelection')
+  }else{
+
+    mainWindow.webContents.findInPage(value.text, {
+      forward  : true
+    })
+  
+    mainWindow.webContents.send('search:devis' ,  {found : true})
+  }
+  */
+ 
+
+
+});
+
 }
 function ReturnAllDevis() {
   const deviss = [];

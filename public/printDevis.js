@@ -6,6 +6,7 @@ const mainWindow = require("./mainWindow");
 var pdf = require("html-pdf");
 const methode = PrintDevis.prototype;
 const path = require("path");
+const fs = require('fs')
 
 function PrintDevis() {
   //PrintDevis
@@ -30,14 +31,15 @@ function PrintDevis() {
       font-family: Arial, Helvetica, sans-serif;
     width: 210mm;
     min-height: 297mm;
+    height : 297mm;
     background-color: white;
     box-sizing: border-box;
     padding : 10mm;
       
     }
     .print-page-head{
-    height : 80mm;
-    min-height : 80mm;
+    height : 77mm;
+    min-height : 77mm;
     
     }
     .print-page-footer{
@@ -48,8 +50,8 @@ function PrintDevis() {
     }
     .print-page-content {
       
-      height : 180mm;
-      min-height : 180mm;
+      height : 190mm;
+      min-height : 190mm;
     
     
     }
@@ -146,7 +148,7 @@ function PrintDevis() {
 
        "phantomPath": isDev ? "./node_modules/phantomjs/lib/phantom/bin/phantomjs" :  __dirname + "/../../../phantomjs",
             format: "A4",
-            height: "300mm", // allowed units: mm, cm, in, px
+            height: "297mm", // allowed units: mm, cm, in, px
             width: "210mm",
             header: {
               height: "0mm",
@@ -158,32 +160,16 @@ function PrintDevis() {
             path.join( __dirname ,"../", "../", "../", 'pdf_a4_portrait.js').toString()
           };
 
-          const Alert = require("electron-alert");
-          let alert = new Alert();
-
-          let swalOptions = {
-            title: path.join(directory, "devis.pdf").toString(),
-            text: path.join(directory, "devis.pdf").toString(),
-            type: "warning",
-            showCancelButton: true,
-          };
-
-          alert.fireFrameless(swalOptions, null, true, false);
-
+        
           pdf
             .create(html, option)
             .toFile(path.join(directory, "devis.pdf").toString(), function (
               err,
               res
             ) {
+              if(err) return err;
              
-              let swalOptions = {
-                title: err ? err.message : res.filename,
-                text: err ? err.message : res.filename,
-                type: "warning",
-                showCancelButton: true,
-              };
-              alert.fireFrameless(swalOptions, null, true, false);
+              mainWindow.webContents.send('printToPdf:devis' , {save : true})
             });
         }
       });
@@ -219,6 +205,125 @@ function PrintDevis() {
   });
 
   ipcMain.on("print:devis", (event, value) => {
+
+    let html = `
+    <!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+   
+
+    
+    <style>
+    * {
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+  }
+    @page {
+      size: A4;
+      margin: 10mm;
+  }
+  @media print {
+      html, body {
+          width: 210mm;
+          height: 297mm;        
+      }
+      .print-page-container {
+          margin: 0;
+          border: initial;
+          border-radius: initial;
+          width: initial;
+          min-height: initial;
+          box-shadow: initial;
+          background: initial;
+          page-break-after: always;
+      }
+  }
+.print-page-container{
+box-sizing: border-box;
+font-family: Arial, Helvetica, sans-serif;
+width: 210mm;
+min-height: 297mm;
+height: 297mm;
+background-color: white;
+
+
+display: flex;
+flex-direction: column;
+
+}
+.print-page-head{
+flex : 10;
+}
+.print-page-footer{
+flex: 1;
+}
+.print-page-content {
+flex :19;
+
+}
+.page-row{
+display:  flex;
+width : 100%;
+justify-content: space-between;
+}
+.page-col{
+flex: 5;
+}
+.print-page-container table{
+width : 100%;
+border : 1px double black;
+}
+.print-page-container p {
+font-size: 14px;
+font-weight: 400;
+}
+.logo-entreprise-page{
+max-width:  100px;
+float: left;
+margin-left: auto;
+margin-right: auto;
+}
+.entreprise-fiscaux{
+margin-top: 10px;
+
+}
+.entreprise-fiscaux p {
+font-weight: 700 !important;
+margin : 10px !important;
+}
+
+
+.print-page-container table td,th{
+border-bottom: 1px solid rgba(0, 0, 0, 1);
+text-align: left;
+padding : 3px;
+max-height: 60px;
+max-width: 350px;
+text-align: center;
+}
+.print-page-container p,h1,h2,h3,h4,h5,h6{
+margin: 5px;
+color: black;
+font-family: Arial, Helvetica, sans-serif;
+}
+.pt-1{
+padding-top : 10px;
+}
+
+    
+  
+    </style>
+    </head>
+    <body>`;
+    value.pages.forEach((page, index) => {
+      html = html + `<div id="page-${index}">${page.page}</div>`;
+    });
+    html =
+      html +
+      `</body>
+    </html>`;
+
     const printWindow = new BrowserWindow({
       webPreferences: {
         nodeIntegration: true,
@@ -226,21 +331,23 @@ function PrintDevis() {
       },
       width: 1200,
       height: 900,
-      transparent: true,
+      show : false
     });
-    printWindow.loadURL(
-      isDev
-        ? "http://localhost:3000/printDevis.html"
-        : `file://${path.join(__dirname, "../build/printDevis.html")}`
-    );
-    //  printWindow.hide()
-    printWindow.webContents.on("dom-ready", () => {
-      printWindow.webContents.send("print:devis", value);
-      ipcMain.once("print:close", (event, value) => {
+    fs.writeFileSync("printDevis1.html", html, {encoding: 'utf8'})
+    printWindow.webContents.once('dom-ready', () => {
+      printWindow.webContents.print({printBackground  : true}, (success , error)=>{
         printWindow.close();
+        fs.unlinkSync("printDevis1.html") /* cleaning */
         mainWindow.webContents.send("print:devis", { save: true });
-      });
-    });
+      })
+  
+})
+printWindow.loadFile("printDevis1.html")
+
+
+   
+
+  
   });
 }
 module.exports = PrintDevis;

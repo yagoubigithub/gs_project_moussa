@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+   
+</head>
+<body>
+    <input type="text" id="search-input" />
+    <button onclick="search()">Recherche</button>
+    <p id="matches-index"></p>
+
+    <button id="backward" disabled onclick="backward()">backward</button>
+    <button id="forward" disabled onclick="forward()">forward</button>
+
+    <script>
+
+const electron = window.require("electron");
+    const { ipcRenderer } = electron;
+    let index = 0;
+
+
+
+function search(){
+    const searchInput = document.getElementById("search-input");
+
+    const text  = searchInput.value;
+    
+    ipcRenderer.send('search-text', {text})
+
+    ipcRenderer.once("matches" , (event,value)=>{
+        const {matches} = value;
+        index= 0;
+
+        if(matches > 0){
+
+            index++;
+    if(index === matches){
+        index = 1;
+    }
+            document.getElementById('matches-index').innerHTML = index +  "/" + matches;
+            document.getElementById("forward").disabled = false;
+            document.getElementById("backward").disabled = false ;
+
+        }else{
+            document.getElementById('matches-index').innerHTML =  "0/0" 
+            document.getElementById("forward").disabled = true;
+            document.getElementById("backward").disabled = true ;
+        }
+    })
+}
+
+function backward(){
+    const searchInput = document.getElementById("search-input");
+    const text  = searchInput.value;
+    
+    ipcRenderer.send('backward-search', {text})
+
+    ipcRenderer.once("matches" , (event,value)=>{
+        const {matches} = value;
+
+if(matches > 0){
+    index--;
+    if(index === 0){
+        index = matches
+    }
+    document.getElementById('matches-index').innerHTML = index +  "/" + matches;
+    document.getElementById("forward").disabled = false;
+    document.getElementById("backward").disabled = false ;
+
+}else{
+    document.getElementById('matches-index').innerHTML =  "0/0" 
+    document.getElementById("forward").disabled = true;
+    document.getElementById("backward").disabled = true ;
+}
+    })
+}
+function forward(){
+    const searchInput = document.getElementById("search-input");
+    const text  = searchInput.value;
+    
+    ipcRenderer.send('forward-search', {text})
+
+    ipcRenderer.once("matches" , (event,value)=>{
+        const {matches} = value;
+
+if(matches > 0){
+    index++;
+    if(index === matches  || matches === 1 ){
+        index = 1;
+    }
+    document.getElementById('matches-index').innerHTML = index +  "/" + matches;
+    document.getElementById("forward").disabled = false;
+    document.getElementById("backward").disabled = false ;
+
+}else{
+    document.getElementById('matches-index').innerHTML =  "0/0" 
+    document.getElementById("forward").disabled = true;
+    document.getElementById("backward").disabled = true ;
+}
+    })
+}
+
+
+
+
+    </script>
+</body>
+</html>
