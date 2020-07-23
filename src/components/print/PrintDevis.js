@@ -188,11 +188,12 @@ class PrintDevis extends Component {
                   <ArrowBackIcon />
                 </IconButton>
               </Link>
-              <div>
+              <div >
                 <Button
                   color="primary"
                   variant="contained"
                   onClick={this.print}
+                  style={{margin : 4}}
                 >
                   <PrintIcon />
                 </Button>
@@ -206,9 +207,18 @@ class PrintDevis extends Component {
                 </Button>
               
              {/* <button onClick={this.searchInPage} >Search</button>  */}
-<input type="number" onChange={this.handlePageChange} max={this.state.pagesNumber} defaultValue={1} min={1} />
+           
+
             
               </div>
+
+              <div style={{
+               display : "inline"
+             }}>
+             <input style={{width : 30}} type="number" onChange={this.handlePageChange} max={this.state.pagesNumber} defaultValue={1} min={1} />
+             /
+             {this.state.pagesNumber}
+             </div>
             </Toolbar>
           </AppBar>
 
