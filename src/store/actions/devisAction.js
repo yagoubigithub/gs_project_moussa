@@ -297,9 +297,8 @@ export const removeDevisCreated = () =>{
 
   export const printToPdf = (data) =>{
     return (dispatch ,getState)=>{
-      dispatch({
-        type : "LOADING_DEVIS"
-    })
+    
+    
     ipcRenderer.send("printToPdf:devis", {...data});
   
     ipcRenderer.once('printToPdf:devis', function (event,data) {

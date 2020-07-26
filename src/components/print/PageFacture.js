@@ -18,7 +18,7 @@ export default class PageFacture extends Component {
       return total + (Number.parseFloat(r.rows_to_print.prix) + Number.parseFloat((r.rows_to_print.prix)* r.facture.tva) /100)
     },0)
     return (
-      <div className="print-page-container">
+      <div className="print-page-container" id={`page-${this.props.id}`}>
         <div className="print-page-head">
           <div className="page-row">
             <div className="page-col">

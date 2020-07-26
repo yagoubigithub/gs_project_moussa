@@ -82,6 +82,7 @@ class PrintDevis extends Component {
     const rows_to_print = this.calculRows();
     const pages = [];
     rows_to_print.map((row, index) => {
+    
       pages.push({
         page: ReactDOMServer.renderToString(
           <Page
@@ -90,8 +91,10 @@ class PrintDevis extends Component {
             index={index}
             row={row}
             key={index}
+            id={index+1}
           />
         ),
+        id : row.devis.id
       });
     });
 
@@ -113,6 +116,8 @@ class PrintDevis extends Component {
             key={index}
           />
         ),
+        
+        id : row[0].devis.id
       });
     });
 

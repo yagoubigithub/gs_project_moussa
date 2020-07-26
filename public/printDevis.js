@@ -12,6 +12,8 @@ function PrintDevis() {
   //PrintDevis
 
   ipcMain.on("printToPdf:devis", (event, value) => {
+    
+    let id = 0;
     let html = `
     <!DOCTYPE html>
 <html>
@@ -122,27 +124,33 @@ function PrintDevis() {
     <body>`;
     value.pages.forEach((page, index) => {
       html = html + `<div id="page-${index}">${page.page}</div>`;
+      id=page.id;
     });
     html =
       html +
       `</body>
     </html>`;
 
-    let directory = "../../";
+    let directory = `../../devis-${id}.pdf`;
     dialog
-      .showOpenDialog(mainWindow, {
+      .showSaveDialog(mainWindow, {
         properties: [
-          "openFile",
-          "openDirectory",
-          "promptToCreate",
+          
+          "dontAddToRecent",
           "showHiddenFiles",
+          
         ],
+        defaultPath : `devis-${id}.pdf`
       })
       .then((result) => {
         if (!result.canceled) {
         
 
-          directory = result.filePaths.toString();
+          directory = result.filePath.toString();
+          if(!directory.includes('.pdf')){
+            directory= directory + ".pdf"
+            
+          }
           const option = {
             directory: directory,
 
@@ -163,7 +171,7 @@ function PrintDevis() {
         
           pdf
             .create(html, option)
-            .toFile(path.join(directory, "devis.pdf").toString(), function (
+            .toFile(directory, function (
               err,
               res
             ) {
@@ -171,6 +179,8 @@ function PrintDevis() {
              
               mainWindow.webContents.send('printToPdf:devis' , {save : true})
             });
+        }else{
+          mainWindow.webContents.send('printToPdf:devis' , {save : false})
         }
       });
 
