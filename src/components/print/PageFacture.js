@@ -14,6 +14,7 @@ export default class PageFacture extends Component {
   
   render() {
     const info = { ...this.props.entreprise };
+    const user = {...this.props.user}
     const totalReporter = this.props.row.reduce((total,r)=>{
       return total + (Number.parseFloat(r.rows_to_print.prix) + Number.parseFloat((r.rows_to_print.prix)* r.facture.tva) /100)
     },0)
@@ -53,7 +54,7 @@ export default class PageFacture extends Component {
             <div className="page-col">
               <h2>Facture : N° {this.props.row[0].facture.id} / {new Date(this.props.row[0].facture.date_facture).getFullYear()}</h2>
               <p>Date : {this.props.row[0].facture.date_facture.split('T')[0]}</p>
-              <p>Par : yagoubi moussa</p>
+              <p>Par : {user.nom + " " + user.prenom}</p>
               <p>Objet :  {this.props.row[0].facture.objet}</p>
               <p>Projet  : {this.props.row[0].facture.nom}</p>
             </div>

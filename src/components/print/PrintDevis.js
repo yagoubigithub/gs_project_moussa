@@ -39,7 +39,8 @@ class PrintDevis extends Component {
     devis: {},
     search :"",
     pagesNumber : 1,
-    rows_to_print : []
+    rows_to_print : [],
+    user : {}
   };
   componentDidMount() {
     this.props.getDevis(this.props.match.params.id);
@@ -58,6 +59,11 @@ class PrintDevis extends Component {
       //focus
      // this.searchInput.focus()
      
+    }
+    if(nextProps.user){
+      this.setState({
+        user : nextProps.user
+      })
     }
   }
   
@@ -87,6 +93,7 @@ class PrintDevis extends Component {
         page: ReactDOMServer.renderToString(
           <Page
             entreprise={this.props.entreprise}
+             user={this.state.user}
             head={head}
             index={index}
             row={row}
@@ -248,6 +255,7 @@ class PrintDevis extends Component {
                   id={index+1}
                   key={index}
                   entreprise={this.props.entreprise}
+                   user={this.state.user}
                 />
               );
             })}
@@ -263,7 +271,7 @@ const mapStateToProps = (state) => {
     devis: state.devis.devis,
     loading: state.devis.loading,
     entreprise: state.entreprise.info,
-    found : state.devis.found
+    user : state.auth.user
   };
 };
 const mapActionToProps = (dispatch) => {

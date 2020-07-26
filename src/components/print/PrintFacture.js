@@ -43,7 +43,8 @@ class PrintFacture extends Component {
     search: "",
     pagesNumber: 1,
     rows_to_print: [],
-    entreprise : {}
+    entreprise : {},
+    user : {}
   };
   componentDidMount() {
     this.props.getFacture(this.props.match.params.id);
@@ -65,6 +66,12 @@ class PrintFacture extends Component {
     if(nextProps.entreprise){
       this.setState({
         entreprise : nextProps.entreprise
+      })
+    }
+    
+    if(nextProps.user){
+      this.setState({
+        user : nextProps.user
       })
     }
   }
@@ -113,6 +120,7 @@ class PrintFacture extends Component {
             index={index}
             row={row}
             key={index}
+            user={this.state.user}
           />
         )
         ,
@@ -249,6 +257,7 @@ class PrintFacture extends Component {
                     key={index}
                     entreprise={this.state.entreprise}
                     id={index + 1}
+                    user={this.state.user}
                   />
                 );
               })}
@@ -265,6 +274,7 @@ const mapStateToProps = (state) => {
     facture: state.facture.facture,
     loading: state.facture.loading,
     entreprise: state.entreprise.info,
+    user : state.auth.user
   };
 };
 const mapActionToProps = (dispatch) => {
