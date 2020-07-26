@@ -102,10 +102,31 @@ class AjouterProjet extends Component {
       });
     }
     if (nextProps.phasesProjets) {
+      const phasesProjets = []
+      nextProps.phasesProjets.map(phase=>{
+        if(phase.status === "undo"){
+          phasesProjets.push(phase)
+        }
+
+      })
       this.setState({
-        phasesProjets: nextProps.phasesProjets,
+        phasesProjets
       });
     }
+
+    if (nextProps.maitreDouvrages) {
+      const maitreDouvrages = []
+      nextProps.maitreDouvrages.map(maiterDouvrage=>{
+        if(maiterDouvrage.status === "undo"){
+          maitreDouvrages.push(maiterDouvrage)
+        }
+
+      })
+      this.setState({
+        maitreDouvrages
+      });
+    }
+    
   }
 
  
@@ -293,7 +314,7 @@ class AjouterProjet extends Component {
           <MaitreDouvrageTable
             sendData={this.getmaitreDouvrageeData}
             type="choose-one"
-            rows={this.props.maitreDouvrages}
+            rows={this.state.maitreDouvrages}
             chooseOneColumn
           />
 
@@ -586,7 +607,7 @@ const mapStateToProps = (state) => {
   return {
     loading: state.projet.loading,
     projetCreated: state.projet.projetCreated,
-    maitreDouvrages: state.maitre_douvrage.maitreDouvrages,
+    maitreDouvrages: state.maitre_douvrage.maitreDouvrages.filter(mD=>mD.status === "undo"),
     phasesProjets: state.phases_projet.phasesProjets,
   };
 };

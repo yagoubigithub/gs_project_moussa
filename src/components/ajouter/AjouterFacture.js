@@ -106,10 +106,30 @@ class AjouterFacture extends Component {
       });
     }
     if (nextProps.phasesProjets) {
+      const phasesProjets = []
+      nextProps.phasesProjets.map(phase=>{
+        if(phase.status === "undo"){
+          phasesProjets.push(phase)
+        }
+
+      })
       this.setState({
-        phasesProjets: nextProps.phasesProjets,
+        phasesProjets
       });
     }
+    if (nextProps.maitreDouvrages) {
+      const maitreDouvrages = []
+      nextProps.maitreDouvrages.map(maiterDouvrage=>{
+        if(maiterDouvrage.status === "undo"){
+          maitreDouvrages.push(maiterDouvrage)
+        }
+
+      })
+      this.setState({
+        maitreDouvrages
+      });
+    }
+    
   }
 
   handleSelectChange = (phasesProjetsSelected) => {
@@ -335,7 +355,7 @@ class AjouterFacture extends Component {
           <MaitreDouvrageTable
             sendData={this.getmaitreDouvrageeData}
             type="choose-one"
-            rows={this.props.maitreDouvrages}
+            rows={this.state.maitreDouvrages}
             chooseOneColumn
           />
 
