@@ -8,14 +8,17 @@ const methode = Entreprise.prototype;
 function Entreprise(){
  //Entreprise
 
- // db.run('DROP TABLE entreprise');
+ //db.run('DROP TABLE entreprise');
 
   db.run(`CREATE TABLE IF NOT EXISTS entreprise (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nom TEXT NOT NULL,
     telephone TEXT,
     email TEXT,
-    adresse TEXT
+    adresse TEXT,
+    rc TEXT,
+    nif TEXT,
+    nis TEXT
    
 )`);
 
@@ -35,7 +38,7 @@ function Entreprise(){
       // ajouter
       db.run(
         `
-               INSERT INTO entreprise(nom  , telephone , email , adresse ) VALUES ('${value.entreprise.nom}','${value.entreprise.telephone}','${value.entreprise.email}','${value.entreprise.adresse}') `,
+               INSERT INTO entreprise(nom  , telephone , email , adresse ,rc , nis , nif) VALUES ('${value.entreprise.nom}','${value.entreprise.telephone}','${value.entreprise.email}','${value.entreprise.adresse}' ,'${value.entreprise.rc}','${value.entreprise.nis}','${value.entreprise.nif}') `,
         function(err) {
           db.run(
             `
@@ -64,7 +67,7 @@ function Entreprise(){
 
       db.run(
         `
-     UPDATE entreprise SET nom='${value.nom}' , telephone='${value.telephone}' , email='${value.email}' , adresse='${value.adresse}'  WHERE  id=${value.id}  `,
+     UPDATE entreprise SET nom='${value.nom}' , telephone='${value.telephone}' , email='${value.email}' , adresse='${value.adresse}' , rc='${value.rc}' , nis='${value.nis}' , nif='${value.nif}'  WHERE  id=${value.id}  `,
         function(err) {
           if (err) mainWindow.webContents.send("entreprise:modifier", err);
           db.all("SELECT * FROM entreprise ", function(err, rows) {

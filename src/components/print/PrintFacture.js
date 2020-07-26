@@ -43,6 +43,7 @@ class PrintFacture extends Component {
     search: "",
     pagesNumber: 1,
     rows_to_print: [],
+    entreprise : {}
   };
   componentDidMount() {
     this.props.getFacture(this.props.match.params.id);
@@ -59,6 +60,12 @@ class PrintFacture extends Component {
           this.setState({ rows_to_print });
         }
       );
+    }
+
+    if(nextProps.entreprise){
+      this.setState({
+        entreprise : nextProps.entreprise
+      })
     }
   }
 
@@ -79,7 +86,7 @@ class PrintFacture extends Component {
       pages.push({
         page: ReactDOMServer.renderToString(
           <PageFacture
-            entreprise={this.props.entreprise}
+            entreprise={this.state.entreprise}
             head={head}
             index={index}
             row={row}
@@ -101,7 +108,7 @@ class PrintFacture extends Component {
       pages.push({
         page: ReactDOMServer.renderToString(
           <PageFacture
-            entreprise={this.props.entreprise}
+            entreprise={this.state.entreprise}
             head={head}
             index={index}
             row={row}
@@ -240,7 +247,7 @@ class PrintFacture extends Component {
                     row={row}
                     index={index}
                     key={index}
-                    entreprise={this.props.entreprise}
+                    entreprise={this.state.entreprise}
                     id={index + 1}
                   />
                 );

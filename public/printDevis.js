@@ -88,6 +88,7 @@ function PrintDevis() {
      float: right;
     }
     .entreprise-fiscaux{
+      text-align: left;
      
       margin-top: 25px;
       
@@ -97,9 +98,13 @@ function PrintDevis() {
       margin : 10px !important;
       
     }
-    .entreprise-info {
-      text-align: right;
+    .entreprise-info-1 {
+      width :65%;
     }
+    .entreprise-info-2 {
+      width : 35%;
+    }
+    
     
     .print-page-container table td,th{
       border-bottom: 1px solid rgba(0, 0, 0, 1);
@@ -289,21 +294,27 @@ font-size: 14px;
 font-weight: 400;
 }
 .logo-entreprise-page{
-max-width:  100px;
-float: left;
-margin-left: auto;
-margin-right: auto;
+  max-width:  100px;
+  
+ float: right;
 }
 .entreprise-fiscaux{
-margin-top: 10px;
-
+  text-align: left;
+ 
+  margin-top: 25px;
+  
 }
 .entreprise-fiscaux p {
-font-weight: 700 !important;
-margin : 10px !important;
+  font-weight: 700 !important;
+  margin : 10px !important;
+  
 }
-
-
+.entreprise-info-1 {
+  width :65%;
+}
+.entreprise-info-2 {
+  width : 35%;
+}
 .print-page-container table td,th{
 border-bottom: 1px solid rgba(0, 0, 0, 1);
 text-align: left;

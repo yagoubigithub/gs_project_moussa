@@ -21,23 +21,30 @@ export default class PageFacture extends Component {
       <div className="print-page-container" id={`page-${this.props.id}`}>
         <div className="print-page-head">
           <div className="page-row">
-            <div className="page-col">
-              <h4>Bureau d'etudes d'architecture  & d'urbanisme {info.nom}</h4>
+            <div className="page-col entreprise-info-1">
+              <h4>Bureau d'etudes d'architecture  & d'urbanisme :  {info.nom}</h4>
               <p>Adresse : {info.adresse}</p>
               <p>Télephpne : {info.telephone}</p>
               <p>Email : {info.email}</p>
              
             </div>
 
-            <div className="page-col entreprise-info">
+            <div className="page-col  entreprise-info-2">
               <img className="logo-entreprise-page" src={logo} />
               <div className="entreprise-fiscaux">
-                  <p>RC :**********************</p>
-              <p>AI :**********************</p>
-              <p>NIF :**********************</p>
-              <p>NIS :**********************</p>
+              {info.rc !== "" ?   <p>RC :{info.rc}</p> : null}
+              {
+                info.nis !== "" ? 
+                <p>NIS : {info.nis}</p>
+                : null
+              }
+              {
+                info.nif !== "" ? 
+                <p>NIF : {info.nif }</p>
+                : null
+              }
+               
               </div>
-            
             </div>
           </div>
 

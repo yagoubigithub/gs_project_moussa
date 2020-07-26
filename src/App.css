@@ -344,6 +344,7 @@ hr{
  float: right;
 }
 .entreprise-fiscaux{
+  text-align: left;
  
   margin-top: 25px;
   
@@ -353,8 +354,11 @@ hr{
   margin : 10px !important;
   
 }
-.entreprise-info {
-  text-align: right;
+.entreprise-info-1 {
+  width :65%;
+}
+.entreprise-info-2 {
+  width : 35%;
 }
 
 .print-page-container table td,th{
