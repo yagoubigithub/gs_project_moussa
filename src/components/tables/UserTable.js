@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from "react";
 
-import { Link } from "react-router-dom";
 
 import ReactTable from "react-table";
 import "react-table/react-table.css";
@@ -8,13 +7,12 @@ import "react-table/react-table.css";
 //Mui
 import IconButton from "@material-ui/core/IconButton";
 
-import {
-  Dialog,
-  Collapse,
-  Grid,
-  DialogContent,
-  Checkbox,
-} from "@material-ui/core";
+
+import Dialog from '@material-ui/core/Dialog'
+import Grid from '@material-ui/core/Grid'
+import Checkbox from '@material-ui/core/Checkbox'
+import Button from '@material-ui/core/Button'
+import TextField from '@material-ui/core/TextField'
 
 //redux
 import { connect } from "react-redux";
@@ -27,7 +25,6 @@ import {
 
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
-import PermMediaIcon from "@material-ui/icons/PermMedia";
 import UndoIcon from "@material-ui/icons/Undo";
 import SearchIcon from "@material-ui/icons/Search";
 
@@ -40,9 +37,12 @@ class UserTable extends Component {
     deletedId: null,
     rowsSelected: this.props.rowsSelected,
     selectedAll: false,
+    modfierDialog : false, 
+    nom :"",
+    prenom : "",
 
- 
-    selectedAll: false,
+    username :  "",
+
    
   };
   
@@ -100,6 +100,16 @@ class UserTable extends Component {
       maitreDouvrageSelected,
     });
   };
+
+  handleOpenCloseModifierDialog = (user) =>{
+    this.setState({
+      ...user
+    }, ()=>{
+      console.log(this.state)
+    })
+    
+    this.setState({ modfierDialog: !this.state.modfierDialog });
+  }
   render() {
     const columns = [
       {
@@ -249,10 +259,8 @@ class UserTable extends Component {
               if(props.original.status === "admin"){
                 render =(<div>
 
-                  <IconButton size="small">
-                    <Link to={`/user/modifier/${props.value}`}>
-                      <EditIcon className="black" fontSize="small"></EditIcon>
-                    </Link>
+<IconButton onClick={() => this.handleOpenCloseModifierDialog(props.original)}  size="small">
+                      <EditIcon className="black" fontSize="small"></EditIcon>                 
                   </IconButton>
                 
                 </div>);
@@ -266,10 +274,8 @@ class UserTable extends Component {
                   >
                     <DeleteIcon className="red" fontSize="small"></DeleteIcon>
                   </IconButton>
-                  <IconButton size="small">
-                    <Link to={`/user/modifier/${props.value}`}>
-                      <EditIcon className="black" fontSize="small"></EditIcon>
-                    </Link>
+                  <IconButton onClick={() => this.handleOpenCloseModifierDialog(props.original)}  size="small">
+                      <EditIcon className="black" fontSize="small"></EditIcon>                 
                   </IconButton>
                 
                 </div>);
@@ -356,6 +362,78 @@ class UserTable extends Component {
             this.props.loading !== undefined ? this.props.loading : false
           }
         />
+
+{
+       /* 
+       Modfier user 
+
+       */
+     }
+        <Dialog
+          open={this.state.modfierDialog}
+          onClose={this.handleOpenCloseModifierDialog}
+          maxWidth="lg"
+        >
+        <div>
+           <h2>Modifier</h2>
+          <form  onSubmit={this.modifier} id="modifier-user-form">
+          <span className="error" >{this.props.error}</span>
+            <Grid container spacing={1} style={{ padding: 15 }}>
+              <Grid item xs={6}>
+                <h3 style={{ margin: 0 }}>Nom * </h3>
+
+                <TextField
+                  placeholder="Nom *"
+                  value={this.state.nom}
+                  name="nom"
+                  variant="outlined"
+                  onChange={this.handleChange}
+                  fullWidth
+                  required
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <h3 style={{ margin: 0 }}>Prénom * </h3>
+
+                <TextField
+                  placeholder="Prénom *"
+                  value={this.state.prenom}
+                  name="prenom"
+                  variant="outlined"
+                  onChange={this.handleChange}
+                  fullWidth
+                  required
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <h3 style={{ margin: 0 }}>Nom d'utilisateur * </h3>
+
+                <TextField
+                  placeholder="Nom d'utilisateur *"
+                  value={this.state.username}
+                  name="username"
+                  variant="outlined"
+                  onChange={this.handleChange}
+                  fullWidth
+                  required
+                />
+              </Grid>
+             
+              <Grid item xs={6}></Grid>
+              <Grid item xs={3}></Grid>
+
+              <Grid item xs={6}>
+                <Button type="submit" fullWidth color="primary" variant="contained"> Modfier</Button>
+              </Grid>
+            </Grid>
+          </form>
+        </div>
+         
+        </Dialog>
+
+    
+
+
         <Dialog
           open={this.state.addToCorbeilleDialog}
           onClose={this.handleOpenCloseaddToCorbeilleDialog}

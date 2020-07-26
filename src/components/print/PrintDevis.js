@@ -95,10 +95,10 @@ class PrintDevis extends Component {
             entreprise={this.props.entreprise}
              user={this.state.user}
             head={head}
-            index={index}
+            index={ index }
             row={row}
-            key={index}
-            id={index+1}
+            key={ index }
+            id={ index +1}
           />
         ),
         id : row.devis.id

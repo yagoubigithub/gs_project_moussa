@@ -37,6 +37,7 @@ class User extends Component {
     tab: "users",
     addToCorbeilleDialog: false,
     ajouterDialog: false,
+    modfierDialog : false,
     user: {},
     nom :"",
     prenom  : "",
@@ -123,6 +124,7 @@ class User extends Component {
     this.setState({ ajouterDialog: !this.state.ajouterDialog });
   };
 
+  
   handleChange = (e) =>{
       this.setState({
           [e.target.name] : e.target.value
@@ -242,6 +244,8 @@ class User extends Component {
           </form>
         </Dialog>
 
+     
+   
         <div className="sous-nav-container">
           <NavLink onClick={this.props.getAllUser} to="/user">
             <button className="btn btn-nav">Actualisé</button>
