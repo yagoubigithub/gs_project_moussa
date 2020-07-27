@@ -7,12 +7,13 @@ const isDev = require("electron-is-dev");
 const methode = Devis.prototype;
 
 function Devis() {
- //db.run('DROP TABLE devis');
- // db.run('DROP TABLE devis_phases_projets');
+// db.run('DROP TABLE devis');
+ //db.run('DROP TABLE devis_phases_projets');
 
   db.run(`CREATE TABLE IF NOT EXISTS devis (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     projet_id INTEGER,
+    user_id INTEGER,
     nom TEXT NOT NULL,
     objet TEXT,
     adresse TEXT,
@@ -22,6 +23,7 @@ function Devis() {
     date_devis TEXT,
     maitreDouvrage_id INTEGER ,
     tva REAL,
+    
    status TEXT
 )`);
 
@@ -41,7 +43,7 @@ function Devis() {
     if (value.id) {
       let devis = {};
       db.get(
-        "SELECT d.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom,m.rg maitre_douvrage_rg , m.raison_social maitre_douvrage_raison_social,m.telephone maitre_douvrage_telephone , m.email   maitre_douvrage_email, m.adresse maitre_douvrage_adresse ,m.logo maitre_douvrage_logo FROM devis d  JOIN maitre_douvrage m ON m.id=d.maitreDouvrage_id WHERE d.id=" +
+        "SELECT d.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom,m.rg maitre_douvrage_rg , m.raison_social maitre_douvrage_raison_social,m.telephone maitre_douvrage_telephone , m.email   maitre_douvrage_email, m.adresse maitre_douvrage_adresse ,m.logo maitre_douvrage_logo , u.nom user_nom , u.prenom user_prenom FROM devis d  JOIN maitre_douvrage m ON m.id=d.maitreDouvrage_id JOIN user u ON u.id=d.user_id WHERE d.id=" +
           value.id ,
         function (err, result) {
           if (err) mainWindow.webContents.send("devis", err);
@@ -76,12 +78,13 @@ function Devis() {
   ipcMain.on("devis:ajouter", (event, value) => {
     const deviss = [];
     db.run(
-      `INSERT INTO devis(projet_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, unite_remise, date_devis ,  maitreDouvrage_id , tva , status) VALUES (${value.projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.unite_remise}', '${value.date_devis}' , ${value.maitreDouvrage_id} , ${value.tva} , 'undo') `,
+      `INSERT INTO devis(projet_id , user_id  , nom , objet , adresse  , duree_phase , prix_totale , remise , date_devis ,  maitreDouvrage_id , tva , status) VALUES (${value.projet_id}, ${value.user_id} , '${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} ,  '${value.date_devis}' , ${value.maitreDouvrage_id} , ${value.tva} , 'undo') `,
       function (err) {
         if (err) mainWindow.webContents.send("devis:ajouter", err);
        
         //add phase de devis
         const devis_id = this.lastID;
+       
         let sql = `INSERT INTO devis_phases_projets(devis_id , phases_devis_id , titre , description , duree , prix , status) VALUES   `;
 
         /*phases_devis_id:
@@ -96,7 +99,7 @@ function Devis() {
         sql = sql.slice(0, sql.lastIndexOf(",") - 1);
 
         db.run(sql, function (err) {
-          console.log(err,sql)
+       
          
 
           if (err) mainWindow.webContents.send("devis:ajouter", err);
@@ -117,7 +120,7 @@ function Devis() {
   //AJOUTER
   ipcMain.on("devis:transform", (event, value) => {
     db.run(
-      `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , remise , unite_remise , status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.delais},'${value.date_debut}','${value.date_depot}' , 'en cours',${value.duree_phase},${value.maitreDouvrage_id} , ${value.remise} , '${value.unite_remise}' , 'undo') `,
+      `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , user_id , remise  , status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.delais},'${value.date_debut}','${value.date_depot}' , 'en cours',${value.duree_phase},${value.maitreDouvrage_id} , ${value.user_id} , ${value.remise} , 'undo') `,
       function (err) {
         if (err) mainWindow.webContents.send("devis:transform", err);
 
@@ -252,10 +255,10 @@ let index = 0;
         
        
       })
-      console.log(index)
+    
       mainWindow.webContents.once('found-in-page', (event, result) => {
       
-        console.log(result)
+       
           const matches = result.matches;
           mainWindow.webContents.stopFindInPage('keepSelection')
           searchWindow.webContents.send("matches", {matches,index})
@@ -353,7 +356,7 @@ function ReturnAllDevis() {
 
   return new Promise((resolve, reject) => {
     db.all(
-      `SELECT d.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM devis d  JOIN maitre_douvrage m ON m.id=d.maitreDouvrage_id ORDER BY id DESC`,
+      `SELECT d.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom , u.nom user_nom , u.prenom user_prenom  FROM devis d  JOIN maitre_douvrage m ON m.id=d.maitreDouvrage_id JOIN user u ON u.id=d.user_id ORDER BY id DESC`,
       function (err, rows) {
         if (err) reject(err);
         if (rows !== undefined) {

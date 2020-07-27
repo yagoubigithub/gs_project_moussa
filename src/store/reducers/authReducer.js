@@ -22,7 +22,12 @@ const authReducer = (state = initStat, action) =>{
                 loading : false
             }
         case 'AUTH_ERROR' :
+            return {
+                ...state,
+                error : action.payload
+            }
         case 'ERROR_AUTH' : 
+        console.log('ERROR_AUTH' , action.payload)
             return {
                 ...state,
                 error : action.payload

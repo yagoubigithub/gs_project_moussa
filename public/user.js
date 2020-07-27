@@ -6,7 +6,7 @@ const mainWindow = require('./mainWindow');
 const methode = User.prototype;
 
 function User(){
- // db.run('DROP TABLE user');
+// db.run('DROP TABLE user');
 
     db.run(`CREATE TABLE IF NOT EXISTS user (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -45,15 +45,16 @@ function User(){
         db.all(
           `SELECT * FROM user WHERE username='${value.username}'  `,
           function(err, rows) {
-            if (err) mainWindow.webContents.send("user:ajouter", err);
+            if (err) mainWindow.webContents.send("user:ajouter", {error : err});
 
             if(rows.length > 0){
               mainWindow.webContents.send("user:ajouter", {error : "Utilisateur déja exist"});
             }else{
 
+              console.log(rows)
               db.run(
                 `
-                    INSERT INTO user(nom , prenom  , username ,  password , ='undo'  ) VALUES ('${value.nom}','${value.prenom}','${value.username}','${value.password}' , 'undo') `,
+                    INSERT INTO user(nom , prenom  , username ,  password , status  ) VALUES ('${value.nom}','${value.prenom}','${value.username}','${value.password}' , 'undo') `,
                 function(err) {
                   if (err) mainWindow.webContents.send("user:ajouter", err);
                   db.all(

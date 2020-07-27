@@ -160,6 +160,7 @@ class AjouterProjet extends Component {
       nom: d.nom,
       objet: d.objet,
       maitreDouvrage_id: d.maitreDouvrage.id,
+      user_id :this.props.user.id, 
       adresse: d.adresse,
       phasesProjetsSelected: [...this.state.phasesProjetsSelected],
       duree_phase: d.duree_phase,
@@ -609,6 +610,7 @@ const mapStateToProps = (state) => {
     projetCreated: state.projet.projetCreated,
     maitreDouvrages: state.maitre_douvrage.maitreDouvrages.filter(mD=>mD.status === "undo"),
     phasesProjets: state.phases_projet.phasesProjets,
+    user : state.auth.user
   };
 };
 export default connect(

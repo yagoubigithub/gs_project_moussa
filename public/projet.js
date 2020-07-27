@@ -20,6 +20,7 @@ function Projet() {
     etat TEXT ,
     duree_phase INTEGER ,
     maitreDouvrage_id INTEGER ,
+    user_id   INTEGER,
     remise REAL,
     tva REAL,
    status TEXT
@@ -40,7 +41,7 @@ function Projet() {
   ipcMain.on("projet", (event, value) => {
     if (value.id) {
       db.get(
-        "SELECT p.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM projet p  JOIN maitre_douvrage m ON m.id=p.maitreDouvrage_id WHERE p.id=" +
+        "SELECT p.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom , u.nom user_nom , u.prenom user_prenom  FROM projet p  JOIN maitre_douvrage m ON m.id=p.maitreDouvrage_id JOIN user u ON p.user_id=u.id WHERE p.id=" +
           value.id,
         function (err, result) {
           
@@ -70,16 +71,18 @@ function Projet() {
 
   //AJOUTER
   ipcMain.on("projet:ajouter", (event, value) => {
+    
     db.run(
-      `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , remise  , tva ,  status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.delais},'${value.date_debut}','${value.date_depot}' , 'en cours',${value.duree_phase},${value.maitreDouvrage_id} , ${value.remise} ,   ${value.tva} , 'undo') `,
+      `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , user_id , remise  , tva ,  status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.delais},'${value.date_debut}','${value.date_depot}' , 'en cours',${value.duree_phase},${value.maitreDouvrage_id} , ${value.user_id} , ${value.remise} ,   ${value.tva} , 'undo') `,
       function (err) {
+        
         if (err) mainWindow.webContents.send("projet:ajouter", err);
 
         //add phase de projet
         const projet_id = this.lastID;
 
-      
-
+       
+       
         new Promise((resolve, reject)=>{
           let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , titre ,description , duree , prix , status) VALUES   `;
           let count = 0;
@@ -95,15 +98,16 @@ function Projet() {
         }).then((sql)=>{
          
           sql = sql.slice(0, sql.lastIndexOf(",") - 1);
-          console.log(sql)
+         
           db.run(sql, function (err) {
             if (err) mainWindow.webContents.send("projet:ajouter", err);
           
             db.run(
-              `INSERT INTO devis(projet_id  ,nom , objet , adresse  , duree_phase , prix_totale , remise, date_devis ,  maitreDouvrage_id ,  tva , status) VALUES (${projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_projet}' , ${value.maitreDouvrage_id} , ${value.tva}  , 'undo') `,
+              `INSERT INTO devis(projet_id , user_id  ,nom , objet , adresse  , duree_phase , prix_totale , remise, date_devis ,  maitreDouvrage_id ,  tva , status) VALUES (${projet_id} , ${value.user_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_projet}' , ${value.maitreDouvrage_id} , ${value.tva}  , 'undo') `,
               function (err) {
                 if (err) mainWindow.webContents.send("projet:ajouter", err);
   
+               
                 //add phase de devis
                 const devis_id = this.lastID;
                 let sql = `INSERT INTO devis_phases_projets(devis_id , phases_devis_id , titre ,description , duree , prix , status) VALUES   `;
@@ -120,12 +124,14 @@ function Projet() {
   
                   //ajouter facture
                   db.run(
-                    `INSERT INTO facture(projet_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, date_facture ,  maitreDouvrage_id , tva , status) VALUES (${projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_projet}' , ${value.maitreDouvrage_id} , ${value.tva} , 'undo') `,
+                    `INSERT INTO facture(projet_id , user_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, date_facture ,  maitreDouvrage_id , tva , status) VALUES (${projet_id}, ${value.user_id}, '${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_projet}' , ${value.maitreDouvrage_id} , ${value.tva} , 'undo') `,
                     function (err) {
                       if (err) mainWindow.webContents.send("projet:ajouter", err);
-  
+                      
+                     
                       //add phase de facture
                       const facture_id = this.lastID;
+                    
   
                       let sql = `INSERT INTO facture_phases_projets(facture_id , phases_facture_id , titre ,description , duree , prix , status) VALUES   `;
   
@@ -222,7 +228,7 @@ function Projet() {
     if (value.id !== undefined) {
       // delete  projet
 
-      console.log(value.id);
+    
 
       db.run(
         `UPDATE projet  SET status='${value.status}' WHERE id = ${value.id};`,
@@ -247,7 +253,7 @@ function Projet() {
     }' WHERE id IN(${value.projets.join(",")})    `;
     db.run(sql, function (err) {
       if (err) mainWindow.webContents.send("projet:delete-multi", err);
-      console.log(err);
+     
 
       ReturnAllProject()
         .then((projets) => {
@@ -275,7 +281,7 @@ function Projet() {
     if (err) mainWindow.webContents.send("projet:modifier", err);
 
 
-    console.log("err 1" , err)
+
     
     new Promise((resolve, reject)=>{
       let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , titre ,description , duree , prix , status) VALUES   `;
@@ -348,21 +354,7 @@ db.get(`SELECT id  FROM devis WHERE projet_id=${value.id}` ,  (err,result)=>{
 
  const devis_id = result.id;
 
- /*
-
- id INTEGER PRIMARY KEY AUTOINCREMENT,
-    projet_id INTEGER,
-    nom TEXT NOT NULL,
-    objet TEXT,
-    adresse TEXT,
-    duree_phase INTEGER ,
-    prix_totale  REAL ,
-    remise REAL,
-    date_devis TEXT,
-    maitreDouvrage_id INTEGER ,
-    tva REAL,
-   status TEXT
- */
+ 
  db.run(
   `UPDATE devis SET nom='${value.nom}', objet='${value.objet}', adresse='${value.adresse}' , duree_phase=${value.duree_phase}  , prix_totale=${value.prix_totale} , maitreDouvrage_id=${value.maitreDouvrage_id} , remise=${value.remise}  , tva=${value.tva} , status='${value.status}'  WHERE projet_id=${value.id} `,
    (err) =>{
@@ -458,7 +450,7 @@ function ReturnAllProject() {
 
   return new Promise((resolve, reject) => {
     db.all(
-      `SELECT p.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM projet p  JOIN maitre_douvrage m ON m.id=p.maitreDouvrage_id  ORDER BY p.id DESC`,
+      `SELECT p.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom , u.nom user_nom , u.prenom user_prenom  FROM projet p  JOIN maitre_douvrage m ON m.id=p.maitreDouvrage_id JOIN user u ON p.user_id=u.id   ORDER BY p.id DESC`,
       function (err, rows) {
         if (err) reject(err);
         if (rows !== undefined) {

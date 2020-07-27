@@ -155,6 +155,7 @@ class AjouterDevis extends Component {
       nom: d.nom,
       objet: d.objet,
       maitreDouvrage_id: d.maitreDouvrage.id,
+      user_id :this.props.user.id, 
       adresse: d.adresse,
       phasesProjetsSelected: [...this.state.phasesProjetsSelected],
       duree_phase: d.duree_phase,
@@ -500,6 +501,7 @@ const mapActionToProps = (dispatch) => {
 const mapStateToProps = (state) => {
   return {
     loading: state.devis.loading,
+    user : state.auth.user,
     devisCreated: state.devis.devisCreated,
     maitreDouvrages: state.maitre_douvrage.maitreDouvrages,
     phasesProjets: state.phases_projet.phasesProjets,

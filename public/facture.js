@@ -5,13 +5,14 @@ const mainWindow = require("./mainWindow");
 const methode = Facture.prototype;
 
 function Facture() {
- //db.run('DROP TABLE facture');
-/// db.run('DROP TABLE facture_phases_projets');
+// db.run('DROP TABLE facture');
+// db.run('DROP TABLE facture_phases_projets');
  // db.run('DROP TABLE paye');
 
   db.run(`CREATE TABLE IF NOT EXISTS facture (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     projet_id INTEGER,
+    user_id INTEGER,
     nom TEXT NOT NULL,
     objet TEXT,
     adresse TEXT,
@@ -39,6 +40,7 @@ function Facture() {
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     facture_id INTEGER NOT NULL,
     paye REAL,
+    user_id INTEGER,
     date_paye TEXT
   )`);
 
@@ -48,7 +50,7 @@ function Facture() {
       const factures = [];
 
       db.all(
-        `SELECT f.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom , m.rg maitre_douvrage_rg , m.raison_social maitre_douvrage_raison_social,m.telephone maitre_douvrage_telephone , m.email   maitre_douvrage_email, m.adresse maitre_douvrage_adresse ,m.logo maitre_douvrage_logo  FROM facture f   JOIN maitre_douvrage m ON m.id=f.maitreDouvrage_id   WHERE f.id=${value.id}`,
+        `SELECT f.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom , m.rg maitre_douvrage_rg , m.raison_social maitre_douvrage_raison_social,m.telephone maitre_douvrage_telephone , m.email   maitre_douvrage_email, m.adresse maitre_douvrage_adresse ,m.logo maitre_douvrage_logo , u.nom user_nom , u.prenom user_prenom FROM facture f   JOIN maitre_douvrage m ON m.id=f.maitreDouvrage_id JOIN user u ON u.id=f.user_id   WHERE f.id=${value.id}`,
         function (err, factures_rows) {
         
           if (err) mainWindow.webContents.send("facture", err);
@@ -115,7 +117,7 @@ function Facture() {
 
     //ajouter projet
     db.run(
-      `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , remise  , tva ,  status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.delais},'${value.date_debut}','${value.date_depot}' , 'en cours',${value.duree_phase},${value.maitreDouvrage_id} , ${value.remise}  ,  ${value.tva} , 'undo') `,
+      `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , user_id , remise  , tva ,  status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.delais},'${value.date_debut}','${value.date_depot}' , 'en cours',${value.duree_phase},${value.maitreDouvrage_id} , ${value.user_id} , ${value.remise}  ,  ${value.tva} , 'undo') `,
       function (err) {
         if (err) mainWindow.webContents.send("facture:ajouter", err);
 
@@ -139,7 +141,7 @@ function Facture() {
           if (err) mainWindow.webContents.send("facture:ajouter", err);
           
           db.run(
-            `INSERT INTO devis(projet_id  , nom , objet , adresse  , duree_phase , prix_totale , remise , date_devis ,  maitreDouvrage_id ,  tva , status) VALUES (${projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_facture}' , ${value.maitreDouvrage_id} , ${value.tva}  , 'undo') `,
+            `INSERT INTO devis(projet_id , user_id  , nom , objet , adresse  , duree_phase , prix_totale , remise , date_devis ,  maitreDouvrage_id ,  tva , status) VALUES (${projet_id},${value.user_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_facture}' , ${value.maitreDouvrage_id} , ${value.tva}  , 'undo') `,
             function (err) {
               if (err) mainWindow.webContents.send("facture:ajouter", err);
              
@@ -166,7 +168,7 @@ function Facture() {
         
  //ajouter facture
  db.run(
-  `INSERT INTO facture(projet_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, date_facture ,  maitreDouvrage_id , tva , status) VALUES (${projet_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_facture}' , ${value.maitreDouvrage_id} , ${value.tva} , 'undo') `,
+  `INSERT INTO facture(projet_id ,user_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, date_facture ,  maitreDouvrage_id , tva , status) VALUES (${projet_id},${value.user_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_facture}' , ${value.maitreDouvrage_id} , ${value.tva} , 'undo') `,
   function (err) {
     if (err) mainWindow.webContents.send("facture:ajouter", err);
   
@@ -174,7 +176,7 @@ function Facture() {
     const facture_id = this.lastID;
 
     db.run(
-      `INSERT INTO paye(facture_id  , paye ,date_paye  ) VALUES (${facture_id},${value.paye} ,  '${value.date_facture}' ) `,
+      `INSERT INTO paye(facture_id  , paye , user_id , date_paye  ) VALUES (${facture_id}, ${value.user_id}, ${value.paye} ,  '${value.date_facture}' ) `,
       function (err) {
         if (err) mainWindow.webContents.send("facture:ajouter", err);
 
@@ -230,7 +232,7 @@ function Facture() {
 
     if(value.facture_id){
       db.run(
-        `INSERT INTO paye(facture_id  , paye , date_paye ) VALUES (${value.facture_id},${value.paye} , '${value.date_paye}')  `,
+        `INSERT INTO paye(facture_id  , paye , user_id ,  date_paye ) VALUES (${value.facture_id} ,${value.paye} , ${value.user_id}  , '${value.date_paye}')  `,
         function (err) {
           if (err) mainWindow.webContents.send("facture:ajouterPaiement", err);
           ReturnAllFacture()
@@ -281,30 +283,7 @@ function Facture() {
 
   });
 
-  //MODIFIER
-  ipcMain.on("maitre_douvrage:modifier", (event, value) => {
-    if (value.nom !== undefined) {
-      db.run(
-        `
-               UPDATE maitre_douvrage SET nom='${value.nom}', prenom='${value.prenom}', raison_social='${value.raison_social}', rg='${value.rg}', telephone='${value.telephone}', email='${value.email}', adresse='${value.adresse}', logo='${value.logo}'  WHERE id=${value.id} `,
-        function (err) {
-          if (err) mainWindow.webContents.send("maitre_douvrage:modifier", err);
-          db.all("SELECT * FROM maitre_douvrage ", function (err, rows) {
-            if (err)
-              mainWindow.webContents.send("maitre_douvrage:modifier", err);
-            mainWindow.webContents.send("maitre_douvrage:modifier", {
-              maitreDouvrages: rows,
-              maitreDouvrage: value,
-            });
-          });
-        }
-      );
-
-      /*
-                
-                              */
-    }
-  });
+ 
 }
 
 
@@ -312,8 +291,9 @@ function ReturnAllEtatDuFacture  () {
   const factures = [];
   return new Promise((resolve, reject) => {
     db.all(
-      `SELECT f.*,p.paye paiement , p.date_paye, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM facture f   JOIN maitre_douvrage m ON m.id=f.maitreDouvrage_id  LEFT JOIN paye p ON f.id=p.facture_id  ORDER BY f.id DESC `,
+      `SELECT f.*,p.paye paiement , p.date_paye, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom , u.nom user_nom , u.prenom user_prenom FROM facture f   JOIN maitre_douvrage m ON m.id=f.maitreDouvrage_id LEFT  JOIN paye p ON f.id=p.facture_id JOIN user u ON u.id=f.user_id  ORDER BY f.id DESC `,
       function (err, factures_rows) {
+       
        
         if (err) reject(err);
         if (factures_rows !== undefined) {
@@ -366,9 +346,9 @@ function ReturnAllFacture() {
 
   return new Promise((resolve, reject) => {
     db.all(
-      `SELECT f.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom  FROM facture f   JOIN maitre_douvrage m ON m.id=f.maitreDouvrage_id  ORDER BY f.id DESC `,
+      `SELECT f.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom , u.nom user_nom , u.prenom user_prenom  FROM facture f   JOIN maitre_douvrage m ON m.id=f.maitreDouvrage_id JOIN user u ON f.user_id=u.id  ORDER BY f.id DESC `,
       function (err, factures_rows) {
-        console.log(err);
+        
         if (err) reject(err);
         if (factures_rows !== undefined) {
           if (factures_rows.length === 0) {

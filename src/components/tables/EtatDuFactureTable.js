@@ -75,6 +75,7 @@ class EtatDuFactureTable extends Component {
         d.unite_paye
       ),
       date_paye: getCurrentDateTime(new Date().getTime()),
+      user_id : this.props.user.id
     };
 
     this.props.ajouterPaiement(data);
@@ -601,6 +602,7 @@ const mapStateToProps = (state) => {
   return {
     loading: state.facture.loading,
     paiementAdded: state.facture.paiementAdded,
+    user : state.auth.user
   };
 };
 export default connect(mapStateToProps, mapActionToProps)(EtatDuFactureTable);

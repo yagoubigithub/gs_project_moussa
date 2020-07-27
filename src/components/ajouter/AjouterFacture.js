@@ -179,6 +179,7 @@ class AjouterFacture extends Component {
       nom: d.nom,
       objet: d.objet,
       maitreDouvrage_id: d.maitreDouvrage.id,
+      user_id :this.props.user.id, 
       adresse: d.adresse,
       phasesProjetsSelected: [...this.state.phasesProjetsSelected],
       duree_phase: d.duree_phase,
@@ -678,6 +679,7 @@ const mapStateToProps = (state) => {
     factureCreated: state.facture.factureCreated,
     maitreDouvrages: state.maitre_douvrage.maitreDouvrages,
     phasesProjets: state.phases_projet.phasesProjets,
+    user : state.auth.user
   };
 };
 export default connect(
