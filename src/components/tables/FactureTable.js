@@ -41,7 +41,7 @@ import LoadingComponent from "../../utils/loadingComponent";
 class FactureTable extends Component {
   state = {
     addToCorbeilleDialog: false,
-    
+    transformDialog : false,
     deletedId: null,
     facture: null,
     rowsSelected: this.props.rowsSelected,

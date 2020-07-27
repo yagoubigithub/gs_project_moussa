@@ -58,7 +58,12 @@ class Devis extends Component {
             }
           });
          
-    
+          deviss.sort((a,b )=> new Date(a.date_devis).getTime() -  new Date(b.date_devis).getTime())
+          deviss.reverse()
+
+          projetCorebeille.sort((a,b )=> new Date(a.date_devis).getTime() -  new Date(b.date_devis).getTime())
+          projetCorebeille.reverse()
+
           this.setState({ projetCorebeille, deviss });
         }
       }
