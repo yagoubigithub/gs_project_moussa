@@ -99,6 +99,22 @@ function User(){
           );
         }
       })
+
+      ipcMain.on("closeWindow",  (event,value)=>{
+      app.quit()
+     })
+     ipcMain.on("minimizeWindow",  (event,value)=>{
+        mainWindow.minimize()
+     })
+     ipcMain.on("changeScreen",  (event,value)=>{
+        if(value.isFullScreen){
+            mainWindow.unmaximize()
+        }else{
+            mainWindow.maximize()
+            
+           
+        }
+     })
 }
 
 function ReturnAllUser(){

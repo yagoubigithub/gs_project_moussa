@@ -24,6 +24,7 @@ import Facture from "./components/Facture";
 import EtatDuFacture from "./components/EtatDuFacture";
 import User from "./components/User";
 import Statistique from "./components/Statistique";
+import TaskBar from "./components/TaskBar";
 
 class App extends Component {
   componentDidMount(){
@@ -51,6 +52,7 @@ class App extends Component {
   render() {
     return (
       <Router>
+       <TaskBar></TaskBar>
         <div className="container">
           {this.props.auth.user !== undefined ? (
             <Navbar />
