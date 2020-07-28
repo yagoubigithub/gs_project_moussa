@@ -112,16 +112,13 @@ function Facture() {
   //AJOUTER
   ipcMain.on("facture:ajouter", (event, value) => {
    
-    
-  
-
     //ajouter projet
     db.run(
       `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , user_id , remise  , tva ,  status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.delais},'${value.date_debut}','${value.date_depot}' , 'en cours',${value.duree_phase},${value.maitreDouvrage_id} , ${value.user_id} , ${value.remise}  ,  ${value.tva} , 'undo') `,
       function (err) {
         if (err) mainWindow.webContents.send("facture:ajouter", err);
 
-        console.log("ajouter projet",err)
+       
         //add phase de projet
         const projet_id = this.lastID;
         
@@ -176,7 +173,7 @@ function Facture() {
     const facture_id = this.lastID;
 
     db.run(
-      `INSERT INTO paye(facture_id  , paye , user_id , date_paye  ) VALUES (${facture_id}, ${value.user_id}, ${value.paye} ,  '${value.date_facture}' ) `,
+      `INSERT INTO paye(facture_id  , paye , user_id , date_paye  ) VALUES (${facture_id},  ${value.paye} , ${value.user_id},  '${value.date_facture}' ) `,
       function (err) {
         if (err) mainWindow.webContents.send("facture:ajouter", err);
 
@@ -235,9 +232,9 @@ function Facture() {
         `INSERT INTO paye(facture_id  , paye , user_id ,  date_paye ) VALUES (${value.facture_id} ,${value.paye} , ${value.user_id}  , '${value.date_paye}')  `,
         function (err) {
           if (err) mainWindow.webContents.send("facture:ajouterPaiement", err);
-          ReturnAllFacture()
-          .then((factures) =>
-            mainWindow.webContents.send("facture:ajouterPaiement", factures)
+          ReturnAllEtatDuFacture()
+          .then((etat_factures) =>
+            mainWindow.webContents.send("facture:ajouterPaiement", etat_factures)
           )
           .catch((err) =>
             mainWindow.webContents.send("facture:ajouterPaiement", err)

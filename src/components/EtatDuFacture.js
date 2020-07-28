@@ -51,7 +51,10 @@ class EtatDuFacture extends Component {
         }
       }
     
-    
+   
+      getData = (etat_factures) =>{
+        this.setState({etat_factures })
+      }
      
      
       render() {
@@ -79,6 +82,7 @@ class EtatDuFacture extends Component {
                   rowsSelected={this.state.rowsSelected}
                   sendData={this.getData}
                   rows={this.state.etat_factures}
+                  sendData={this.getData}
                 />
               
               </Tab>

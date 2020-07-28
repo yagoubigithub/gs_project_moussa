@@ -69,7 +69,7 @@ const initStat = {
             case 'AJOUTER_PAIEMENT_FACTURE' :
               return {
                 ...state,
-                factures : action.payload,
+                etat_factures : action.payload,
                 paiementAdded : true
               }
               case 'REMOVE_PAIEMENT_ADDED':

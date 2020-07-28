@@ -8,10 +8,11 @@ import ReactTable from "react-table";
 import "react-table/react-table.css";
 
 //Mui
-import IconButton from "@material-ui/core/IconButton";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import { Dialog, Checkbox, Grid, DialogActions } from "@material-ui/core";
+import  Dialog  from "@material-ui/core/Dialog";
 import MenuItem from "@material-ui/core/MenuItem";
 import MuiSelect from "@material-ui/core/Select";
 
@@ -37,33 +38,45 @@ class EtatDuFactureTable extends Component {
     facture: null,
 
     paye: 0,
-    unite_paye: "%",
+    unite_paye: "DA",
+    error : "",
 
+   
     ajouterPaiement: false,
   };
   componentWillReceiveProps(nextProps) {
     if (nextProps.paiementAdded) {
       this.props.removePaiementAdded();
+      this.props.sendData(nextProps.etat_factures)
       this.handleOpenCloseAjouterPaiementDialog();
     }
+   
   }
 
+  
+ 
   handleChange = (e) => {
     this.setState({
       [e.target.name]: e.target.value,
+      error : ""
     });
   };
 
   ajouter_paiement = (facture) => {
     this.setState({ facture });
+   
     //popup
     this.handleOpenCloseAjouterPaiementDialog();
   };
   handleOpenCloseAjouterPaiementDialog = () => {
-    this.setState({ ajouterPaiement: !this.state.ajouterPaiement });
+    this.setState({ ajouterPaiement: !this.state.ajouterPaiement ,  error : "" });
   };
   ajouterPaiement = () => {
     const d = { ...this.state };
+    if(d.paye === 0 || d.paye === undefined){
+      this.setState({error :  "aaa"})
+      return;
+    }
 
     const data = {
       facture_id: d.facture.id,
@@ -505,8 +518,10 @@ class EtatDuFactureTable extends Component {
 
         <Dialog
           open={this.state.ajouterPaiement}
+          maxWidth="md"
           onClose={this.handleOpenCloseAjouterPaiementDialog}
         >
+        <DialogContent>
           <h3 style={{ margin: 0 }}>
             Ajouter paiement{" "}
             <small>
@@ -533,6 +548,7 @@ class EtatDuFactureTable extends Component {
               type="number"
               placeholder="Ajouter paiement"
               value={this.state.paye}
+              error={this.state.error !== ""}
               name="paye"
               variant="outlined"
               onChange={this.handleChange}
@@ -546,11 +562,13 @@ class EtatDuFactureTable extends Component {
               name="paye"
               variant="outlined"
               onChange={this.handleChange}
+              error={this.state.error !== ""}
               fullWidth
               InputProps={{ inputProps: { min: 0, step: 1, max: 100 } }}
             />
           )}
 
+<span>Unité {" "}  </span>
           <MuiSelect
             value={this.state.unite_paye}
             name="unite_paye"
@@ -559,6 +577,9 @@ class EtatDuFactureTable extends Component {
             <MenuItem value={"%"}>%</MenuItem>
             <MenuItem value={"DA"}>DA</MenuItem>
           </MuiSelect>
+    
+    
+    </DialogContent>
           <DialogActions>
             <Button
               onClick={this.ajouterPaiement}
@@ -602,7 +623,8 @@ const mapStateToProps = (state) => {
   return {
     loading: state.facture.loading,
     paiementAdded: state.facture.paiementAdded,
-    user : state.auth.user
+    user : state.auth.user,
+    etat_factures: state.facture.etat_factures,
   };
 };
 export default connect(mapStateToProps, mapActionToProps)(EtatDuFactureTable);
