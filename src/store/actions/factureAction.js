@@ -377,3 +377,34 @@ if(Array.isArray(res)){
       
     }
   }
+
+
+  export const getAllStatistique = () =>{
+    return (dispatch , getState) =>{
+      dispatch({
+        type : "LOADING_FACTURE"
+    })
+    ipcRenderer.send("facture:statistique", {});
+
+    ipcRenderer.once("facture:statistique", function (event,res) {
+     
+      dispatch({
+        type : "STOP_LOADING_FACTURE"
+    });
+    
+    if(Array.isArray(res)){
+      dispatch({
+          type : "READ_ALL_STATISTIQUE_FACTURE",
+          payload : res
+      });
+    }else{
+      dispatch({
+        type : "ERROR_FACTURE",
+        payload : res
+    });
+    }
+});
+      
+
+    }
+  }

@@ -281,6 +281,23 @@ function Facture() {
   });
 
  
+  ipcMain.on("facture:statistique", (event, value) => {
+
+
+    db.all(
+      `SELECT strftime('%Y', date_paye) annee, SUM(paye) revenu FROM paye GROUP BY annee ORDER BY annee; `,
+      function (err, statistique) {
+
+        if(err) mainWindow.webContents.send("facture:statistique", err)
+        console.log(statistique)
+        mainWindow.webContents.send("facture:statistique", statistique)
+        
+      })
+
+  });
+
+
+
 }
 
 

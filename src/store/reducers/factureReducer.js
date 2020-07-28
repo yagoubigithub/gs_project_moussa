@@ -94,6 +94,12 @@ const initStat = {
 
                   }
   
+            case 'READ_ALL_STATISTIQUE_FACTURE' :
+
+            return{
+              ...state,
+              statistique : action.payload
+            }
       default:
         return {
           ...state,

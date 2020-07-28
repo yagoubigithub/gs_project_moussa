@@ -23,6 +23,7 @@ import Devis from "./components/Devis";
 import Facture from "./components/Facture";
 import EtatDuFacture from "./components/EtatDuFacture";
 import User from "./components/User";
+import Statistique from "./components/Statistique";
 
 class App extends Component {
   componentDidMount(){
@@ -67,6 +68,7 @@ class App extends Component {
               <Route path="/facture" component={Facture} />
               <Route path="/etat_facture" component={EtatDuFacture} />    
               <Route path="/agence" component={Agence} />
+              <Route path="/statistique" component={Statistique} />
               <Route path="/user" component={User} />
             </Switch>
           </div>
