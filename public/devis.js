@@ -186,30 +186,40 @@ function Devis() {
     }
   });
 
-  //MODIFIER
-  ipcMain.on("maitre_douvrage:modifier", (event, value) => {
-    if (value.nom !== undefined) {
+  
+  ipcMain.on("devis:delete", (event, value) => {
+    if (value.id !== undefined) {
+      // delete  projet
+
+    
+
       db.run(
-        `
-               UPDATE maitre_douvrage SET nom='${value.nom}', prenom='${value.prenom}', raison_social='${value.raison_social}', rg='${value.rg}', telephone='${value.telephone}', email='${value.email}', adresse='${value.adresse}', logo='${value.logo}'  WHERE id=${value.id} `,
+        `UPDATE projet  SET status='${value.status}' WHERE id = ${value.id};`,
         function (err) {
-          if (err) mainWindow.webContents.send("maitre_douvrage:modifier", err);
-          db.all("SELECT * FROM maitre_douvrage ", function (err, rows) {
-            if (err)
-              mainWindow.webContents.send("maitre_douvrage:modifier", err);
-            mainWindow.webContents.send("maitre_douvrage:modifier", {
-              maitreDouvrages: rows,
-              maitreDouvrage: value,
-            });
-          });
+          if (err) mainWindow.webContents.send("devis:delete", err);
+          db.run(` UPDATE devis  SET status='${value.status}' WHERE projet_id = ${value.id};`,
+          function (err) {
+            if (err) mainWindow.webContents.send("devis:delete", err);
+            db.run(` UPDATE facture  SET status='${value.status}' WHERE projet_id = ${value.id};`,
+            function (err) {
+              if (err) mainWindow.webContents.send("devis:delete", err);
+
+              ReturnAllDevis()
+              .then((projets) => {
+                mainWindow.webContents.send("devis:delete", projets);
+              })
+              .catch((err) => {
+                mainWindow.webContents.send("devis:delete", err);
+              });
+            })
+          })
+
+        
         }
       );
-
-      /*
-                
-                              */
     }
   });
+
 
  //search
  ipcMain.on("search:devis", (event, value) => {

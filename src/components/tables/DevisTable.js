@@ -19,6 +19,7 @@ import {
   addToCorbeille,
   transformDevisAProjet,
   removeDevisTransformProjet,
+  undoDeleteDevis
 } from "../../store/actions/devisAction";
 
 //utils
@@ -477,7 +478,7 @@ class ProjetTable extends Component {
                 <IconButton
                   size="small"
                   onClick={() =>
-                    this.props.undoDeleteMaitreDouvrage(props.value)
+                    this.props.undoDeleteDevis(props.original.projet_id)
                   }
                 >
                   <UndoIcon className="black" fontSize="small"></UndoIcon>
@@ -492,7 +493,7 @@ class ProjetTable extends Component {
 
              <IconButton
                   size="small"
-                  onClick={() => this.add_To_Corbeille(props.value)}
+                  onClick={() => this.add_To_Corbeille(props.original.projet_id)}
                 >
                   <DeleteIcon className="red" fontSize="small"></DeleteIcon>
                 </IconButton>
@@ -749,6 +750,7 @@ class ProjetTable extends Component {
 const mapActionToProps = (dispatch) => {
   return {
     addToCorbeille: (id) => dispatch(addToCorbeille(id)),
+    undoDeleteDevis: (id) => dispatch(undoDeleteDevis(id)),
     getPhasesProjetDeDevis: (data) => dispatch(getPhasesProjetDeDevis(data)),
     transformDevisAProjet: (data) => dispatch(transformDevisAProjet(data)),
     removeDevisTransformProjet: () => dispatch(removeDevisTransformProjet()),

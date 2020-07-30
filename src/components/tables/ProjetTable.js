@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 
 import { Link } from "react-router-dom";
-import { NavLink } from "react-router-dom";
+
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 
@@ -10,16 +10,15 @@ import IconButton from "@material-ui/core/IconButton";
 
 import {
   Dialog,
-  Collapse,
-  Grid,
-  DialogContent,
+ 
   Checkbox,
 } from "@material-ui/core";
 
 //redux
 import { connect } from "react-redux";
 import {
-  addToCorbeille
+  addToCorbeille,
+  undoDeleteProjet
 
 } from "../../store/actions/projetAction";
 
@@ -313,7 +312,7 @@ class ProjetTable extends Component {
                 <IconButton
                   size="small"
                   onClick={() =>
-                    this.props.undoDeleteMaitreDouvrage(props.value)
+                    this.props.undoDeleteProjet(props.value)
                   }
                 >
                   <UndoIcon className="black" fontSize="small"></UndoIcon>
@@ -449,7 +448,8 @@ class ProjetTable extends Component {
 
 const mapActionToProps = (dispatch) => {
   return {
-    addToCorbeille: (id) => dispatch(addToCorbeille(id))
+    addToCorbeille: (id) => dispatch(addToCorbeille(id)),
+    undoDeleteProjet : (id) => dispatch(undoDeleteProjet(id))
   };
 };
 
