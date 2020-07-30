@@ -158,25 +158,7 @@ function Devis() {
     );
   });
 
-  ipcMain.on("devis:delete", (event, value) => {
-    if (value.id !== undefined) {
-      // delete  projet
-
-      db.run(
-        `UPDATE devis  SET status='${value.status}' WHERE id = ${value.id};`,
-        function (err) {
-          if (err) mainWindow.webContents.send("devis:delete", err);
-
-          ReturnAllDevis()
-            .then((deviss) =>
-              mainWindow.webContents.send("devis:delete", deviss)
-            )
-            .catch((err) => mainWindow.webContents.send("devis:delete", err));
-        }
-      );
-    }
-  });
-
+ 
   //get Phases
   ipcMain.on("phaseProjetDevis:get", (event, value) => {
     if (Object.keys(value).length > 0) {

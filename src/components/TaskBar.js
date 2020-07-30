@@ -11,13 +11,11 @@ const electron = window.require("electron");
 
 export default class TaskBar extends Component {
   state = {
-    isFullScreen: false,
-    screenIcon : <Crop54Icon />
+    isFullScreen : true,
+    screenIcon : <FilterNoneIcon />
   };
 
   close = () => {
-    
-
     ipcRenderer.send("closeWindow");
   };
 

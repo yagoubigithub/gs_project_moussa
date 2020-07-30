@@ -250,24 +250,7 @@ function Facture() {
 
   
 
-  ipcMain.on("devis:delete", (event, value) => {
-    if (value.id !== undefined) {
-      // delete  projet
 
-      db.run(
-        `UPDATE devis  SET status='${value.status}' WHERE id = ${value.id};`,
-        function (err) {
-          if (err) mainWindow.webContents.send("devis:delete", err);
-
-          ReturnAllDevis()
-            .then((factures) =>
-              mainWindow.webContents.send("devis:delete", deviss)
-            )
-            .catch((err) => mainWindow.webContents.send("devis:delete", err));
-        }
-      );
-    }
-  });
 
   //get Phases
   ipcMain.on("facture:etat", (event, value) => {

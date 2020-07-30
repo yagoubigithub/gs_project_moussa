@@ -234,14 +234,24 @@ function Projet() {
         `UPDATE projet  SET status='${value.status}' WHERE id = ${value.id};`,
         function (err) {
           if (err) mainWindow.webContents.send("projet:delete", err);
+          db.run(` UPDATE devis  SET status='${value.status}' WHERE projet_id = ${value.id};`,
+          function (err) {
+            if (err) mainWindow.webContents.send("projet:delete", err);
+            db.run(` UPDATE facture  SET status='${value.status}' WHERE projet_id = ${value.id};`,
+            function (err) {
+              if (err) mainWindow.webContents.send("projet:delete", err);
 
-          ReturnAllProject()
-            .then((projets) => {
-              mainWindow.webContents.send("projet:delete", projets);
+              ReturnAllProject()
+              .then((projets) => {
+                mainWindow.webContents.send("projet:delete", projets);
+              })
+              .catch((err) => {
+                mainWindow.webContents.send("projet:delete", err);
+              });
             })
-            .catch((err) => {
-              mainWindow.webContents.send("projet:delete", err);
-            });
+          })
+
+        
         }
       );
     }
