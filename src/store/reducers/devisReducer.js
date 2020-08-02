@@ -29,11 +29,17 @@ const DevisReducer = (state = initStat, action) => {
     case "MODIFIER_DEVIS":
       return {
         ...state,
-        error: null,
+        
         deviss: action.payload.deviss,
         devis: action.payload.devis,
         devisEdited: true,
+        error: null,
       };
+    case "REMOVE_DEVIS_EDITED" : 
+    return{
+      ...state,
+      devisEdited : false
+    }
     case "REMOVE_DEVIS_CREATED":
       return {
         ...state,

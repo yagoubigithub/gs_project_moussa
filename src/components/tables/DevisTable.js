@@ -503,6 +503,7 @@ class ProjetTable extends Component {
                     <EditIcon className="black" fontSize="small"></EditIcon>
                   </Link>
                 </IconButton>
+
                 <IconButton
                   size="small"
                  
@@ -513,7 +514,13 @@ class ProjetTable extends Component {
                  
                 </IconButton>
 
-             </div> :    <IconButton
+             </div> :    <div>
+             <IconButton size="small">
+                  <Link to={`/devis/modifier/${props.value}/devis`}>
+                    <EditIcon className="black" fontSize="small"></EditIcon>
+                  </Link>
+                </IconButton>
+             <IconButton
                   size="small"
                  
                 >
@@ -521,7 +528,9 @@ class ProjetTable extends Component {
                   <PrintIcon className="black" fontSize="small"></PrintIcon>
                   </Link>
                  
-                </IconButton>}
+                </IconButton>
+                </div>
+                }
                
               
              

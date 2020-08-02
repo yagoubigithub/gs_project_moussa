@@ -46,10 +46,15 @@ function Devis() {
         "SELECT d.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom,m.rg maitre_douvrage_rg , m.raison_social maitre_douvrage_raison_social,m.telephone maitre_douvrage_telephone , m.email   maitre_douvrage_email, m.adresse maitre_douvrage_adresse ,m.logo maitre_douvrage_logo , u.nom user_nom , u.prenom user_prenom FROM devis d  JOIN maitre_douvrage m ON m.id=d.maitreDouvrage_id JOIN user u ON u.id=d.user_id WHERE d.id=" +
           value.id ,
         function (err, result) {
+          if(err) mainWindow.webContents.send("devis", err);
+          db.get(`SELECT * FROM  maitre_douvrage WHERE id=${result.maitreDouvrage_id}` , (err,maitreDouvrage)=>{
+           
+
           if (err) mainWindow.webContents.send("devis", err);
-          devis = { ...result };
+          devis = { ...result,maitreDouvrage };
           const phases = [];
-          db.all(
+          db.all
+          (
             `SELECT *  FROM devis_phases_projets WHERE devis_id=${value.id} ORDER BY phases_devis_id `,
             function (err, devis_phases_projets) {
              
@@ -65,6 +70,8 @@ function Devis() {
               }
             }
           );
+
+        })
         }
       );
     } else {
@@ -220,6 +227,188 @@ function Devis() {
     }
   });
 
+
+  //MODIFIER
+  ipcMain.on("devis:modifier", (event, value) => {
+    if (value.projet_id !== 0) {
+
+     
+  db.run(
+        `UPDATE projet SET nom='${value.nom}', objet='${value.objet}', adresse='${value.adresse}' , duree_phase=${value.duree_phase}  , maitreDouvrage_id=${value.maitreDouvrage_id} , remise=${value.remise}  , tva=${value.tva} , status='${value.status}'  WHERE id=${value.projet_id} `,
+        function (err) {
+          if (err) mainWindow.webContents.send("devis:modifier", err);
+
+
+   db.run(`DELETE FROM phases_projets
+   WHERE projet_id=${value.projet_id}` , (err)=>{
+    if (err) mainWindow.webContents.send("devis:modifier", err);
+
+
+
+    
+    new Promise((resolve, reject)=>{
+      let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , titre ,description , duree , prix , status) VALUES   `;
+      let count = 0;
+    
+      value.phasesProjetsSelected.forEach((phase) => {
+      
+        const placeholder = ` (${value.projet_id},${phase.id} ,  '${phase.titre}' , '${phase.description}' , ${phase.duree} , ${phase.prix}  , 'undo') ,`;
+        sql = sql + placeholder;
+        count++;
+
+        if(count === value.phasesProjetsSelected.length) {resolve(sql)}
+      })
+    }).then((sql)=>{
+     
+      sql = sql.slice(0, sql.lastIndexOf(",") - 1);
+     
+      db.run(sql, function (err) {
+        if (err) mainWindow.webContents.send("devis:modifier", err);
+      // modifier facture
+
+db.get(`SELECT id  FROM facture WHERE projet_id=${value.projet_id}` ,  (err,result)=>{
+  if (err) mainWindow.webContents.send("devis:modifier", err);
+
+ const facture_id = result.id;
+
+ db.run(
+  `UPDATE facture SET nom='${value.nom}', objet='${value.objet}', adresse='${value.adresse}' , duree_phase=${value.duree_phase}  , prix_totale=${value.prix_totale}   , maitreDouvrage_id=${value.maitreDouvrage_id} , remise=${value.remise}  , tva=${value.tva} , status='${value.status}'  WHERE projet_id=${value.projet_id} `,
+   (err) =>{
+    if (err) mainWindow.webContents.send("devis:modifier", err);
+    
+   
+
+db.run(`DELETE FROM facture_phases_projets
+WHERE facture_id=${facture_id};` , (err)=>{
+if (err) mainWindow.webContents.send("devis:modifier", err);
+
+
+
+
+
+new Promise((resolve, reject)=>{
+let sql = `INSERT INTO facture_phases_projets(facture_id , phases_facture_id , titre ,description , duree , prix , status) VALUES   `;
+let count = 0;
+
+value.phasesProjetsSelected.forEach((phase) => {
+
+  const placeholder = ` (${facture_id},${phase.id} ,  '${phase.titre}' , '${phase.description}' , ${phase.duree} , ${phase.prix}  , 'undo') ,`;
+  sql = sql + placeholder;
+  count++;
+
+  if(count === value.phasesProjetsSelected.length) {resolve(sql)}
+})
+
+}).then((sql)=>{
+
+sql = sql.slice(0, sql.lastIndexOf(",") - 1);
+
+db.run(sql, function (err) {
+
+ 
+  if (err) mainWindow.webContents.send("devis:modifier", err);
+
+//modfier devis
+
+
+
+db.get(`SELECT id  FROM devis WHERE projet_id=${value.projet_id}` ,  (err,result)=>{
+  if (err) mainWindow.webContents.send("devis:modifier", err);
+
+ const devis_id = result.id;
+
+ 
+ db.run(
+  `UPDATE devis SET nom='${value.nom}', objet='${value.objet}', adresse='${value.adresse}' , duree_phase=${value.duree_phase}  , prix_totale=${value.prix_totale} , maitreDouvrage_id=${value.maitreDouvrage_id} , remise=${value.remise}  , tva=${value.tva} , status='${value.status}'  WHERE projet_id=${value.projet_id} `,
+   (err) =>{
+    if (err) mainWindow.webContents.send("devis:modifier", err);
+    
+   
+
+db.run(`DELETE FROM devis_phases_projets
+WHERE devis_id=${devis_id};` , (err)=>{
+if (err) mainWindow.webContents.send("devis:modifier", err);
+
+
+
+
+
+new Promise((resolve, reject)=>{
+let sql = `INSERT INTO devis_phases_projets(devis_id , phases_devis_id , titre ,description , duree , prix , status) VALUES   `;
+let count = 0;
+
+value.phasesProjetsSelected.forEach((phase) => {
+
+  const placeholder = ` (${devis_id},${phase.id} ,  '${phase.titre}' , '${phase.description}' , ${phase.duree} , ${phase.prix}  , 'undo') ,`;
+  sql = sql + placeholder;
+  count++;
+
+  if(count === value.phasesProjetsSelected.length) {resolve(sql)}
+})
+
+}).then((sql)=>{
+
+sql = sql.slice(0, sql.lastIndexOf(",") - 1);
+
+db.run(sql, function (err) {
+
+ 
+  if (err) mainWindow.webContents.send("devis:modifier", err);
+
+  ReturnAllDevis()
+  .then((deviss) =>
+    mainWindow.webContents.send("devis:modifier", {deviss , devis : value})
+  )
+  .catch((err) => mainWindow.webContents.send("devis:modifier", err));
+})
+
+})
+})
+   })
+  })
+
+
+
+
+  
+
+
+})
+
+})
+
+
+
+
+})
+
+  })
+} )
+
+   
+
+
+
+      })
+
+
+    })
+
+   })
+
+
+        }
+      );
+
+      /*
+                
+                              */
+    }else{
+
+      console.log("edit devis without project")
+
+    }
+  });
 
  //search
  ipcMain.on("search:devis", (event, value) => {

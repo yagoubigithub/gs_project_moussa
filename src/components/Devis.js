@@ -24,6 +24,7 @@ import ProjetTable from "./tables/ProjetTable";
 import AjouterDevis from "./ajouter/AjouterDevis.";
 import DevisTable from "./tables/DevisTable";
 import PrintDevis from "./print/PrintDevis";
+import ModifierDevis from "./modifier/ModifierDevis";
 
 class Devis extends Component {
   state = {
@@ -171,6 +172,8 @@ class Devis extends Component {
         </Dialog>
         <Route path="/devis/ajouter/:buttonReturn" component={AjouterDevis} />
         <Route path="/devis/print/:id/:buttonReturn" component={PrintDevis} />
+
+        <Route path="/devis/modifier/:id/:buttonReturn" component={ModifierDevis} />
 
         <Tabs>
           <Tab

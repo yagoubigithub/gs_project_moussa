@@ -108,7 +108,7 @@ export const getAllDevis = () =>{
       dispatch({
         type : "STOP_LOADING_DEVIS"
     });
-    console.log(data)
+  
    
     if(data){
       dispatch({
@@ -169,6 +169,16 @@ export const removeDevisCreated = () =>{
   }
 }
 
+export const removeDevisEdited = () =>{
+  return (dispatch , getState)=>{
+
+    dispatch({
+      type : "REMOVE_DEVIS_EDITED"
+  })
+  
+  }
+}
+
 
   export const modifierDevis = (data) =>{
     return (dispatch ,getState)=>{
@@ -184,7 +194,8 @@ export const removeDevisCreated = () =>{
       dispatch({
         type : "STOP_LOADING_DEVIS"
     });
-    if(data){
+    
+    if(Array.isArray(data.deviss)){
       dispatch({
           type : "MODIFIER_DEVIS",
           payload : data
