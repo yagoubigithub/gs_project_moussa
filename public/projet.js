@@ -5,9 +5,10 @@ var os = require("os");
 
 const methode = Projet.prototype;
 
+
 function Projet() {
- //  db.run('DROP TABLE projet');
- //   db.run('DROP TABLE phases_projets');
+   db.run('DROP TABLE projet');
+    db.run('DROP TABLE phases_projets');
 
   db.run(`CREATE TABLE IF NOT EXISTS projet (
     id INTEGER PRIMARY KEY AUTOINCREMENT ,
@@ -78,6 +79,7 @@ function Projet() {
         
         if (err) mainWindow.webContents.send("projet:ajouter", err);
 
+       
         //add phase de projet
         const projet_id = this.lastID;
 
@@ -101,7 +103,7 @@ function Projet() {
          
           db.run(sql, function (err) {
             if (err) mainWindow.webContents.send("projet:ajouter", err);
-          
+           
             db.run(
               `INSERT INTO devis(projet_id , user_id  ,nom , objet , adresse  , duree_phase , prix_totale , remise, date_devis ,  maitreDouvrage_id ,  tva , status) VALUES (${projet_id} , ${value.user_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_projet}' , ${value.maitreDouvrage_id} , ${value.tva}  , 'undo') `,
               function (err) {
@@ -121,7 +123,7 @@ function Projet() {
   
                 db.run(sql, function (err) {
                   if (err) mainWindow.webContents.send("projet:ajouter", err);
-  
+                  
                   //ajouter facture
                   db.run(
                     `INSERT INTO facture(projet_id , user_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, date_facture ,  maitreDouvrage_id , tva , status) VALUES (${projet_id}, ${value.user_id}, '${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_projet}' , ${value.maitreDouvrage_id} , ${value.tva} , 'undo') `,
@@ -149,6 +151,7 @@ function Projet() {
                         if (err)
                           mainWindow.webContents.send("projet:ajouter", err);
   
+                          console.log(err)
                         ReturnAllProject()
                           .then((projets) =>
                             mainWindow.webContents.send("projet:ajouter", projets)

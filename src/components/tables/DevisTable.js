@@ -367,12 +367,12 @@ class ProjetTable extends Component {
         ),
       },
       {
-        Header: "Prix Totale",
+        Header: "Total net",
         accessor: "prix_totale",
         filterMethod: (filter, row) => {
           const regx = `.*${filter.value}.*`;
           return (
-            Number.parseFloat(row["prix_totale"]) + Number.parseFloat(row["remise"])
+            Number.parseFloat(row["prix_totale"]) 
           )
             .toString()
             .match(regx);
@@ -382,8 +382,82 @@ class ProjetTable extends Component {
           return (
             <div className="cell">
               {props.value !== "undefined"
-                ? Number.parseFloat(props.original.prix_totale) +
-                  Number.parseFloat(props.original.remise)
+                ? Number.parseFloat(props.original.prix_totale) 
+                : ""}
+            </div>
+          );
+        },
+        Filter: ({ filter, onChange }) => (
+          <div className="searchtable-container">
+            <label htmlFor="remise-input-rg">
+              <SearchIcon className="searchtable-icon" />
+            </label>
+
+            <input
+              type="text"
+              id="remise-input-rg"
+              className="searchtable-input"
+              onChange={(event) => onChange(event.target.value)}
+              value={filter ? filter.value : ""}
+            />
+          </div>
+        ),
+      },
+      {
+        Header: "TVA",
+        accessor: "tva",
+        filterMethod: (filter, row) => {
+          const regx = `.*${filter.value}.*`;
+          return (
+            Number.parseFloat(row["tva"]) 
+          )
+            .toString()
+            .match(regx);
+        },
+
+        Cell: (props) => {
+          return (
+            <div className="cell">
+              {props.value !== "undefined"
+                ? Number.parseFloat(props.value) +
+                   " %"
+                : ""}
+            </div>
+          );
+        },
+        Filter: ({ filter, onChange }) => (
+          <div className="searchtable-container">
+            <label htmlFor="remise-input-rg">
+              <SearchIcon className="searchtable-icon" />
+            </label>
+
+            <input
+              type="text"
+              id="remise-input-rg"
+              className="searchtable-input"
+              onChange={(event) => onChange(event.target.value)}
+              value={filter ? filter.value : ""}
+            />
+          </div>
+        ),
+      },
+      {
+        Header: "Total TTC",
+        accessor: "prix_totale",
+        filterMethod: (filter, row) => {
+          const regx = `.*${filter.value}.*`;
+          return (
+            Number.parseFloat (((Number.parseFloat(row["prix_totale"]) * Number.parseFloat(row["tva"])) / 100) + Number.parseFloat(row["prix_totale"]))
+          )
+            .toString()
+            .match(regx);
+        },
+
+        Cell: (props) => {
+          return (
+            <div className="cell">
+              {props.value !== "undefined"
+                ?Number.parseFloat (((Number.parseFloat(props.original.prix_totale) * Number.parseFloat(props.original.tva)) / 100) + Number.parseFloat(props.original.prix_totale))
                 : ""}
             </div>
           );
@@ -438,30 +512,39 @@ class ProjetTable extends Component {
         accessor: "prix_totale",
         filterMethod: (filter, row) => {
           const regx = `.*${filter.value}.*`;
-          return row[filter.id].match(regx);
+          return (
+            Number.parseFloat (((Number.parseFloat(row["prix_totale"]) * Number.parseFloat(row["tva"])) / 100) + Number.parseFloat(row["prix_totale"])) - Number.parseFloat(row["remise"])
+          )
+            .toString()
+            .match(regx);
         },
 
-        Cell: (props) => (
-          <div className="cell">
-            {props.value !== "undefined" ? props.value : ""}
-          </div>
-        ),
+        Cell: (props) => {
+          return (
+            <div className="cell">
+              {props.value !== "undefined"
+                ?Number.parseFloat (((Number.parseFloat(props.original.prix_totale) * Number.parseFloat(props.original.tva)) / 100) + Number.parseFloat(props.original.prix_totale)) - props.original.remise
+                : ""}
+            </div>
+          );
+        },
         Filter: ({ filter, onChange }) => (
           <div className="searchtable-container">
-            <label htmlFor="maitre_douvrage_prenom-input-rg">
+            <label htmlFor="remise-input-rg">
               <SearchIcon className="searchtable-icon" />
             </label>
 
             <input
               type="text"
-              id="maitre_douvrage_prenom-input-rg"
+              id="remise-input-rg"
               className="searchtable-input"
               onChange={(event) => onChange(event.target.value)}
               value={filter ? filter.value : ""}
             />
           </div>
         ),
-      },
+      }
+    
     ];
 
     if (this.props.IconsColumn) {
@@ -499,7 +582,7 @@ class ProjetTable extends Component {
                 </IconButton>
 
                 <IconButton size="small">
-                  <Link to={`/projet/modifier/${props.value}`}>
+                  <Link to={`/devis/modifier/${props.value}/devis`}>
                     <EditIcon className="black" fontSize="small"></EditIcon>
                   </Link>
                 </IconButton>

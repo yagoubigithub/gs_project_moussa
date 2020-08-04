@@ -7,8 +7,8 @@ const isDev = require("electron-is-dev");
 const methode = Devis.prototype;
 
 function Devis() {
-// db.run('DROP TABLE devis');
- //db.run('DROP TABLE devis_phases_projets');
+ db.run('DROP TABLE devis');
+ db.run('DROP TABLE devis_phases_projets');
 
   db.run(`CREATE TABLE IF NOT EXISTS devis (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -234,11 +234,11 @@ function Devis() {
 
      
   db.run(
-        `UPDATE projet SET nom='${value.nom}', objet='${value.objet}', adresse='${value.adresse}' , duree_phase=${value.duree_phase}  , maitreDouvrage_id=${value.maitreDouvrage_id} , remise=${value.remise}  , tva=${value.tva} , status='${value.status}'  WHERE id=${value.projet_id} `,
+        `UPDATE projet SET nom='${value.nom}', objet='${value.objet}', adresse='${value.adresse}' , duree_phase=${value.duree_phase}  , maitreDouvrage_id=${value.maitreDouvrage_id} , remise=${value.remise} ,  prix_totale=${value.prix_totale} , tva=${value.tva} , status='${value.status}'  WHERE id=${value.projet_id} `,
         function (err) {
           if (err) mainWindow.webContents.send("devis:modifier", err);
 
-
+console.log(err)
    db.run(`DELETE FROM phases_projets
    WHERE projet_id=${value.projet_id}` , (err)=>{
     if (err) mainWindow.webContents.send("devis:modifier", err);
@@ -405,7 +405,55 @@ db.run(sql, function (err) {
                               */
     }else{
 
-      console.log("edit devis without project")
+     // edit devis without project
+
+     db.run(
+      `UPDATE devis SET nom='${value.nom}', objet='${value.objet}', adresse='${value.adresse}' , duree_phase=${value.duree_phase}  , prix_totale=${value.prix_totale} , maitreDouvrage_id=${value.maitreDouvrage_id} , remise=${value.remise}  , tva=${value.tva} , status='${value.status}'  WHERE id=${value.id} `,
+       (err) =>{
+        if (err) mainWindow.webContents.send("devis:modifier", err);
+        
+       
+    
+    db.run(`DELETE FROM devis_phases_projets
+    WHERE devis_id=${value.id};` , (err)=>{
+    if (err) mainWindow.webContents.send("devis:modifier", err);
+    
+    
+    
+    
+    
+    new Promise((resolve, reject)=>{
+    let sql = `INSERT INTO devis_phases_projets(devis_id , phases_devis_id , titre ,description , duree , prix , status) VALUES   `;
+    let count = 0;
+    
+    value.phasesProjetsSelected.forEach((phase) => {
+    
+      const placeholder = ` (${value.id},${phase.id} ,  '${phase.titre}' , '${phase.description}' , ${phase.duree} , ${phase.prix}  , 'undo') ,`;
+      sql = sql + placeholder;
+      count++;
+    
+      if(count === value.phasesProjetsSelected.length) {resolve(sql)}
+    })
+    
+    }).then((sql)=>{
+    
+    sql = sql.slice(0, sql.lastIndexOf(",") - 1);
+    
+    db.run(sql, function (err) {
+    
+     
+      if (err) mainWindow.webContents.send("devis:modifier", err);
+    
+      ReturnAllDevis()
+      .then((deviss) =>
+        mainWindow.webContents.send("devis:modifier", {deviss , devis : value})
+      )
+      .catch((err) => mainWindow.webContents.send("devis:modifier", err));
+    })
+    
+    })
+    })
+       })
 
     }
   });

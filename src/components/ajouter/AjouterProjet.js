@@ -167,7 +167,7 @@ class AjouterProjet extends Component {
       delais: d.delais,
       date_debut: d.date_debut === "" ? getCurrentDateTime(new Date().getTime()) : d.date_debut,
       date_depot: d.date_depot === "" ? getCurrentDateTime(new Date().getTime()) : d.date_depot,
-      prix_totale: d.prix_totale - d.remise,
+      prix_totale: d.prix_totale ,
       remise: remise,
       tva: d.tva,
       date_projet: getCurrentDateTime(new Date().getTime()),
@@ -258,8 +258,7 @@ class AjouterProjet extends Component {
                 Number.parseInt(duree_phase) + Number.parseInt(phase.duree);
               prix_totale =
                 prix_totale +
-                (Number.parseFloat(phase.prix) +
-                  (Number.parseFloat(phase.prix) * this.state.tva) / 100);
+                (Number.parseFloat(phase.prix));
             });
           }
     
@@ -288,8 +287,7 @@ class AjouterProjet extends Component {
             Number.parseInt(duree_phase) + Number.parseInt(phase.duree);
           prix_totale =
             prix_totale +
-            (Number.parseFloat(phase.prix) +
-              (Number.parseFloat(phase.prix) * this.state.tva) / 100);
+            (Number.parseFloat(phase.prix));
         });
       }
 
