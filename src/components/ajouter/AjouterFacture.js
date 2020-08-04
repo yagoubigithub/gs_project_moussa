@@ -318,8 +318,7 @@ class AjouterFacture extends Component {
                 Number.parseInt(duree_phase) + Number.parseInt(phase.duree);
               prix_totale =
                 prix_totale +
-                (Number.parseFloat(phase.prix) +
-                  (Number.parseFloat(phase.prix) * this.state.tva) / 100);
+                (Number.parseFloat(phase.prix) );
             });
           }
     

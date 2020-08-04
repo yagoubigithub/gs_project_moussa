@@ -153,7 +153,7 @@ class ModifierProjet extends Component {
       delais: d.delais,
       date_debut: d.date_debut,
       date_depot: d.date_depot,
-      prix_totale: d.prix_totale - d.remise,
+      prix_totale: d.prix_totale ,
       remise: d.remise,
       unite_remise: d.unite_remise,
       etat : d.etat,

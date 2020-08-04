@@ -124,7 +124,7 @@ class AjouterDevis extends Component {
         phasesProjetsSelected.map((phase) => {
           duree_phase =
             Number.parseInt(duree_phase) + Number.parseInt(phase.value.duree);
-            prix_totale = prix_totale + (Number.parseFloat(phase.value.prix)  + (Number.parseFloat(phase.value.prix) * this.state.tva)/100);
+            prix_totale = prix_totale + (Number.parseFloat(phase.value.prix) );
         });
       }
 

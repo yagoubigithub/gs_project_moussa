@@ -409,20 +409,23 @@ class FactureTable extends Component {
         ),
       },
       {
-        Header: "Montant Net",
+        Header: "Totale a Payer",
         accessor: "prix_totale",
+        width: 250,
         filterMethod: (filter, row) => {
           const regx = `.*${filter.value}.*`;
-          return round(Number.parseFloat(row["prix_totale"]))
+          return (
+            Number.parseFloat (((Number.parseFloat(row["prix_totale"]) * Number.parseFloat(row["tva"])) / 100) + Number.parseFloat(row["prix_totale"])) - Number.parseFloat(row["remise"])
+          )
             .toString()
             .match(regx);
         },
 
         Cell: (props) => {
           return (
-            <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
+            <div className="cell">
               {props.value !== "undefined"
-                ? round(Number.parseFloat(props.original.prix_totale))
+                ?Number.parseFloat (((Number.parseFloat(props.original.prix_totale) * Number.parseFloat(props.original.tva)) / 100) + Number.parseFloat(props.original.prix_totale)) - props.original.remise
                 : ""}
             </div>
           );
@@ -442,42 +445,13 @@ class FactureTable extends Component {
             />
           </div>
         ),
-      },
-      {
-        Header: "Remise",
-        accessor: "remise",
-        filterMethod: (filter, row) => {
-          const regx = `.*${filter.value}.*`;
-          return row[filter.id].match(regx);
-        },
-
-        Cell: (props) => (
-          <div className={`cell ${this.isPaye(props.original.paye,props.original.prix_totale, props.original.tva,props.original.remise) ? "bg-green" :  ""}`}>
-            {props.value !== "undefined"
-              ? round(Number.parseFloat(props.value)).toString()
-              : ""}
-          </div>
-        ),
-        Filter: ({ filter, onChange }) => (
-          <div className="searchtable-container">
-            <label htmlFor="remise-input-rg">
-              <SearchIcon className="searchtable-icon" />
-            </label>
-
-            <input
-              type="text"
-              id="remise-input-rg"
-              className="searchtable-input"
-              onChange={(event) => onChange(event.target.value)}
-              value={filter ? filter.value : ""}
-            />
-          </div>
-        ),
-      },
-  
+      }
+    
+  ,
       {
         Header: "Payé",
         accessor: "paye",
+        width: 250,
         filterMethod: (filter, row) => {
           const regx = `.*${filter.value}.*`;
           return row[filter.id].match(regx);

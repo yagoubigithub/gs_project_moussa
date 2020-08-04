@@ -151,7 +151,7 @@ class ModifierDevis extends Component {
       phasesProjetsSelected: [...this.state.phasesProjetsSelected],
       duree_phase: d.duree_phase,
      
-      prix_totale: d.prix_totale - d.remise,
+      prix_totale: d.prix_totale ,
       remise: d.remise,
     
       projet_id : d.projet_id,
