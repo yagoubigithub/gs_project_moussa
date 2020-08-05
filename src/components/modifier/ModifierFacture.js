@@ -63,7 +63,7 @@ class ModifierFacture extends Component {
     date_depot: "",
     prix_totale: 0,
     remise: 0,
-    unite_remise : "%",   
+    unite_remise : "DA",   
     prix_totale: 0,
     tva : 0,
     maitreDouvrages: [],
@@ -219,11 +219,12 @@ class ModifierFacture extends Component {
       prix_totale: d.prix_totale ,
       remise:remise,
      
+      status : d.status
       
-      date_facture: getCurrentDateTime(new Date().getTime()),
+     
     };
 
-    this.props.ajouterFacture(data);
+    this.props.modifierFacture(data);
   };
 
  
