@@ -334,6 +334,39 @@ export const removeDevisEdited = () =>{
 
 
 
+     
+//undo delete
+export const undoDeleteDevisMultiple = (deviss) =>{
+  return (dispatch ,getState)=>{
+
+    dispatch({
+      type : "LOADING_DEVIS"
+  })
+  ipcRenderer.send("devis:delete-multi", {deviss, status :  "undo"});
+
+  ipcRenderer.once('devis:delete-multi', function (event,data) {
+   
+    dispatch({
+      type : "STOP_LOADING_DEVIS"
+  });
+  if(Array.isArray(data)){
+    dispatch({
+        type : "UNDO_DELETE_DEVIS",
+        payload : data
+    });
+  }else{
+    dispatch({
+      type : "ERROR_DEVIS",
+      payload :data
+  });
+  }
+});
+
+  }
+}
+
+
+
   export const search = (data) =>{
     return (dispatch ,getState)=>{
      

@@ -663,11 +663,11 @@ class ProjetTable extends Component {
         Cell: (props) => (
           <div className="cell">
             <Checkbox
-              value={props.value}
-              key={`key-checkbox-table-voiture-${props.value}`}
-              id={`id-checkbox-table-voiture-${props.value}`}
-              onChange={(e) => this.handeleCheckCheckboxRow(e, props.value)}
-              checked={this.checkRowIsSelected(props.value)}
+              value={props.original.projet_id}
+              key={`key-checkbox-table-voiture-${props.original.projet_id}`}
+              id={`id-checkbox-table-voiture-${props.original.projet_id}`}
+              onChange={(e) => this.handeleCheckCheckboxRow(e, props.original.projet_id)}
+              checked={this.checkRowIsSelected(props.original.projet_id)}
               style={{ padding: 3 }}
             />
           </div>

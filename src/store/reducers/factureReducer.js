@@ -6,7 +6,7 @@ const initStat = {
       case "LOADING_FACTURE":
         return {
           ...state,
-          loading: false,
+          loading: true,
         };
       case "STOP_LOADING_FACTURE":
         return {
@@ -34,6 +34,11 @@ const initStat = {
           facture: action.payload.facture,
           factureEdited: true,
         };
+        case "REMOVE_DEVIS_EDITED" : 
+        return{
+          ...state,
+          factureEdited : false
+        }
       case "REMOVE_FACTURE_CREATED":
         return {
           ...state,

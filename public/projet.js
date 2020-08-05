@@ -266,6 +266,28 @@ function Projet() {
     }' WHERE id IN(${value.projets.join(",")})    `;
     db.run(sql, function (err) {
       if (err) mainWindow.webContents.send("projet:delete-multi", err);
+
+      let sql = `UPDATE devis  SET status='${
+        value.status
+      }' WHERE projet_id IN(${value.projets.join(",")})    `;
+
+      db.run(sql, function (err) {
+        if (err) mainWindow.webContents.send("projet:delete-multi", err);
+
+        let sql = `UPDATE facture  SET status='${
+          value.status
+        }' WHERE projet_id IN(${value.projets.join(",")})    `;
+        db.run(sql, function (err) {
+          if (err) mainWindow.webContents.send("projet:delete-multi", err);
+          ReturnAllProject()
+          .then((projets) => {
+            mainWindow.webContents.send("projet:delete-multi", projets);
+          })
+          .catch((err) => {
+            mainWindow.webContents.send("projet:delete-multi", err);
+          });
+        })
+      })
      
 
       ReturnAllProject()

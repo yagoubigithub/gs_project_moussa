@@ -170,6 +170,17 @@ export const removeFactureCreated = () =>{
 }
 
 
+export const removeFactureEdited = () =>{
+  return (dispatch , getState)=>{
+
+    dispatch({
+      type : "REMOVE_FACTURE_EDITED"
+  })
+  
+  }
+}
+
+
   export const modifierFacture = (data) =>{
     return (dispatch ,getState)=>{
       

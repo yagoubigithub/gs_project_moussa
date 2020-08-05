@@ -17,10 +17,11 @@ import {
   getAllDevis,
   addToCorbeille,
   undoDeleteDevis,
+  undoDeleteDevisMultiple
 } from "../store/actions/devisAction";
 import { connect } from "react-redux";
 
-import ProjetTable from "./tables/ProjetTable";
+
 import AjouterDevis from "./ajouter/AjouterDevis.";
 import DevisTable from "./tables/DevisTable";
 import PrintDevis from "./print/PrintDevis";
@@ -117,9 +118,7 @@ class Devis extends Component {
         this.handleOpenCloseaddToCorbeilleDialog();
       }
       if (this.state.tab === "projetCorebeille") {
-        this.state.rowsSelected.map((projet) => {
-          this.props.undoDeleteProjet(projet);
-        });
+        this.props.undoDeleteDevisMultiple([...this.state.rowsSelected])
         this.setState({ rowsSelected: [] });
       }
     }
@@ -214,6 +213,7 @@ const mapActionToProps = (dispatch) => ({
   getAllDevis: () => dispatch(getAllDevis()),
   addToCorbeille: (id) => dispatch(addToCorbeille(id)),
   undoDeleteDevis: (id) => dispatch(undoDeleteDevis(id)),
+  undoDeleteDevisMultiple : (data) => dispatch(undoDeleteDevisMultiple(data)),
 });
 const mapStateToProps = (state) => ({
   deviss: state.devis.deviss,

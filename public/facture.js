@@ -50,7 +50,7 @@ function Facture() {
       const factures = [];
 
       db.all(
-        `SELECT f.*, m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom , m.rg maitre_douvrage_rg , m.raison_social maitre_douvrage_raison_social,m.telephone maitre_douvrage_telephone , m.email   maitre_douvrage_email, m.adresse maitre_douvrage_adresse ,m.logo maitre_douvrage_logo , u.nom user_nom , u.prenom user_prenom FROM facture f   JOIN maitre_douvrage m ON m.id=f.maitreDouvrage_id JOIN user u ON u.id=f.user_id   WHERE f.id=${value.id}`,
+        `SELECT f.*,p.date_depot date_depot, p.date_debut date_debut, p.delais delais,  m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom , m.rg maitre_douvrage_rg , m.raison_social maitre_douvrage_raison_social,m.telephone maitre_douvrage_telephone , m.email   maitre_douvrage_email, m.adresse maitre_douvrage_adresse ,m.logo maitre_douvrage_logo , u.nom user_nom , u.prenom user_prenom FROM facture f   JOIN maitre_douvrage m ON m.id=f.maitreDouvrage_id JOIN user u ON u.id=f.user_id JOIN projet p ON p.id=f.projet_id   WHERE f.id=${value.id}`,
         function (err, factures_rows) {
         
           if (err) mainWindow.webContents.send("facture", err);
@@ -279,6 +279,68 @@ function Facture() {
 
   });
 
+  ipcMain.on("facture:delete", (event, value) => {
+    if (value.id !== undefined) {
+      // delete  projet
+      db.run(
+        `UPDATE projet  SET status='${value.status}' WHERE id = ${value.id};`,
+        function (err) {
+          if (err) mainWindow.webContents.send("facture:delete", err);
+          db.run(` UPDATE devis  SET status='${value.status}' WHERE projet_id = ${value.id};`,
+          function (err) {
+            if (err) mainWindow.webContents.send("facture:delete", err);
+            db.run(` UPDATE facture  SET status='${value.status}' WHERE projet_id = ${value.id};`,
+            function (err) {
+              if (err) mainWindow.webContents.send("facture:delete", err);
+
+              ReturnAllFacture()
+              .then((fctures) => {
+                mainWindow.webContents.send("facture:delete", factures);
+              })
+              .catch((err) => {
+                mainWindow.webContents.send("facture:delete", err);
+              });
+            })
+          })
+
+        
+        }
+      );
+    }
+  });
+  ipcMain.on("facture:delete-multi", (event, value) => {
+    let sql = `UPDATE projet  SET status='${
+      value.status
+    }' WHERE id IN(${value.factures.join(",")})    `;
+    db.run(sql, function (err) {
+      if (err) mainWindow.webContents.send("facture:delete-multi", err);
+
+      let sql = `UPDATE devis  SET status='${
+        value.status
+      }' WHERE projet_id IN(${value.factures.join(",")})    `;
+
+      db.run(sql, function (err) {
+        if (err) mainWindow.webContents.send("facture:delete-multi", err);
+
+        let sql = `UPDATE facture  SET status='${
+          value.status
+        }' WHERE projet_id IN(${value.factures.join(",")})    `;
+        db.run(sql, function (err) {
+          if (err) mainWindow.webContents.send("facture:delete-multi", err);
+          ReturnAllFacture()
+          .then((factures) => {
+            mainWindow.webContents.send("facture:delete-multi", factures);
+          })
+          .catch((err) => {
+            mainWindow.webContents.send("facture:delete-multi", err);
+          });
+        })
+      })
+     
+
+     
+    });
+  });
 
 
 }

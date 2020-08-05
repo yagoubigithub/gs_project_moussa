@@ -228,6 +228,40 @@ function Devis() {
   });
 
 
+  ipcMain.on("devis:delete-multi", (event, value) => {
+    let sql = `UPDATE projet  SET status='${
+      value.status
+    }' WHERE id IN(${value.deviss.join(",")})    `;
+    db.run(sql, function (err) {
+      if (err) mainWindow.webContents.send("devis:delete-multi", err);
+
+      let sql = `UPDATE devis  SET status='${
+        value.status
+      }' WHERE projet_id IN(${value.deviss.join(",")})    `;
+
+      db.run(sql, function (err) {
+        if (err) mainWindow.webContents.send("devis:delete-multi", err);
+
+        let sql = `UPDATE facture  SET status='${
+          value.status
+        }' WHERE projet_id IN(${value.deviss.join(",")})    `;
+        db.run(sql, function (err) {
+          if (err) mainWindow.webContents.send("devis:delete-multi", err);
+          ReturnAllDevis()
+          .then((deviss) => {
+            mainWindow.webContents.send("devis:delete-multi", deviss);
+          })
+          .catch((err) => {
+            mainWindow.webContents.send("devis:delete-multi", err);
+          });
+        })
+      })
+     
+
+     
+    });
+  });
+
   //MODIFIER
   ipcMain.on("devis:modifier", (event, value) => {
     if (value.projet_id !== 0) {

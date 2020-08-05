@@ -24,6 +24,7 @@ import { connect } from "react-redux";
 import AjouterFacture from "./ajouter/AjouterFacture";
 import FactureTable from "./tables/FactureTable";
 import PrintFacture from "./print/PrintFacture";
+import ModifierFacture from "./modifier/ModifierFacture";
 
 
 
@@ -175,7 +176,7 @@ class Facture extends Component {
           
             <Route path="/facture/ajouter/:buttonReturn" component={AjouterFacture} />
             <Route   path="/facture/print/:id/:buttonReturn" component={PrintFacture} />
-    
+            <Route path="/facture/modifier/:id/:buttonReturn" component={ModifierFacture} />
     
             <Tabs>
               <Tab

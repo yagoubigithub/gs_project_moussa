@@ -34,7 +34,9 @@ import LoadingComponent from "../../utils/loadingComponent";
 import { connect } from "react-redux";
 import {
   removeFactureCreated,
-  ajouterFacture,
+  modifierFacture,
+  getFacture,
+  removeFactureEdited
 } from "../../store/actions/factureAction";
 
 import { getAllPhasesProjet } from "../../store/actions/pahsesProjetAction";
@@ -43,7 +45,7 @@ import { getAllPhasesProjet } from "../../store/actions/pahsesProjetAction";
 import MaitreDouvrageTable from "../tables/MaitreDouvrageTable";
 import PhasesProjetTable from '../tables/PhasesProjetTable'
 
-class AjouterFacture extends Component {
+class ModifierFacture extends Component {
   state = {
     open: true,
     error: "",
@@ -60,32 +62,35 @@ class AjouterFacture extends Component {
     date_debut: "",
     date_depot: "",
     prix_totale: 0,
-
     remise: 0,
-    unite_remise : "%",
-
-    paye : 0,
-    unite_paye :"%",
+    unite_remise : "%",   
     prix_totale: 0,
     tva : 0,
-
     maitreDouvrages: [],
     phasesProjetsSelected: [],
   };
   componentDidMount() {
-    this.props.getAllPhasesProjet();
+    const id = this.props.match.params.id;
     const buttonReturn = "/" + this.props.match.params.buttonReturn + "/";
-    this.setState({ buttonReturn });
+    
+    this.setState({
+      success: "",
+      error: "",
+      buttonReturn
+    });
+    this.props.getAllPhasesProjet()
+    this.props.getFacture(id);
   }
   componentWillUnmount() {
-    this.props.removeFactureCreated();
+    this.props.removeFactureEdited();
   }
+ 
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.factureCreated) {
       this.setState({
         error: "",
-        success: "Facture a été ajouter",
+        success: "Facture a été modofoer",
         nom: "",
         objet: "",
         adresse: "",
@@ -97,8 +102,7 @@ class AjouterFacture extends Component {
         tva : 0,
         remise: 0,
         unite_remise : "%",
-        paye : 0,
-        unite_paye :"%",
+       
         prix_totale: 0,
         maitreDouvrage: undefined,
         duree_phase: 0,
@@ -129,6 +133,29 @@ class AjouterFacture extends Component {
         maitreDouvrages
       });
     }
+
+
+    if (nextProps.facture) {
+        this.setState({ ...nextProps.facture});
+       const  phasesProjetsSelected = []
+       
+          let duree_phase = 0;
+          let prix_totale = 0;
+          
+         
+          this.setState({ phasesProjetsSelected : nextProps.facture.phases ?   nextProps.facture.phases :  nextProps.facture.phasesProjetsSelected}, () => {
+            if (this.state.phasesProjetsSelected !== null) {
+              this.state.phasesProjetsSelected.map((phase) => {
+                duree_phase =
+                  Number.parseInt(duree_phase) + Number.parseInt(phase.duree);
+                prix_totale = prix_totale + Number.parseFloat(phase.prix)  ;
+              });
+            }
+      
+            this.setState({ duree_phase, prix_totale });
+          });
+        
+      }
     
   }
 
@@ -147,7 +174,7 @@ class AjouterFacture extends Component {
       this.setState({ duree_phase, prix_totale });
     });
   };
-  ajouter = () => {
+  modifier = () => {
     const d = { ...this.state };
     if (d.nom.trim().length === 0) {
       this.setState({ error: "le champ nom et obligatoire *" });
@@ -171,11 +198,13 @@ class AjouterFacture extends Component {
       this.setState({ error: "le champ Payé et superieur a 100%" }); 
       return;
     }
-   const paye = this.calculPaye(d.prix_totale,d.tva ,d.remise, d.unite_remise,d.paye, d.unite_paye)
+   
    const remise = this.calculRemise(d.prix_totale,d.tva ,d.remise, d.unite_remise);
 
     const data = {
-      projet_id: 0,
+        id: d.id,
+
+      projet_id: d.projet_id,
       nom: d.nom,
       objet: d.objet,
       maitreDouvrage_id: d.maitreDouvrage.id,
@@ -189,7 +218,7 @@ class AjouterFacture extends Component {
       tva : d.tva,
       prix_totale: d.prix_totale ,
       remise:remise,
-      paye:paye,
+     
       
       date_facture: getCurrentDateTime(new Date().getTime()),
     };
@@ -197,23 +226,7 @@ class AjouterFacture extends Component {
     this.props.ajouterFacture(data);
   };
 
-  calculPaye = (total_net, tva,remise, unite_remise, paye, unite_paye)=>{
-
-    if(unite_paye === "%"){
-      if(unite_remise === "%"){
-        const result_paye = parseFloat((total_net  + parseFloat(tva*(total_net  + parseFloat(tva*total_net/100))/100) - parseFloat(remise*total_net/100)) * paye /100)
-        return result_paye;
-      }else{
- const result_paye = parseFloat((total_net  + parseFloat(tva*(total_net  + parseFloat(tva*total_net/100))/100) - remise) * paye /100);
- return result_paye;
-      }
-
-    }else{
-      const result_paye = paye;
-      return result_paye;
-    }
-
-  }
+ 
 
   calculRemise = (total_net, tva,remise, unite_remise) =>{
 
@@ -511,23 +524,7 @@ class AjouterFacture extends Component {
             <h3>La durée des phases : {this.state.duree_phase} (jours)</h3>
             <h3>Total net : {this.state.prix_totale} (DA)</h3>
           </Grid>
-       {/*   <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}>Phases du projet </h3>
-            <Select
-              onChange={this.handleSelectChange}
-              getOptionValue={(option) => option.value.id}
-              classNamePrefix="react-select"
-              value={this.state.phasesProjetsSelected}
-              options={options}
-              fullWidth
-              isMulti
-            />
-
-            <h3>La durée des phases : {this.state.duree_phase} (jours)</h3>
-            <h3>Total net : {this.state.prix_totale} (DA)</h3>
-           
-          </Grid>
-*/}
+ 
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}>Remise Sur le Total <small><span className="red">(Unité : {this.state.unite_remise} )</span></small></h3>
             {
@@ -614,47 +611,14 @@ class AjouterFacture extends Component {
             />
           </Grid>
 
-          <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}>Payé <small><span className="red">(Unité : {this.state.unite_paye} )</span></small></h3>
-            {
-              this.state.unite_paye === "DA"? 
-              
-              <TextField
-              type="number"
-              placeholder="Payé"
-              value={this.state.paye}
-              name="paye"
-              variant="outlined"
-              onChange={this.handleChange}
-              fullWidth
-            />
-              :   <TextField
-              type="number"
-              placeholder="Payé"
-              value={this.state.paye}
-              name="paye"
-              variant="outlined"
-              onChange={this.handleChange}
-              fullWidth
-              InputProps={{inputProps : {min  : 0, step : 1, max : 100 }}}
-            />
-            }
-            
-
-<MuiSelect value={this.state.unite_paye} name="unite_paye" onChange={this.handleChange}>
-            <MenuItem value={"%"}>%</MenuItem>
-          <MenuItem value={"DA"}>DA</MenuItem>
-            </MuiSelect>
-          </Grid>
-
-          
+    
           <Grid item xs={12}>
             <br />
             <Button
               color="primary"
               variant="contained"
               fullWidth
-              onClick={this.ajouter}
+              onClick={this.modifier}
             >
               <SaveIcon />
             </Button>
@@ -667,9 +631,11 @@ class AjouterFacture extends Component {
 
 const mapActionToProps = (dispatch) => {
   return {
-    ajouterFacture: (data) => dispatch(ajouterFacture(data)),
+    getFacture: (id) => dispatch(getFacture(id)),
+    modifierFacture: (data) => dispatch(modifierFacture(data)),
     removeFactureCreated: () => dispatch(removeFactureCreated()),
     getAllPhasesProjet: () => dispatch(getAllPhasesProjet()),
+    removeFactureEdited : () =>dispatch(removeFactureEdited())
   };
 };
 const mapStateToProps = (state) => {
@@ -678,10 +644,11 @@ const mapStateToProps = (state) => {
     factureCreated: state.facture.factureCreated,
     maitreDouvrages: state.maitre_douvrage.maitreDouvrages,
     phasesProjets: state.phases_projet.phasesProjets,
-    user : state.auth.user
+    user : state.auth.user,
+    facture : state.facture.facture
   };
 };
 export default connect(
   mapStateToProps,
   mapActionToProps
-)(withRouter(AjouterFacture));
+)(withRouter(   ModifierFacture));
