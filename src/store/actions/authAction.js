@@ -46,13 +46,11 @@ export const modifier_user  = (data) =>{
    
     dispatch({
       type : "STOP_LOADING_AUTH"
-  });dispatch({
-    type : "STOP_LOADING_AUTH"
-});
-  if(Array.isArray(data)){
+  });
+  if(Array.isArray(data.users)){
     dispatch({
         type : "MODIFIER_AUTH",
-        payload : data[0]
+        payload : data
     });
   }else{
     dispatch({
@@ -66,6 +64,12 @@ export const modifier_user  = (data) =>{
   }
 }
 
+
+export const removeUserEdited = () =>{
+  return (dispatch ,getState)=>{
+    dispatch({type :  "REMOVE_USER_EDITED"})
+  }
+}
 
 export const ajouterUser = (data) =>{
   return (dispatch, getState)  =>{

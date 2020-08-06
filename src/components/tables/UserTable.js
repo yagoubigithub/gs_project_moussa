@@ -14,7 +14,7 @@ import TextField from "@material-ui/core/TextField";
 
 //redux
 import { connect } from "react-redux";
-import { addToCorbeille, undoDeleteUser } from "../../store/actions/authAction";
+import { addToCorbeille, undoDeleteUser , modifier_user , removeUserEdited } from "../../store/actions/authAction";
 
 //icons
 
@@ -32,14 +32,26 @@ class UserTable extends Component {
     rowsSelected: this.props.rowsSelected,
     selectedAll: false,
     modfierDialog: false,
+    error : ""
+,
     nom: "",
     prenom: "",
     id : 0,
-
     username: "",
     password : ""
   };
 
+
+  componentWillReceiveProps = (nextProps)  =>{
+
+    if(nextProps.userEdited){
+      this.props.removeUserEdited();
+      this.handleOpenCloseModifierDialog()
+    }
+  }
+
+
+  
   handleOpenCloseaddToCorbeilleDialog = () => {
     this.setState({ addToCorbeilleDialog: !this.state.addToCorbeilleDialog });
   };
@@ -107,18 +119,55 @@ class UserTable extends Component {
     this.setState({ modfierDialog: !this.state.modfierDialog });
   };
 
-  handleChange =( e ) =>{
+  handleChange = ( e ) =>{
   
     this.setState({
       [e.target.name] : e.target.value
     })
   }
+
+  modifier = (e) =>{
+    e.preventDefault();
+    const d  = {...this.state}
+
+    if(d.username === ""){
+      this.setState({
+        error : "Nom d'utilisateur est obligatoire"
+      })
+      return;
+    }
+
+    if(d.nom === ""){
+      this.setState({
+        error : "Le nom et le prénom sont obligatoire"
+      })
+      return;
+    }
+
+    if(d.prenom === ""){
+      this.setState({
+        error : "Le nom et le prénom sont obligatoire"
+      })
+      return;
+    }
+
+    const user = {
+      id : d.id,
+      nom : d.nom,
+      prenom : d.prenom,
+      username : d.username,
+      password : d.password
+    }
+    console.log(user)
+    this.props.modifier_user(user)
+  }
+
   render() {
-let passWordRender =null;
+let passWordRender = null;
     if(this.props.user){
        passWordRender = this.state.id === this.props.user.id ?
        <Grid item xs={6}>
-       <h3 style={{ margin: 0 }}>Nom * </h3>
+       <h3 style={{ margin: 0 }}>Mot de passe * </h3>
 
        <TextField
          placeholder="Mot de passe *"
@@ -127,7 +176,7 @@ let passWordRender =null;
          variant="outlined"
          onChange={this.handleChange}
          fullWidth
-         required
+         
        />
      </Grid>
        :  <Grid item xs={6}></Grid>
@@ -308,7 +357,7 @@ let passWordRender =null;
                 );
               }
             } else {
-              if(this.props.user.username === props.original.username ){
+              if(this.props.user.id === props.original.id ){
               render =(   <div>
                 <IconButton
                   onClick={() =>
@@ -409,7 +458,7 @@ let passWordRender =null;
           <div>
             <h2>Modifier</h2>
             <form onSubmit={this.modifier} id="modifier-user-form">
-              <span className="error">{this.props.error}</span>
+              <span className="error">{this.state.error}</span>
               <Grid container spacing={1} style={{ padding: 15 }}>
                 <Grid item xs={6}>
                   <h3 style={{ margin: 0 }}>Nom * </h3>
@@ -421,7 +470,7 @@ let passWordRender =null;
                     variant="outlined"
                     onChange={this.handleChange}
                     fullWidth
-                    required
+                    
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -434,7 +483,7 @@ let passWordRender =null;
                     variant="outlined"
                     onChange={this.handleChange}
                     fullWidth
-                    required
+                    
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -447,7 +496,7 @@ let passWordRender =null;
                     variant="outlined"
                     onChange={this.handleChange}
                     fullWidth
-                    required
+                    
                   />
                 </Grid>
                 {passWordRender}
@@ -461,6 +510,7 @@ let passWordRender =null;
                     fullWidth
                     color="primary"
                     variant="contained"
+                   
                   >
                     {" "}
                     Modfier
@@ -514,13 +564,16 @@ const mapActionToProps = (dispatch) => {
   return {
     addToCorbeille: (id) => dispatch(addToCorbeille(id)),
     undoDeleteUser: (id) => dispatch(undoDeleteUser(id)),
-  };
+    modifier_user : (data) => dispatch(modifier_user(data)),
+    removeUserEdited : () => dispatch(removeUserEdited())
+   };
 };
 
 const mapStateToProps = (state) => {
   return {
     loading: state.auth.loading,
     user: state.auth.user,
+    userEdited : state.auth.userEdited,
   };
 };
 export default connect(mapStateToProps, mapActionToProps)(UserTable);
