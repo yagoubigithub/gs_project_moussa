@@ -1,25 +1,20 @@
 import React, { Component, Fragment } from "react";
 
-
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 
 //Mui
 import IconButton from "@material-ui/core/IconButton";
 
-
-import Dialog from '@material-ui/core/Dialog'
-import Grid from '@material-ui/core/Grid'
-import Checkbox from '@material-ui/core/Checkbox'
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
+import Dialog from "@material-ui/core/Dialog";
+import Grid from "@material-ui/core/Grid";
+import Checkbox from "@material-ui/core/Checkbox";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
 
 //redux
 import { connect } from "react-redux";
-import {
-  addToCorbeille,
-  undoDeleteUser
-} from "../../store/actions/authAction";
+import { addToCorbeille, undoDeleteUser } from "../../store/actions/authAction";
 
 //icons
 
@@ -32,20 +27,18 @@ import LoadingComponent from "../../utils/loadingComponent";
 
 class UserTable extends Component {
   state = {
-   
     addToCorbeilleDialog: false,
     deletedId: null,
     rowsSelected: this.props.rowsSelected,
     selectedAll: false,
-    modfierDialog : false, 
-    nom :"",
-    prenom : "",
+    modfierDialog: false,
+    nom: "",
+    prenom: "",
+    id : 0,
 
-    username :  "",
-
-   
+    username: "",
+    password : ""
   };
-  
 
   handleOpenCloseaddToCorbeilleDialog = () => {
     this.setState({ addToCorbeilleDialog: !this.state.addToCorbeilleDialog });
@@ -101,16 +94,45 @@ class UserTable extends Component {
     });
   };
 
-  handleOpenCloseModifierDialog = (user) =>{
-    this.setState({
-      ...user
-    }, ()=>{
-      console.log(this.state)
-    })
-    
+  handleOpenCloseModifierDialog = (user) => {
+    this.setState(
+      {
+        ...user,
+      },
+      () => {
+        console.log(this.state);
+      }
+    );
+
     this.setState({ modfierDialog: !this.state.modfierDialog });
+  };
+
+  handleChange =( e ) =>{
+  
+    this.setState({
+      [e.target.name] : e.target.value
+    })
   }
   render() {
+let passWordRender =null;
+    if(this.props.user){
+       passWordRender = this.state.id === this.props.user.id ?
+       <Grid item xs={6}>
+       <h3 style={{ margin: 0 }}>Nom * </h3>
+
+       <TextField
+         placeholder="Mot de passe *"
+         value={this.state.password}
+         name="password"
+         variant="outlined"
+         onChange={this.handleChange}
+         fullWidth
+         required
+       />
+     </Grid>
+       :  <Grid item xs={6}></Grid>
+    }
+   
     const columns = [
       {
         Header: "N°",
@@ -141,7 +163,7 @@ class UserTable extends Component {
           </div>
         ),
       },
-      
+
       {
         Header: "Nom d'utilisateur",
         accessor: "username",
@@ -170,7 +192,8 @@ class UserTable extends Component {
             />
           </div>
         ),
-      },{
+      },
+      {
         Header: "Nom",
         accessor: "nom",
         filterMethod: (filter, row) => {
@@ -227,8 +250,6 @@ class UserTable extends Component {
           </div>
         ),
       },
-     
-  
     ];
 
     if (this.props.IconsColumn) {
@@ -244,9 +265,7 @@ class UserTable extends Component {
               <div className="cell">
                 <IconButton
                   size="small"
-                  onClick={() =>
-                    this.props.undoDeleteUser(props.value)
-                  }
+                  onClick={() => this.props.undoDeleteUser(props.value)}
                 >
                   <UndoIcon className="black" fontSize="small"></UndoIcon>
                 </IconButton>
@@ -254,42 +273,57 @@ class UserTable extends Component {
             );
           } else {
             let render = null;
-            if(this.props.user.status === "admin"){
-              
-              if(props.original.status === "admin"){
-                render =(<div>
-
-<IconButton onClick={() => this.handleOpenCloseModifierDialog(props.original)}  size="small">
-                      <EditIcon className="black" fontSize="small"></EditIcon>                 
-                  </IconButton>
-                
-                </div>);
-
-              }else{
-                
-                render =(<div>
-                <IconButton
-                    size="small"
-                    onClick={() => this.add_To_Corbeille(props.value)}
-                  >
-                    <DeleteIcon className="red" fontSize="small"></DeleteIcon>
-                  </IconButton>
-                  <IconButton onClick={() => this.handleOpenCloseModifierDialog(props.original)}  size="small">
-                      <EditIcon className="black" fontSize="small"></EditIcon>                 
-                  </IconButton>
-                
-                </div>);
+            if (this.props.user.status === "admin") {
+              if (props.original.status === "admin") {
+                render = (
+                  <div>
+                    <IconButton
+                      onClick={() =>
+                        this.handleOpenCloseModifierDialog(props.original)
+                      }
+                      size="small"
+                    >
+                      <EditIcon className="black" fontSize="small"></EditIcon>
+                    </IconButton>
+                  </div>
+                );
+              } else {
+                render = (
+                  <div>
+                    <IconButton
+                      size="small"
+                      onClick={() => this.add_To_Corbeille(props.value)}
+                    >
+                      <DeleteIcon className="red" fontSize="small"></DeleteIcon>
+                    </IconButton>
+                    <IconButton
+                      onClick={() =>
+                        this.handleOpenCloseModifierDialog(props.original)
+                      }
+                      size="small"
+                    >
+                      <EditIcon className="black" fontSize="small"></EditIcon>
+                    </IconButton>
+                  </div>
+                );
               }
-
-            }else{
-              render = null;
-            }
-            return (
-              <div className="cell">
-
-              {render}
-            </div>
+            } else {
+              if(this.props.user.username === props.original.username ){
+              render =(   <div>
+                <IconButton
+                  onClick={() =>
+                    this.handleOpenCloseModifierDialog(props.original)
+                  }
+                  size="small"
+                >
+                  <EditIcon className="black" fontSize="small"></EditIcon>
+                </IconButton>
+              </div>
             );
+              }
+             
+            }
+            return <div className="cell">{render}</div>;
           }
         },
       });
@@ -357,82 +391,85 @@ class UserTable extends Component {
 
     return (
       <Fragment>
-       <LoadingComponent
+        <LoadingComponent
           loading={
             this.props.loading !== undefined ? this.props.loading : false
           }
         />
 
-{
-       /* 
+        {/* 
        Modfier user 
 
-       */
-     }
+       */}
         <Dialog
           open={this.state.modfierDialog}
           onClose={this.handleOpenCloseModifierDialog}
           maxWidth="lg"
         >
-        <div>
-           <h2>Modifier</h2>
-          <form  onSubmit={this.modifier} id="modifier-user-form">
-          <span className="error" >{this.props.error}</span>
-            <Grid container spacing={1} style={{ padding: 15 }}>
-              <Grid item xs={6}>
-                <h3 style={{ margin: 0 }}>Nom * </h3>
+          <div>
+            <h2>Modifier</h2>
+            <form onSubmit={this.modifier} id="modifier-user-form">
+              <span className="error">{this.props.error}</span>
+              <Grid container spacing={1} style={{ padding: 15 }}>
+                <Grid item xs={6}>
+                  <h3 style={{ margin: 0 }}>Nom * </h3>
 
-                <TextField
-                  placeholder="Nom *"
-                  value={this.state.nom}
-                  name="nom"
-                  variant="outlined"
-                  onChange={this.handleChange}
-                  fullWidth
-                  required
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <h3 style={{ margin: 0 }}>Prénom * </h3>
+                  <TextField
+                    placeholder="Nom *"
+                    value={this.state.nom}
+                    name="nom"
+                    variant="outlined"
+                    onChange={this.handleChange}
+                    fullWidth
+                    required
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <h3 style={{ margin: 0 }}>Prénom * </h3>
 
-                <TextField
-                  placeholder="Prénom *"
-                  value={this.state.prenom}
-                  name="prenom"
-                  variant="outlined"
-                  onChange={this.handleChange}
-                  fullWidth
-                  required
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <h3 style={{ margin: 0 }}>Nom d'utilisateur * </h3>
+                  <TextField
+                    placeholder="Prénom *"
+                    value={this.state.prenom}
+                    name="prenom"
+                    variant="outlined"
+                    onChange={this.handleChange}
+                    fullWidth
+                    required
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <h3 style={{ margin: 0 }}>Nom d'utilisateur * </h3>
 
-                <TextField
-                  placeholder="Nom d'utilisateur *"
-                  value={this.state.username}
-                  name="username"
-                  variant="outlined"
-                  onChange={this.handleChange}
-                  fullWidth
-                  required
-                />
-              </Grid>
-             
-              <Grid item xs={6}></Grid>
-              <Grid item xs={3}></Grid>
+                  <TextField
+                    placeholder="Nom d'utilisateur *"
+                    value={this.state.username}
+                    name="username"
+                    variant="outlined"
+                    onChange={this.handleChange}
+                    fullWidth
+                    required
+                  />
+                </Grid>
+                {passWordRender}
 
-              <Grid item xs={6}>
-                <Button type="submit" fullWidth color="primary" variant="contained"> Modfier</Button>
+               
+                <Grid item xs={3}></Grid>
+
+                <Grid item xs={6}>
+                  <Button
+                    type="submit"
+                    fullWidth
+                    color="primary"
+                    variant="contained"
+                  >
+                    {" "}
+                    Modfier
+                  </Button>
+                </Grid>
               </Grid>
-            </Grid>
-          </form>
-        </div>
-         
+            </form>
+          </div>
         </Dialog>
-
-    
-
 
         <Dialog
           open={this.state.addToCorbeilleDialog}
@@ -452,7 +489,6 @@ class UserTable extends Component {
           </button>
         </Dialog>
 
-    
         <div className="table-container">
           {/*
             recherche
@@ -478,7 +514,6 @@ const mapActionToProps = (dispatch) => {
   return {
     addToCorbeille: (id) => dispatch(addToCorbeille(id)),
     undoDeleteUser: (id) => dispatch(undoDeleteUser(id)),
-    
   };
 };
 
