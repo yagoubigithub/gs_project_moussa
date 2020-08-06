@@ -60,6 +60,24 @@ export const modifier_user  = (data) =>{
   }
 });
 
+ipcRenderer.once('auth:modifier-2', function (event,data) {
+   
+  dispatch({
+    type : "STOP_LOADING_AUTH"
+});
+if(Array.isArray(data.users)){
+  dispatch({
+      type : "MODIFIER_AUTH_2",
+      payload : data
+  });
+}else{
+  dispatch({
+    type : "ERROR_AUTH",
+    payload : data
+});
+}
+});
+
   
   }
 }
@@ -141,6 +159,36 @@ export const getAllUser  = () =>{
   }
 }
 
+
+export const getUser = (id) =>{
+  return (dispatch, getState)=>{
+
+    dispatch({
+      type : "LOADING_AUTH"
+  })
+  ipcRenderer.send("user", {id});
+  
+  ipcRenderer.once('user', function (event,data) {
+    dispatch({
+      type : "STOP_LOADING_AUTH"
+  });
+  
+  if(data.id){
+    dispatch({
+      type : "GET_ONE_USER",
+      payload : data
+  });
+  }else{
+    dispatch({
+      type : "AUTH_ERROR",
+      payload : data
+  });
+  }
+    
+  });
+
+}
+}
 //delete (mettre dans le corbeille)
 export const addToCorbeille = (id) =>{
   return (dispatch , getState)=>{
@@ -202,3 +250,4 @@ export const undoDeleteUser = (id) =>{
 
   }
 }
+

@@ -17,6 +17,14 @@ const authReducer = (state = initStat, action) =>{
                 users : action.payload.users,
                 userEdited  :true,
             }
+            case 'MODIFIER_AUTH_2':
+            return {
+                ...state,
+                error :null,
+                users : action.payload.users,
+                user_2 :  action.payload.user,
+                userEdited  :true,
+            }
             case "REMOVE_USER_EDITED" :
             return {
                 ...state,
@@ -46,6 +54,12 @@ const authReducer = (state = initStat, action) =>{
                 error :null,
                 user : action.payload
             }
+            case "GET_ONE_USER" :
+                return {
+                    ...state,
+                    error :null,
+                    user : action.payload
+                }
 
         case 'GET_ALL_USERS' :
             return {

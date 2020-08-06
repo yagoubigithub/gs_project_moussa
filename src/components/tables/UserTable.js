@@ -46,7 +46,8 @@ class UserTable extends Component {
 
     if(nextProps.userEdited){
       this.props.removeUserEdited();
-      this.handleOpenCloseModifierDialog()
+     this.setState({
+    modfierDialog : false})
     }
   }
 
@@ -116,7 +117,9 @@ class UserTable extends Component {
       }
     );
 
-    this.setState({ modfierDialog: !this.state.modfierDialog });
+    this.setState({ modfierDialog: !this.state.modfierDialog } , ()=>{
+      this.props.removeUserEdited()
+    } );
   };
 
   handleChange = ( e ) =>{
@@ -130,21 +133,21 @@ class UserTable extends Component {
     e.preventDefault();
     const d  = {...this.state}
 
-    if(d.username === ""){
+    if(d.username.trim().length === 0){
       this.setState({
         error : "Nom d'utilisateur est obligatoire"
       })
       return;
     }
 
-    if(d.nom === ""){
+    if(d.nom.trim().length === 0){
       this.setState({
         error : "Le nom et le prénom sont obligatoire"
       })
       return;
     }
 
-    if(d.prenom === ""){
+    if(d.prenom.trim().length === 0){
       this.setState({
         error : "Le nom et le prénom sont obligatoire"
       })

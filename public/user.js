@@ -29,13 +29,25 @@ function User(){
           }
         );
        }else
-        db.all(
+       if(value.id !== undefined){
+         
+        db.get(
+          `SELECT * FROM user WHERE  id=${value.id} `,
+          function(err, rows) {
+            if (err) mainWindow.webContents.send("user", err);
+            mainWindow.webContents.send("user", rows);
+          }
+        );
+       }else{
+           db.all(
           `SELECT * FROM user WHERE username='${value.username}' AND password='${value.password}'  AND (status='undo' OR status='admin') `,
           function(err, rows) {
             if (err) mainWindow.webContents.send("user", err);
             mainWindow.webContents.send("user", rows);
           }
         );
+       }
+      
       });
 
 
@@ -102,11 +114,26 @@ function User(){
 
 
       ipcMain.on("auth:modifier", (event, value)=>{
-        console.log(value)
+        
         if (value.id !== undefined) {
           // delete  projet
           if(value.admin_nom !== undefined){
             console.log(value)
+            db.run(
+              `UPDATE user  SET nom='${value.nom}' ,  prenom='${value.prenom}' ,  username='${value.username}' ,  password='${value.password}'   WHERE id = ${value.id};`,
+              function (err) {
+                if (err) mainWindow.webContents.send("auth:modifier", err);
+                db.all(
+                  `SELECT * FROM user`,
+                  function(err, rows) {
+                    if (err)  mainWindow.webContents.send("auth:modifier-2", err);
+                    mainWindow.webContents.send("auth:modifier-2", {users : rows , user : value});
+                  }
+                );
+          
+              
+              }
+            );
 
           }else{
             db.run(
