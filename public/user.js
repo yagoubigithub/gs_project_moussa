@@ -105,21 +105,27 @@ function User(){
         console.log(value)
         if (value.id !== undefined) {
           // delete  projet
-          db.run(
-            `UPDATE user  SET nom='${value.nom}' ,  prenom='${value.prenom}' ,  username='${value.username}' ,  password='${value.password}'   WHERE id = ${value.id};`,
-            function (err) {
-              if (err) mainWindow.webContents.send("auth:modifier", err);
-              db.all(
-                `SELECT * FROM user`,
-                function(err, rows) {
-                  if (err)  mainWindow.webContents.send("auth:modifier", err);
-                  mainWindow.webContents.send("auth:modifier", {users : rows , user : value});
-                }
-              );
+          if(value.admin_nom !== undefined){
+            console.log(value)
+
+          }else{
+            db.run(
+              `UPDATE user  SET nom='${value.nom}' ,  prenom='${value.prenom}' ,  username='${value.username}' ,  password='${value.password}'   WHERE id = ${value.id};`,
+              function (err) {
+                if (err) mainWindow.webContents.send("auth:modifier", err);
+                db.all(
+                  `SELECT * FROM user`,
+                  function(err, rows) {
+                    if (err)  mainWindow.webContents.send("auth:modifier", err);
+                    mainWindow.webContents.send("auth:modifier", {users : rows , user : value});
+                  }
+                );
+          
+              
+              }
+            );
+          }
         
-            
-            }
-          );
         }
       })
       ipcMain.on("closeWindow",  (event,value)=>{

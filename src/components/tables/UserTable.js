@@ -158,7 +158,7 @@ class UserTable extends Component {
       username : d.username,
       password : d.password
     }
-    console.log(user)
+
     this.props.modifier_user(user)
   }
 

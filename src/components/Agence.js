@@ -21,10 +21,13 @@ import SaveIcon from "@material-ui/icons/Save";
         adresse : "",
         telephone : "",
         email : "",
-        admin_nom : "",
-        old_password : "",
-        new_password : "",
-        error : ""
+        username : "",
+        password : "",
+        user_nom : "",
+        user_prenom :  "",
+        user_id : 0,
+        error : "",
+        user_error : ""
     }
     componentWillMount(){
         this.props.getEtreprise();
@@ -37,7 +40,7 @@ import SaveIcon from "@material-ui/icons/Save";
          this.setState({...nextProps.entreprise})
         }
         if(nextProps.user){
-          this.setState({admin_nom : nextProps.user.username, password : nextProps.user.password})
+          this.setState({username : nextProps.user.username, password : nextProps.user.password, user_prenom : nextProps.user.prenom, user_id : nextProps.user.id , user_nom : nextProps.user.nom})
         }
     }
     modifier = () =>{
@@ -74,18 +77,43 @@ import SaveIcon from "@material-ui/icons/Save";
         
     }   
     modifier_user = ()=>{
-      const data = {...this.state}
+      const d = {...this.state}
      
      
      
-      if(this.state.password !== this.state.old_password){
-        this.setState({error : "Mot de passe invalid"});
-          return ;
+      
+      
+      
+      if(d.username === ""){
+        this.setState({
+          user_error : "Nom d'utilisateur est obligatoire"
+        })
+        return;
       }
-      
-      
-          
-           this.props.modifier_user(data);
+  
+      if(d.user_nom === ""){
+        this.setState({
+          user_error : "Le nom et le prénom sont obligatoire"
+        })
+        return;
+      }
+  
+      if(d.user_prenom === ""){
+        this.setState({
+          user_error : "Le nom et le prénom sont obligatoire"
+        })
+        return;
+      }
+  
+      const user = {
+        id : d.id,
+        nom : d.nom,
+        prenom : d.prenom,
+        username : d.username,
+        password : d.password
+      }
+      console.log(user)
+      this.props.modifier_user(user)
       
     }
     handleChange = e => {
@@ -109,7 +137,7 @@ import SaveIcon from "@material-ui/icons/Save";
            
           >
           <div style={{padding : 25}}>
-          <h1>Informations de Bureau</h1>
+          <h1>Informations du Bureau</h1>
          <span className="red">{this.state.error}</span>
 
          <Grid container spacing={2}>
@@ -240,16 +268,20 @@ import SaveIcon from "@material-ui/icons/Save";
 
 <div style={{padding : 25}}>
 <Grid container spacing={2}>
-           
+<h1>Profile</h1>
+<span className="red">{this.state.error}</span>
 
            <Grid item xs={12}>
-           <h3 style={{margin : 0}}>Nom de l'admin</h3>
-             <TextField placeholder="Nom de l'admin *" value={this.state.admin_nom}  name="admin_nom" variant="outlined" onChange={this.handleChange} fullWidth margin="normal" />
+           <h3 style={{margin : 0}}>Nom *</h3>
+             <TextField placeholder="Nom  *" value={this.state.user_nom}  name="user_nom" variant="outlined" onChange={this.handleChange} fullWidth margin="normal" />
+             <h3 style={{margin : 0}}>Prénom *</h3>
+             <TextField placeholder="Prénom  *" value={this.state.user_prenom}  name="user_prenom" variant="outlined" onChange={this.handleChange} fullWidth margin="normal" />
+            <hr />
+             <h3 style={{margin : 0}}>Nom d'utlisateur *</h3>
+             <TextField placeholder="Nom d'utlisateur  *" value={this.state.username}  name="username" variant="outlined" onChange={this.handleChange} fullWidth margin="normal" />
              <h3 style={{margin : 0}}>Mot de passe</h3>
-             <TextField placeholder="mot de passe" value={this.state.old_password} name="old_password" variant="outlined"  onChange={this.handleChange} fullWidth margin="normal" type="password" />
-             <h3 style={{margin : 0}}>Nouveau Mot de passe</h3>
-             <TextField placeholder="Nouveau mot de passe " value={this.state.new_password} name="new_password" type="password" variant="outlined"  onChange={this.handleChange} fullWidth margin="normal" />
-             <br />
+             <TextField placeholder="mot de passe" value={this.state.password} name="password" variant="outlined"  onChange={this.handleChange} fullWidth margin="normal" type="text" />
+            
              <Button
            color="primary"
            variant="contained"
