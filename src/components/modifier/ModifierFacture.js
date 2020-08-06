@@ -87,51 +87,23 @@ class ModifierFacture extends Component {
  
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.factureCreated) {
+    if (nextProps.factureEdited) {
       this.setState({
-        error: "",
-        success: "Facture a été modofoer",
-        nom: "",
-        objet: "",
-        adresse: "",
-
-        delais: 0,
-        date_debut: "",
-        date_depot: "",
-        prix_totale: 0,
-        tva : 0,
-        remise: 0,
-        unite_remise : "%",
-       
-        prix_totale: 0,
-        maitreDouvrage: undefined,
-        duree_phase: 0,
-        phasesProjetsSelected: [],
+        ...nextProps.facture,
+        success: "facture a été modifier",
+        error: null,
       });
     }
-    if (nextProps.phasesProjets) {
-      const phasesProjets = []
-      nextProps.phasesProjets.map(phase=>{
-        if(phase.status === "undo"){
-          phasesProjets.push(phase)
-        }
-
-      })
+    if(nextProps.phasesProjets){
       this.setState({
-        phasesProjets
-      });
+        phasesProjets :  [...nextProps.phasesProjets].filter(item=>item.status === "undo")
+      })
     }
-    if (nextProps.maitreDouvrages) {
-      const maitreDouvrages = []
-      nextProps.maitreDouvrages.map(maiterDouvrage=>{
-        if(maiterDouvrage.status === "undo"){
-          maitreDouvrages.push(maiterDouvrage)
-        }
-
-      })
+    //maitreDouvrages
+    if(nextProps.maitreDouvrages){
       this.setState({
-        maitreDouvrages
-      });
+        maitreDouvrages :  [...nextProps.maitreDouvrages].filter(item=>item.status === "undo")
+      })
     }
 
 
@@ -419,7 +391,7 @@ class ModifierFacture extends Component {
           </Toolbar>
         </AppBar>
         <div style={{ marginTop: 50, padding: 15 }}></div>
-        <h1 style={{ textAlign: "center" }}>Créer une facture</h1>
+        <h1 style={{ textAlign: "center" }}>Modfier une facture</h1>
         <div className="alert error">{this.state.error} </div>
         <div className="alert success">{this.state.success} </div>
         <Grid container spacing={2} style={{ padding: 25 }}>
@@ -642,11 +614,11 @@ const mapActionToProps = (dispatch) => {
 const mapStateToProps = (state) => {
   return {
     loading: state.facture.loading,
-    factureCreated: state.facture.factureCreated,
     maitreDouvrages: state.maitre_douvrage.maitreDouvrages,
     phasesProjets: state.phases_projet.phasesProjets,
     user : state.auth.user,
-    facture : state.facture.facture
+    facture : state.facture.facture,
+    factureEdited : state.facture.factureEdited
   };
 };
 export default connect(

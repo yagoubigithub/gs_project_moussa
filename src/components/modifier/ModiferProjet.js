@@ -108,10 +108,15 @@ class ModifierProjet extends Component {
     }
     if(nextProps.phasesProjets){
       this.setState({
-        phasesProjets :  [...nextProps.phasesProjets]
+        phasesProjets :  [...nextProps.phasesProjets].filter(item=>item.status === "undo")
       })
     }
-
+    //maitreDouvrages
+    if(nextProps.maitreDouvrages){
+      this.setState({
+        maitreDouvrages :  [...nextProps.maitreDouvrages].filter(item=>item.status === "undo")
+      })
+    }
     if (nextProps.projetEdited) {
       this.setState({
         ...nextProps.projet,
@@ -299,7 +304,7 @@ class ModifierProjet extends Component {
           <MaitreDouvrageTable
             sendData={this.getmaitreDouvrageeData}
             type="choose-one"
-            rows={this.props.maitreDouvrages}
+            rows={this.state.maitreDouvrages}
             chooseOneColumn
           />
 

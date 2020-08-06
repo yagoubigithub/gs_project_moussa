@@ -50,11 +50,13 @@ function Facture() {
       const factures = [];
 
       db.all(
-        `SELECT f.*,p.date_depot date_depot, p.date_debut date_debut, p.delais delais,  m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom , m.rg maitre_douvrage_rg , m.raison_social maitre_douvrage_raison_social,m.telephone maitre_douvrage_telephone , m.email   maitre_douvrage_email, m.adresse maitre_douvrage_adresse ,m.logo maitre_douvrage_logo , u.nom user_nom , u.prenom user_prenom FROM facture f   JOIN maitre_douvrage m ON m.id=f.maitreDouvrage_id JOIN user u ON u.id=f.user_id JOIN projet p ON p.id=f.projet_id   WHERE f.id=${value.id}`,
+        `SELECT f.*,p.date_depot date_depot, p.date_debut date_debut, p.delais delais , m.id maitreDouvrage_id,  m.nom maitre_douvrage_nom , m.prenom maitre_douvrage_prenom , m.rg maitre_douvrage_rg , m.raison_social maitre_douvrage_raison_social,m.telephone maitre_douvrage_telephone , m.email   maitre_douvrage_email, m.adresse maitre_douvrage_adresse ,m.logo maitre_douvrage_logo , u.nom user_nom , u.prenom user_prenom FROM facture f   JOIN maitre_douvrage m ON m.id=f.maitreDouvrage_id JOIN user u ON u.id=f.user_id JOIN projet p ON p.id=f.projet_id   WHERE f.id=${value.id}`,
         function (err, factures_rows) {
         
           if (err) mainWindow.webContents.send("facture", err);
-          if (factures_rows !== undefined) {
+          db.get(`SELECT * FROM  maitre_douvrage WHERE id=${factures_rows[0].maitreDouvrage_id}` , (err,maitreDouvrage)=>{
+
+ if (factures_rows !== undefined) {
             if (factures_rows.length === 0) {
               mainWindow.webContents.send("facture", {});
             } else {
@@ -79,6 +81,7 @@ function Facture() {
                               factures.push({
                                 ...facture,
                                 phases,
+                                maitreDouvrage,
                                 payeObject: paye,
                                 paye: paye.reduce(
                                   (total, num) => (toal = total + num.paye),
@@ -100,6 +103,9 @@ function Facture() {
               });
             }
           }
+          })
+
+         
         }
       );
     } else {

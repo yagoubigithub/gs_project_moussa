@@ -44,6 +44,13 @@ const initStat = {
           ...state,
           factureCreated: false,
         };
+
+
+        case "REMOVE_FACTURE_EDITED":
+          return {
+            ...state,
+            factureEdited: false,
+          };
       case "READ_ALL_FACTURE":
         return {
           ...state,

@@ -108,7 +108,13 @@ class ModifierDevis extends Component {
     }
     if(nextProps.phasesProjets){
       this.setState({
-        phasesProjets :  [...nextProps.phasesProjets]
+        phasesProjets :  [...nextProps.phasesProjets].filter(item=>item.status === "undo")
+      })
+    }
+    //maitreDouvrages
+    if(nextProps.maitreDouvrages){
+      this.setState({
+        maitreDouvrages :  [...nextProps.maitreDouvrages].filter(item=>item.status === "undo")
       })
     }
 
@@ -150,13 +156,10 @@ class ModifierDevis extends Component {
       adresse: d.adresse,
       phasesProjetsSelected: [...this.state.phasesProjetsSelected],
       duree_phase: d.duree_phase,
-     
       prix_totale: d.prix_totale ,
       remise: d.remise,
-    
       projet_id : d.projet_id,
-      tva: d.tva,
-     
+      tva: d.tva,    
       status : d.status
     };
 
@@ -267,7 +270,7 @@ class ModifierDevis extends Component {
           <MaitreDouvrageTable
             sendData={this.getmaitreDouvrageeData}
             type="choose-one"
-            rows={this.props.maitreDouvrages}
+            rows={this.state.maitreDouvrages}
             chooseOneColumn
           />
 
@@ -335,7 +338,7 @@ class ModifierDevis extends Component {
             />
           </Grid>
           <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}>Objet </h3>
+            <h3 style={{ margin: 0 }}> Objet </h3>
             <TextField
               placeholder="Objet"
               value={this.state.objet}
