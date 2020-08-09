@@ -220,6 +220,37 @@ export const addToCorbeille = (id) =>{
   }
 }
 
+//delete (mettre dans le corbeille)
+export const addToCorbeilleMultiple = (data) =>{
+  return (dispatch , getState)=>{
+
+    dispatch({
+      type : "LOADING_AUTH"
+  })
+  ipcRenderer.send("user:delete-multi", {...data, status :  "corbeille"});
+
+  ipcRenderer.once('user:delete-multi', function (event,data) {
+   
+    dispatch({
+      type : "STOP_LOADING_AUTH"
+  });
+  if(Array.isArray(data)){
+    dispatch({
+        type : "ADD_TO_CORBEILLE_AUTH",
+        payload : data
+    });
+  }else{
+    dispatch({
+      type : "ERROR_AUTH",
+      payload :data
+  });
+  }
+});
+    
+
+  }
+}
+
 
 //undo delete
 export const undoDeleteUser = (id) =>{
@@ -251,3 +282,33 @@ export const undoDeleteUser = (id) =>{
   }
 }
 
+
+//undo delete
+export const undoDeleteUserMultiple = (data) =>{
+  return (dispatch ,getState)=>{
+
+    dispatch({
+      type : "LOADING_AUTH"
+  })
+  ipcRenderer.send("user:delete-multi", {...data, status :  "undo"});
+
+  ipcRenderer.once('user:delete-multi', function (event,data) {
+   
+    dispatch({
+      type : "STOP_LOADING_AUTH"
+  });
+  if(Array.isArray(data)){
+    dispatch({
+        type : "UNDO_DELETE_AUTH",
+        payload : data
+    });
+  }else{
+    dispatch({
+      type : "ERROR_AUTH",
+      payload :data
+  });
+  }
+});
+
+  }
+}

@@ -6,7 +6,7 @@ const mainWindow = require('./mainWindow');
 const methode = User.prototype;
 
 function User(){
-// db.run('DROP TABLE user');
+//db.run('DROP TABLE user');
 
     db.run(`CREATE TABLE IF NOT EXISTS user (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -18,8 +18,18 @@ function User(){
        
     )`);
     
+   
+
      //get user
      ipcMain.on("user", (event, value) => {
+       
+      db.run(
+        `UPDATE user  SET status='admin' WHERE id = 1;`,
+        function (err) {
+
+
+          console.log(err)
+        });
        if(Object.keys(value).length === 0){
         db.all(
           `SELECT * FROM user`,
@@ -30,6 +40,7 @@ function User(){
         );
        }else
        if(value.id !== undefined){
+      
          
         db.get(
           `SELECT * FROM user WHERE  id=${value.id} `,
@@ -113,12 +124,34 @@ function User(){
       })
 
 
+      ipcMain.on("user:delete-multi", (event, value)=>{
+        
+        let sql = `UPDATE user  SET status='${
+          value.status
+        }' WHERE id IN(${value.users.join(",")})    `;
+        db.run(sql, function (err) {
+    
+          if (err) mainWindow.webContents.send("user:delete-multi", err);
+          db.all( `SELECT * FROM user ORDER BY id`, function (err, rows) {
+            if (err) mainWindow.webContents.send("user:delete-multi", err);
+            
+           
+            mainWindow.webContents.send("user:delete-multi", rows);
+          });
+    
+         
+        });
+
+      })
+
+
+
       ipcMain.on("auth:modifier", (event, value)=>{
         
         if (value.id !== undefined) {
           // delete  projet
           if(value.admin_nom !== undefined){
-            console.log(value)
+         
             db.run(
               `UPDATE user  SET nom='${value.nom}' ,  prenom='${value.prenom}' ,  username='${value.username}' ,  password='${value.password}'   WHERE id = ${value.id};`,
               function (err) {

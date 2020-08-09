@@ -56,6 +56,8 @@ class MaitreDouvrageTable extends Component {
     }
     if (nextProps.rowsSelected) {
       this.setState({ rowsSelected: nextProps.rowsSelected });
+      if(nextProps.rowsSelected.length === 0)
+      this.setState({selectedAll : false})
     }
     if (nextProps.rows.length !== this.props.rows.length) {
       this.setState({ selectedAll: false });

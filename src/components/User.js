@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 
-
-
 import { Tab, Tabs } from "react-tabs-css";
 
 import { NavLink } from "react-router-dom";
@@ -25,7 +23,9 @@ import {
   addToCorbeille,
   undoDeleteUser,
   ajouterUser,
-  removeUserCreated
+  removeUserCreated,
+  addToCorbeilleMultiple,
+  undoDeleteUserMultiple
 } from "../store/actions/authAction";
 
 class User extends Component {
@@ -37,12 +37,12 @@ class User extends Component {
     tab: "users",
     addToCorbeilleDialog: false,
     ajouterDialog: false,
-    modfierDialog : false,
+    modfierDialog: false,
     user: {},
-    nom :"",
-    prenom  : "",
-    username : "",
-    password : "",
+    nom: "",
+    prenom: "",
+    username: "",
+    password: "",
   };
   componentDidMount() {
     this.props.getAllUser();
@@ -50,7 +50,6 @@ class User extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.users) {
-     
       const userCorebeille = [];
       const users = [];
       let usersCounter = 1;
@@ -71,24 +70,28 @@ class User extends Component {
         }
       });
 
-   
-
       this.setState({ userCorebeille, users });
     }
+   
 
     if (nextProps.user) {
       this.setState({ user: { ...nextProps.user } });
     }
 
-    if(nextProps.userCreated){
-        this.setState({
-            ajouterDialog  : false
-        }, ()=>{
-            this.props.removeUserCreated()
-        })
+    if (nextProps.userCreated) {
+      this.setState(
+        {
+          ajouterDialog: false,
+        },
+        () => {
+          this.props.removeUserCreated();
+        }
+      );
     }
   }
-
+  getData = (rowsSelected) => {
+    this.setState({ rowsSelected });
+  };
   handleChangeTab = (tab) => {
     switch (tab) {
       case "users":
@@ -124,25 +127,46 @@ class User extends Component {
     this.setState({ ajouterDialog: !this.state.ajouterDialog });
   };
 
-  
-  handleChange = (e) =>{
-      this.setState({
-          [e.target.name] : e.target.value
-      })
-  }
+  handleChange = (e) => {
+    this.setState({
+      [e.target.name]: e.target.value,
+    });
+  };
   ajouter = (e) => {
-      console.log(e);
-      e.preventDefault()
-      document.getElementById('ajouter-user-form').checkValidity()
-    const d = {...this.state};
+    console.log(e);
+    e.preventDefault();
+    document.getElementById("ajouter-user-form").checkValidity();
+    const d = { ...this.state };
     const user = {
-        nom : d.nom,
-        prenom  : d.prenom,
-        username : d.username,
-        password : d.password
+      nom: d.nom,
+      prenom: d.prenom,
+      username: d.username,
+      password: d.password,
+    };
+    this.props.ajouterUser(user);
+  };
+  handleOpenCloseaddToCorbeilleDialog = () => {
+    this.setState({ addToCorbeilleDialog: !this.state.addToCorbeilleDialog });
+  };
+
+  Supprimer = () => {
+    if (this.state.rowsSelected.length === 0) {
+      alert("Selectionnner des utilsateurs");
+    } else {
+      if (this.state.tab !== "userCorebeille") {
+        this.handleOpenCloseaddToCorbeilleDialog();
+      }
+      if (this.state.tab === "userCorebeille") {
+        this.props.undoDeleteUserMultiple({users : [...this.state.rowsSelected] });
+        this.setState({ rowsSelected: [] });
+      }
     }
-    this.props.ajouterUser(user)
-  }
+  };
+  addToCorbeille = () => {
+    const rowsSelected = [...this.state.rowsSelected];
+    this.props.addToCorbeilleMultiple({users : rowsSelected });
+    this.setState({ rowsSelected: [] });
+  };
 
   render() {
     return (
@@ -152,8 +176,6 @@ class User extends Component {
             this.props.loading !== undefined ? this.props.loading : false
           }
         />
-
-
 
         <Dialog
           open={this.state.addToCorbeilleDialog}
@@ -179,8 +201,8 @@ class User extends Component {
           maxWidth="lg"
         >
           <h2>Ajouter</h2>
-          <form  onSubmit={this.ajouter} id="ajouter-user-form">
-          <span className="error" >{this.props.error}</span>
+          <form onSubmit={this.ajouter} id="ajouter-user-form">
+            <span className="error">{this.props.error}</span>
             <Grid container spacing={1} style={{ padding: 15 }}>
               <Grid item xs={6}>
                 <h3 style={{ margin: 0 }}>Nom * </h3>
@@ -232,20 +254,25 @@ class User extends Component {
                   onChange={this.handleChange}
                   fullWidth
                   type="password"
-                  
                 />
               </Grid>
               <Grid item xs={3}></Grid>
 
               <Grid item xs={6}>
-                <Button type="submit" fullWidth color="primary" variant="contained"> Ajouter</Button>
+                <Button
+                  type="submit"
+                  fullWidth
+                  color="primary"
+                  variant="contained"
+                >
+                  {" "}
+                  Ajouter
+                </Button>
               </Grid>
             </Grid>
           </form>
         </Dialog>
 
-     
-   
         <div className="sous-nav-container">
           <NavLink onClick={this.props.getAllUser} to="/user">
             <button className="btn btn-nav">Actualisé</button>
@@ -306,16 +333,17 @@ const mapActionToProps = (dispatch) => ({
   getAllUser: () => dispatch(getAllUser()),
   addToCorbeille: (id) => dispatch(addToCorbeille(id)),
   undoDeleteUser: (id) => dispatch(undoDeleteUser(id)),
-  ajouterUser : (user) => dispatch(ajouterUser(user)),
-  removeUserCreated  : () => dispatch(removeUserCreated())
-  
+  addToCorbeilleMultiple: (data) => dispatch(addToCorbeilleMultiple(data)),
+  undoDeleteUserMultiple: (data) => dispatch(undoDeleteUserMultiple(data)),
+  ajouterUser: (user) => dispatch(ajouterUser(user)),
+  removeUserCreated: () => dispatch(removeUserCreated()),
 });
 const mapStateToProps = (state) => ({
   users: state.auth.users,
   loading: state.auth.loading,
   user: state.auth.user,
-  error : state.auth.error,
-  userCreated :  state.auth.userCreated
+  error: state.auth.error,
+  userCreated: state.auth.userCreated,
 });
 
 export default connect(mapStateToProps, mapActionToProps)(User);

@@ -49,6 +49,11 @@ class UserTable extends Component {
      this.setState({
     modfierDialog : false})
     }
+    if (nextProps.rowsSelected) {
+      this.setState({ rowsSelected: nextProps.rowsSelected });
+      if(nextProps.rowsSelected.length === 0)
+      this.setState({selectedAll : false})
+    }
   }
 
 
@@ -89,6 +94,7 @@ class UserTable extends Component {
     const rowsSelected = [];
     if (selectedAll) {
       this.props.rows.map((item) => {
+        if(item.status !== "admin")
         rowsSelected.push(item.id);
       });
     }
@@ -405,8 +411,10 @@ let passWordRender = null;
         accessor: "id",
         width: 50,
 
-        Cell: (props) => (
-          <div className="cell">
+        Cell: (props) => {
+          if(props.original.status !== "admin"){
+            return(
+              <div className="cell">
             <Checkbox
               value={props.value}
               key={`key-checkbox-table-voiture-${props.value}`}
@@ -416,7 +424,11 @@ let passWordRender = null;
               style={{ padding: 3 }}
             />
           </div>
-        ),
+            )
+          }else{
+            return<div className="cell">Admin</div>
+          }
+        },
       });
     }
     if (this.props.chooseOneColumn) {

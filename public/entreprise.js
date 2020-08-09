@@ -25,6 +25,7 @@ function Entreprise(){
 
   //get entrepise
   ipcMain.on("entreprise", (event, value) => {
+   
     db.all("SELECT * FROM entreprise ", function(err, rows) {
       if (err) mainWindow.webContents.send("entreprise", err);
       mainWindow.webContents.send("entreprise", rows);
