@@ -8,6 +8,7 @@ const { BrowserWindow, app } = require("electron");
 
 let mainWindow = new BrowserWindow({
     show :false,
+    frame : false,
     webPreferences: {
       nodeIntegration: true,
       nativeWindowOpen: true,

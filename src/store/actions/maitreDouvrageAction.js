@@ -108,6 +108,38 @@ export const addToCorbeille = (id) =>{
   }
 }
 
+
+//delete (mettre dans le corbeille)
+export const addToCorbeilleMultiple = (data) =>{
+  return (dispatch , getState)=>{
+
+    dispatch({
+      type : "LOADING_MAITRE_DOUVRAGE"
+  })
+  ipcRenderer.send("maitre_douvrage:delete-multi", {...data, status :  "corbeille"});
+
+  ipcRenderer.once('maitre_douvrage:delete-multi', function (event,data) {
+   
+    dispatch({
+      type : "STOP_LOADING_MAITRE_DOUVRAGE"
+  });
+  if(Array.isArray(data)){
+    dispatch({
+        type : "ADD_TO_CORBEILLE_MAITRE_DOUVRAGE",
+        payload : data
+    });
+  }else{
+    dispatch({
+      type : "ERROR_MAITRE_DOUVRAGE",
+      payload :data
+  });
+  }
+});
+    
+
+  }
+}
+
 export const getDirename = () =>{
   return (dispatch ,getState)=>{
   ipcRenderer.send("direname", {});
@@ -218,6 +250,36 @@ export const undoDeleteMaitreDouvrage = (id) =>{
   }
 }
 
+
+//undo delete
+export const undoDeleteMaitreDouvrageMultipe = (data) =>{
+  return (dispatch ,getState)=>{
+
+    dispatch({
+      type : "LOADING_MAITRE_DOUVRAGE"
+  })
+  ipcRenderer.send("maitre_douvrage:delete-multi", {...data, status :  "undo"});
+
+  ipcRenderer.once('maitre_douvrage:delete-multi', function (event,data) {
+   
+    dispatch({
+      type : "STOP_LOADING_MAITRE_DOUVRAGE"
+  });
+  if(Array.isArray(data)){
+    dispatch({
+        type : "UNDO_DELETE_MAITRE_DOUVRAGE",
+        payload : data
+    });
+  }else{
+    dispatch({
+      type : "ERROR_MAITRE_DOUVRAGE",
+      payload :data
+  });
+  }
+});
+
+  }
+}
 
 export const modifierMaitreDouvrage = (data) =>{
   return (dispatch ,getState)=>{

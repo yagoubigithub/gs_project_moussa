@@ -16,7 +16,7 @@ import MaitreDouvrageTable from "./tables/MaitreDouvrageTable";
 
 //redux
 import { connect } from "react-redux";
-import { getAllMaitreDouvrage ,undoDeleteMaitreDouvrage,addToCorbeille} from "../store/actions/maitreDouvrageAction";
+import { getAllMaitreDouvrage ,undoDeleteMaitreDouvrage, addToCorbeille , undoDeleteMaitreDouvrageMultipe , addToCorbeilleMultiple } from "../store/actions/maitreDouvrageAction";
 import { Dialog } from "@material-ui/core";
 
 class MaitreDouvrage extends Component {
@@ -60,18 +60,16 @@ class MaitreDouvrage extends Component {
         this.handleOpenCloseaddToCorbeilleDialog();
       }
       if (this.state.tab === "maitreDouvrageCorebeille") {
-        this.state.rowsSelected.map((maitreDouvrage) => {
-          this.props.undoDeleteMaitreDouvrage(maitreDouvrage);
-        });
-        this.setState({ rowsSelected: [] });
+        this.props.undoDeleteMaitreDouvrageMultipe({maitre_douvrages : [...this.state.rowsSelected]});
+        
+        this.setState({ rowsSelected : [] });
       }
     }
   };
   addToCorbeille = () => {
     const rowsSelected = [...this.state.rowsSelected];
-    rowsSelected.map((maitreDouvrage) => {
-      this.props.addToCorbeille(maitreDouvrage);
-    });
+    
+    this.props.addToCorbeilleMultiple({maitre_douvrages : [...rowsSelected]});
     this.setState({ rowsSelected: [] });
   };
 
@@ -203,6 +201,8 @@ const mapActionToProps = (dispatch) => ({
   getAllMaitreDouvrage: () => dispatch(getAllMaitreDouvrage()),
   addToCorbeille: (id) => dispatch(addToCorbeille(id)),
   undoDeleteMaitreDouvrage :  (id) => dispatch(undoDeleteMaitreDouvrage(id)),
+  undoDeleteMaitreDouvrageMultipe : (data) => dispatch(undoDeleteMaitreDouvrageMultipe(data)),
+  addToCorbeilleMultiple : (data) => dispatch(addToCorbeilleMultiple(data)),
 });
 const mapStateToProps = (state) => ({
   maitreDouvrages: state.maitre_douvrage.maitreDouvrages,

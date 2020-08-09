@@ -92,6 +92,24 @@ function MaitreDouvrage() {
   });
 
 
+  ipcMain.on("maitre_douvrage:delete-multi", (event, value) => {
+    let sql = `UPDATE maitre_douvrage  SET status='${
+      value.status
+    }' WHERE id IN(${value.maitre_douvrages.join(",")})    `;
+    db.run(sql, function (err) {
+
+      if (err) mainWindow.webContents.send("maitre_douvrage:delete-multi", err);
+      db.all( `SELECT * FROM maitre_douvrage ORDER BY id`, function (err, rows) {
+        if (err) mainWindow.webContents.send("maitre_douvrage:delete-multi", err);
+        
+       
+        mainWindow.webContents.send("maitre_douvrage:delete-multi", rows);
+      });
+
+     
+    });
+  });
+
   
   //MODIFIER
   ipcMain.on("maitre_douvrage:modifier", (event, value) => {
