@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 
 import { Link } from "react-router-dom";
-import { NavLink } from "react-router-dom";
+
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 
@@ -10,7 +10,6 @@ import IconButton from "@material-ui/core/IconButton";
 
 import {
   Dialog,
-  Collapse,
   Grid,
   DialogContent,
   Checkbox,
@@ -21,7 +20,6 @@ import { connect } from "react-redux";
 import {
   addToCorbeille,
   getMaitreDouvrage,
-  getLogo,
   undoDeleteMaitreDouvrage,
 } from "../../store/actions/maitreDouvrageAction";
 
@@ -51,9 +49,7 @@ class MaitreDouvrageTable extends Component {
     if (nextProps.voiture) {
       this.setState({ ...nextProps.voiture });
     }
-    if (nextProps.logo) {
-      this.setState({ logo: nextProps.logo });
-    }
+ 
     if (nextProps.rowsSelected) {
       this.setState({ rowsSelected: nextProps.rowsSelected });
       if(nextProps.rowsSelected.length === 0)
@@ -119,15 +115,28 @@ class MaitreDouvrageTable extends Component {
     });
   };
 
-  handleCloseOpenGallerieVoiture = () => {
-    this.setState({ openGallerie: !this.state.openGallerie, images: [] });
+  handleCloseOpenGallerie = () => {
+   
+    this.setState({openGallerie: !this.state.openGallerie})
   };
+ 
+  handleCloseaddToCorbeilleDialog = () =>{
+   
+    this.setState({addToCorbeilleDialog:! this.state.addToCorbeilleDialog})
+  }
 
   handleSelectOneChange = (maitreDouvrageSelected) => {
     this.setState({
       maitreDouvrageSelected,
     });
   };
+
+  addLogo = (logo) =>{
+     this.setState({
+    logo
+  })
+  }
+ 
   render() {
     const columns = [
       {
@@ -354,8 +363,8 @@ class MaitreDouvrageTable extends Component {
                 <IconButton
                   size="small"
                   onClick={() => {
-                    this.handleCloseOpenGallerieVoiture();
-                    this.props.getLogo(props.value);
+                    this.handleCloseOpenGallerie();
+                    this.addLogo(props.original.logo);
                   }}
                 >
                   <PermMediaIcon
@@ -446,7 +455,7 @@ class MaitreDouvrageTable extends Component {
       <Fragment>
         <Dialog
           open={this.state.addToCorbeilleDialog}
-          onClose={this.handleOpenCloseaddToCorbeilleDialog}
+          onClose={this.handleCloseaddToCorbeilleDialog}
         >
           <h2>Deleted</h2>
           <button
@@ -465,7 +474,7 @@ class MaitreDouvrageTable extends Component {
         <Dialog
           scroll="paper"
           open={this.state.openGallerie}
-          onClose={this.handleCloseOpenGallerieVoiture}
+          onClose={this.handleCloseOpenGallerie}
         >
           <DialogContent dividers={true}>
             <LoadingComponent
@@ -481,7 +490,7 @@ class MaitreDouvrageTable extends Component {
                     style={{ width: "100%", maxHeight: 200, height: "100%" }}
                   />
                 ) : (
-                  <p>No logo</p>
+                  <p>no image</p>
                 )}
               </Grid>
             </div>
@@ -511,9 +520,10 @@ class MaitreDouvrageTable extends Component {
 const mapActionToProps = (dispatch) => {
   return {
     addToCorbeille: (id) => dispatch(addToCorbeille(id)),
-    getLogo: (id) => dispatch(getLogo(id)),
+  
     undoDeleteMaitreDouvrage: (id) => dispatch(undoDeleteMaitreDouvrage(id)),
     getMaitreDouvrage: (id) => dispatch(getMaitreDouvrage(id)),
+   
   };
 };
 
@@ -522,7 +532,7 @@ const mapStateToProps = (state) => {
     loading: state.maitre_douvrage.loading,
     maitre_douvrage: state.maitre_douvrage.maitre_douvrage,
     direname: state.maitre_douvrage.direname,
-    logo: state.maitre_douvrage.logo,
+   
   };
 };
 export default connect(mapStateToProps, mapActionToProps)(MaitreDouvrageTable);

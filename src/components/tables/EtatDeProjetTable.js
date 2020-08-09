@@ -23,7 +23,6 @@ import { connect } from "react-redux";
 import {
   addToCorbeille,
   getMaitreDouvrage,
-  getLogo,
   undoDeleteMaitreDouvrage,
 } from "../../store/actions/maitreDouvrageAction";
 
@@ -56,9 +55,7 @@ class EtatDeProjet extends Component {
     if (nextProps.voiture) {
       this.setState({ ...nextProps.voiture });
     }
-    if (nextProps.logo) {
-      this.setState({ logo: nextProps.logo });
-    }
+  
     if (nextProps.rowsSelected) {
       this.setState({ rowsSelected: nextProps.rowsSelected });
     }
@@ -579,7 +576,7 @@ class EtatDeProjet extends Component {
 const mapActionToProps = (dispatch) => {
   return {
     addToCorbeille: (id) => dispatch(addToCorbeille(id)),
-    getLogo: (id) => dispatch(getLogo(id)),
+   
     undoDeleteMaitreDouvrage: (id) => dispatch(undoDeleteMaitreDouvrage(id)),
     getMaitreDouvrage: (id) => dispatch(getMaitreDouvrage(id)),
     projetFini : (id) => dispatch(projetFini(id)),

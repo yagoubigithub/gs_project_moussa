@@ -54,7 +54,6 @@ class ProjetTable extends Component {
 
     maitreDouvrageSelected: {},
     devis_phases_projets: [],
-
     selectedAll: false,
     printDialog: false,
   };

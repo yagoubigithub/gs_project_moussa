@@ -58,17 +58,7 @@ function MaitreDouvrage() {
     }
   });
 
-  ipcMain.on('maitre_douvrage:logo', (event,value)=>{
-    if(value.id){
-      db.get(`SELECT logo FROM maitre_douvrage WHERE id=${value.id} `, function (err,result) {
-        if (err) mainWindow.webContents.send("maitre_douvrage:logo", err);
 
-        mainWindow.webContents.send("maitre_douvrage:logo", result.logo);
-
-      })
-    }
-  })
-  
 
   ipcMain.on("maitre_douvrage:delete", (event, value) => {
     if (value.id !== undefined) {

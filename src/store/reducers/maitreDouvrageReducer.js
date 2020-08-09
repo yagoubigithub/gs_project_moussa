@@ -80,11 +80,7 @@ const MaitreDouvrageReducer = (state = initStat, action) =>{
                   error : null,
   
               }
-              case "READ_MAITRE_DOUVRAGE_LOGO" :
-                  return {
-                      ...state,
-                      logo : action.payload
-                  }
+             
                 case 'ERROR_MAITRE_DOUVRAGE' : 
                 return {
                     ...state,

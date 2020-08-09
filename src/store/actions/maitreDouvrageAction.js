@@ -44,38 +44,6 @@ export const removeMaitreDouvrageCreated = () =>{
   }
   
 
-  
-export const getLogo = (id) =>{
-  return (dispatch ,getState)=>{
-
-    
-    dispatch({
-      type : "LOADING_MAITRE_DOUVRAGE"
-  })
-  ipcRenderer.send("maitre_douvrage:logo", {id});
-
-  
-  ipcRenderer.once('maitre_douvrage:logo', function (event,data) {
-   
-    dispatch({
-      type : "STOP_LOADING_MAITRE_DOUVRAGE"
-  });
-  if(data){
-    dispatch({
-        type : "READ_MAITRE_DOUVRAGE_LOGO",
-        payload : data
-    });
-  }else{
-    dispatch({
-      type : "ERROR_MAITRE_DOUVRAGE",
-      payload :data
-  });
-  }
-});
-
-  }
-}
-
 
 //delete (mettre dans le corbeille)
 export const addToCorbeille = (id) =>{
@@ -310,3 +278,4 @@ export const modifierMaitreDouvrage = (data) =>{
     
 }
 }
+
