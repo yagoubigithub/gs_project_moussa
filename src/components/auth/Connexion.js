@@ -8,6 +8,7 @@ import {connexion} from '../../store/actions/authAction'
 
 
 import LoadingComponent from "../../utils/loadingComponent";
+import logo from "../../utils/logo";
 //Mui
 
 import  Dialog   from '@material-ui/core/Dialog'
@@ -18,8 +19,7 @@ import Entreprise from './Etreprise';
          openEntrepriseDialog :  true
 
      }
-     getData = (openEntrepriseDialog)=>{
-         
+     getData = (openEntrepriseDialog)=>{        
          this.setState({openEntrepriseDialog})
      }
      componentWillReceiveProps(nextProps){
@@ -46,6 +46,7 @@ import Entreprise from './Etreprise';
 
             </Dialog>
              { !this.state.openEntrepriseDialog   && <div className="container-auth">
+             <img src={logo} width="200" />
                 <form onSubmit={this.handleSubmit} className="form-auth">
                     <span className="error-auth">{this.props.auth.error}</span>
                     <input className="input-auth" onChange={this.handleChange} name="username" type="text" placeholder="Username" />
