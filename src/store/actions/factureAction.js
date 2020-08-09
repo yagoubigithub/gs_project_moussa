@@ -63,6 +63,37 @@ export const addToCorbeille = (id) =>{
     }
   }
 
+
+  //delete (mettre dans le corbeille)
+export const addToCorbeilleMultiple = (data) =>{
+  return (dispatch , getState)=>{
+
+    dispatch({
+      type : "LOADING_FACTURE"
+  })
+  ipcRenderer.send("facture:delete-multi", {...data, status :  "corbeille"});
+
+  ipcRenderer.once('facture:delete-multi', function (event,data) {
+   
+    dispatch({
+      type : "STOP_LOADING_FACTURE"
+  });
+  if(Array.isArray(data)){
+    dispatch({
+        type : "ADD_TO_CORBEILLE_FACTURE",
+        payload : data
+    });
+  }else{
+    dispatch({
+      type : "ERROR_FACTURE",
+      payload :data
+  });
+  }
+});
+    
+
+  }
+}
   
 export const getAllFacture = () =>{
     return (dispatch ,getState)=>{
@@ -158,6 +189,35 @@ export const undoDeleteFacture     = (id) =>{
   }
   
 
+ 
+export const undoDeleteFactureMultiple     = (data) =>{
+    return (dispatch ,getState)=>{
+  
+      dispatch({
+        type : "LOADING_FACTURE"
+    })
+    ipcRenderer.send("facture:delete-multi", {...data, status :  "undo"});
+  
+    ipcRenderer.once('facture:delete-multi', function (event,data) {
+     
+      dispatch({
+        type : "STOP_LOADING_FACTURE"
+    });
+    if(Array.isArray(data)){
+      dispatch({
+          type : "UNDO_DELETE_FACTURE",
+          payload : data
+      });
+    }else{
+      dispatch({
+        type : "ERROR_FACTURE",
+        payload :data
+    });
+    }
+  });
+  
+    }
+  }
   //facture  
 export const removeFactureCreated = () =>{
   return (dispatch , getState)=>{

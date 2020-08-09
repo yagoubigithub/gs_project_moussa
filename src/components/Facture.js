@@ -17,6 +17,8 @@ import {
   getAllFacture,
   addToCorbeille,
   undoDeleteFacture,
+  addToCorbeilleMultiple,
+  undoDeleteFactureMultiple
 } from "../store/actions/factureAction";
 import { connect } from "react-redux";
 
@@ -120,18 +122,14 @@ class Facture extends Component {
             this.handleOpenCloseaddToCorbeilleDialog();
           }
           if (this.state.tab === "factureCorebeille") {
-            this.state.rowsSelected.map((facture) => {
-              this.props.undoDeleteFacture(facture);
-            });
+            this.props.undoDeleteFactureMultiple({factures : [...this.state.rowsSelected] });
             this.setState({ rowsSelected: [] });
           }
         }
       };
       addToCorbeille = () => {
         const rowsSelected = [...this.state.rowsSelected];
-        rowsSelected.map((facture) => {
-          this.props.addToCorbeille(facture);
-        });
+        this.props.addToCorbeilleMultiple({factures : rowsSelected });
         this.setState({ rowsSelected: [] });
       };
       render() {
@@ -219,6 +217,8 @@ const mapActionToProps = (dispatch) => ({
   getAllFacture: () => dispatch(getAllFacture()),
     addToCorbeille: (id) => dispatch(addToCorbeille(id)),
     undoDeleteFacture: (id) => dispatch(undoDeleteFacture(id)),
+    undoDeleteFactureMultiple: (data) => dispatch(undoDeleteFactureMultiple(data)),
+    addToCorbeilleMultiple: (data) => dispatch(addToCorbeilleMultiple(data)),
   });
   const mapStateToProps = (state) => ({
     factures: state.facture.factures,
