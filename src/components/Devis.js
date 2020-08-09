@@ -17,7 +17,8 @@ import {
   getAllDevis,
   addToCorbeille,
   undoDeleteDevis,
-  undoDeleteDevisMultiple
+  undoDeleteDevisMultiple,
+  addToCorbeilleMultiple
 } from "../store/actions/devisAction";
 import { connect } from "react-redux";
 
@@ -45,14 +46,14 @@ class Devis extends Component {
       const deviss = [];
       let devissCounter = 1;
       let devisCorebeilleCounter = 1;
-      nextProps.deviss.map((projet) => {
-        if (projet.status === "undo") {
-          deviss.push({ number: devissCounter, ...projet });
+      nextProps.deviss.map((devis) => {
+        if (devis.status === "undo") {
+          deviss.push({ number: devissCounter, ...devis });
           devissCounter++;
         }
 
-        if (projet.status === "corbeille") {
-          devisCorebeille.push({ number: devisCorebeilleCounter, ...projet });
+        if (devis.status === "corbeille") {
+          devisCorebeille.push({ number: devisCorebeilleCounter, ...devis });
           devisCorebeilleCounter++;
         }
       });
@@ -89,7 +90,7 @@ class Devis extends Component {
         this.setState({
           delete_button_text: "Annuler Suppression",
           rowsSelected: [],
-          tab: "projetCorebeille",
+          tab: "devisCorebeille",
         });
 
         break;
@@ -114,20 +115,19 @@ class Devis extends Component {
     if (this.state.rowsSelected.length === 0) {
       alert("Selectionnner des devis");
     } else {
-      if (this.state.tab !== "projetCorebeille") {
+      if (this.state.tab !== "devisCorebeille") {
         this.handleOpenCloseaddToCorbeilleDialog();
       }
-      if (this.state.tab === "projetCorebeille") {
-        this.props.undoDeleteDevisMultiple([...this.state.rowsSelected])
+      if (this.state.tab === "devisCorebeille") {
+        this.props.undoDeleteDevisMultiple({deviss : [...this.state.rowsSelected]})
         this.setState({ rowsSelected: [] });
       }
     }
   };
   addToCorbeille = () => {
     const rowsSelected = [...this.state.rowsSelected];
-    rowsSelected.map((projet) => {
-      this.props.addToCorbeille(projet);
-    });
+    this.props.addToCorbeilleMultiple({deviss : rowsSelected})
+   
     this.setState({ rowsSelected: [] });
   };
   render() {
@@ -139,7 +139,7 @@ class Devis extends Component {
           }
         />
         <div className="sous-nav-container">
-          <NavLink onClick={this.props.getAllProjet} to="/projet">
+          <NavLink onClick={this.props.getAllProjet} to="/devis">
             <button className="btn btn-nav">Actualisé</button>
           </NavLink>
 
@@ -214,6 +214,7 @@ const mapActionToProps = (dispatch) => ({
   addToCorbeille: (id) => dispatch(addToCorbeille(id)),
   undoDeleteDevis: (id) => dispatch(undoDeleteDevis(id)),
   undoDeleteDevisMultiple : (data) => dispatch(undoDeleteDevisMultiple(data)),
+  addToCorbeilleMultiple : (data) => dispatch(addToCorbeilleMultiple(data)),
 });
 const mapStateToProps = (state) => ({
   deviss: state.devis.deviss,

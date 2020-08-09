@@ -62,6 +62,36 @@ export const addToCorbeille = (id) =>{
   
     }
   }
+  //delete (mettre dans le corbeille)
+export const addToCorbeilleMultiple = (data) =>{
+  return (dispatch , getState)=>{
+
+    dispatch({
+      type : "LOADING_DEVIS"
+  })
+  ipcRenderer.send("devis:delete-multi", {...data, status :  "corbeille"});
+
+  ipcRenderer.once('devis:delete-multi', function (event,data) {
+   
+    dispatch({
+      type : "STOP_LOADING_DEVIS"
+  });
+  if(Array.isArray(data)){
+    dispatch({
+        type : "ADD_TO_CORBEILLE_DEVIS",
+        payload : data
+    });
+  }else{
+    dispatch({
+      type : "ERROR_DEVIS",
+      payload :data
+  });
+  }
+});
+    
+
+  }
+}
 
   
 export const getAllDevis = () =>{
@@ -336,13 +366,13 @@ export const removeDevisEdited = () =>{
 
      
 //undo delete
-export const undoDeleteDevisMultiple = (deviss) =>{
+export const undoDeleteDevisMultiple = (data) =>{
   return (dispatch ,getState)=>{
 
     dispatch({
       type : "LOADING_DEVIS"
   })
-  ipcRenderer.send("devis:delete-multi", {deviss, status :  "undo"});
+  ipcRenderer.send("devis:delete-multi", {...data, status :  "undo"});
 
   ipcRenderer.once('devis:delete-multi', function (event,data) {
    
