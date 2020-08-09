@@ -164,6 +164,7 @@ class MaitreDouvrage extends Component {
           </button>
         </Dialog>
         <div className="sous-nav-container">
+        <h1 style={{color: "white", marginRight : 100}}>Facture</h1>
           <NavLink
             onClick={this.props.getAllMaitreDouvrage}
             to="/maitre_douvrage"

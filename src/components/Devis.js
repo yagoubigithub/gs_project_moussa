@@ -148,6 +148,7 @@ class Devis extends Component {
           }
         />
         <div className="sous-nav-container">
+        <h1 style={{color: "white", marginRight : 100}}>Devis</h1>
           <NavLink onClick={this.props.getAllProjet} to="/devis">
             <button className="btn btn-nav">Actualisé</button>
           </NavLink>

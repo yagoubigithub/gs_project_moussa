@@ -65,9 +65,9 @@ class EtatDuFacture extends Component {
                 this.props.loading !== undefined ? this.props.loading : false
               }
             />
-            <div className="sous-nav-container">
-          
-            </div>
+             <div className="sous-nav-container" style={{ paddingBottom: 15 }}>
+          <h1 style={{ color: "white", marginRight: 100 }}>Etat du Facture</h1>
+        </div>
     
     
             <Tabs>

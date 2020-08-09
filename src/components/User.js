@@ -302,6 +302,7 @@ class User extends Component {
         </Dialog>
 
         <div className="sous-nav-container">
+        <h1 style={{color: "white", marginRight : 100}}>User</h1>
           <NavLink onClick={this.props.getAllUser} to="/user">
             <button className="btn btn-nav">Actualisé</button>
           </NavLink>

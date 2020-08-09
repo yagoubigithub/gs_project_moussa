@@ -159,6 +159,7 @@ class EtatProjet extends Component {
           }
         />
         <div className="sous-nav-container">
+        <h1 style={{color: "white", marginRight : 100}}>Etat du projet</h1>
           <NavLink onClick={this.props.getAllProjet} to="/etat_projet">
             <button className="btn btn-nav">Actualisé</button>
           </NavLink>

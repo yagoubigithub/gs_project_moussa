@@ -149,6 +149,7 @@ class Facture extends Component {
               }
             />
             <div className="sous-nav-container">
+            <h1 style={{color: "white", marginRight : 100}}>Facture</h1>
               <NavLink onClick={this.props.getAllFacture} to="/facture">
                 <button className="btn btn-nav">Actualisé</button>
               </NavLink>

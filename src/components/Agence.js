@@ -141,7 +141,7 @@ class Agence extends Component {
   };
   render() {
     return (
-      <div style={{ padding: 5 }}>
+      <div >
         <LoadingComponent
           loading={
             this.props.loading !== undefined ? this.props.loading : false
@@ -152,6 +152,9 @@ class Agence extends Component {
             this.props.loadingAuth !== undefined ? this.props.loadingAuth : false
           }
         />
+         <div className="sous-nav-container" style={{ paddingBottom: 15 }}>
+          <h1 style={{ color: "white", marginRight: 100 }}>Bureau d'étude</h1>
+        </div>
         <Tabs>
           <Tab index={0} title="Informations du Bureau">
             <div style={{ padding: 25 }}>
