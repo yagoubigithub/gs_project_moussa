@@ -9,9 +9,14 @@ import Dialog from "@material-ui/core/Dialog";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+
+
 
 //util
 import LoadingComponent from "../utils/loadingComponent";
+
 
 import UserTable from "./tables/UserTable";
 
@@ -25,8 +30,9 @@ import {
   ajouterUser,
   removeUserCreated,
   addToCorbeilleMultiple,
-  undoDeleteUserMultiple
+  undoDeleteUserMultiple,
 } from "../store/actions/authAction";
+
 
 class User extends Component {
   state = {
@@ -43,6 +49,7 @@ class User extends Component {
     prenom: "",
     username: "",
     password: "",
+    message: "",
   };
   componentDidMount() {
     this.props.getAllUser();
@@ -72,7 +79,6 @@ class User extends Component {
 
       this.setState({ userCorebeille, users });
     }
-   
 
     if (nextProps.user) {
       this.setState({ user: { ...nextProps.user } });
@@ -151,23 +157,30 @@ class User extends Component {
 
   Supprimer = () => {
     if (this.state.rowsSelected.length === 0) {
-      alert("Selectionnner des utilsateurs");
+      this.setState({ message: "Selectionnner des utilsateurs" });
     } else {
       if (this.state.tab !== "userCorebeille") {
         this.handleOpenCloseaddToCorbeilleDialog();
       }
       if (this.state.tab === "userCorebeille") {
-        this.props.undoDeleteUserMultiple({users : [...this.state.rowsSelected] });
+        this.props.undoDeleteUserMultiple({
+          users: [...this.state.rowsSelected],
+        });
         this.setState({ rowsSelected: [] });
       }
     }
   };
   addToCorbeille = () => {
     const rowsSelected = [...this.state.rowsSelected];
-    this.props.addToCorbeilleMultiple({users : rowsSelected });
+    this.props.addToCorbeilleMultiple({ users: rowsSelected });
     this.setState({ rowsSelected: [] });
   };
 
+  closeAlert = () => {
+    this.setState({
+      message: "",
+    });
+  };
   render() {
     return (
       <div>
@@ -177,6 +190,21 @@ class User extends Component {
           }
         />
 
+        <Dialog open={this.state.message !== ""} onClose={this.closeAlert}>
+          <DialogContent>
+            <p>{this.state.message}</p>
+          </DialogContent>
+
+          <DialogActions>
+            <Button
+              onClick={this.closeAlert}
+              variant="contained"
+              color="primary"
+            >
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
         <Dialog
           open={this.state.addToCorbeilleDialog}
           onClose={this.handleOpenCloseaddToCorbeilleDialog}

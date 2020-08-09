@@ -7,7 +7,10 @@ import { Tab, Tabs } from "react-tabs-css";
 import { NavLink } from "react-router-dom";
 
 //mui
-import Dialog from '@material-ui/core/Dialog'
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+import Button from "@material-ui/core/Button";
 
 //util
 import LoadingComponent from "../utils/loadingComponent";
@@ -32,6 +35,7 @@ class Projet extends Component {
     rowsSelected: [],
     tab: "projets",
     addToCorbeilleDialog: false,
+    message : ""
   };
   componentDidMount() {
     this.props.getAllProjet();
@@ -105,7 +109,7 @@ class Projet extends Component {
   };
   Supprimer = () => {
     if (this.state.rowsSelected.length === 0) {
-      alert("Selectionnner des projets");
+      this.setState({message : "Selectionnner des projets"});
     } else {
       if (this.state.tab !== "projetCorebeille") {
         this.handleOpenCloseaddToCorbeilleDialog();
@@ -124,6 +128,11 @@ class Projet extends Component {
    
 
     this.setState({ rowsSelected: [] });
+  };
+  closeAlert = () => {
+    this.setState({
+      message: "",
+    });
   };
   render() {
     return (
@@ -146,7 +155,21 @@ class Projet extends Component {
             {this.state.delete_button_text}
           </button>
         </div>
+        <Dialog open={this.state.message !== ""} onClose={this.closeAlert}>
+          <DialogContent>
+            <p>{this.state.message}</p>
+          </DialogContent>
 
+          <DialogActions>
+            <Button
+              onClick={this.closeAlert}
+              variant="contained"
+              color="primary"
+            >
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
         <Dialog
           open={this.state.addToCorbeilleDialog}
           onClose={this.handleOpenCloseaddToCorbeilleDialog}

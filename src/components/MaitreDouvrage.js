@@ -7,6 +7,12 @@ import { Tab, Tabs } from "react-tabs-css";
 import { NavLink } from "react-router-dom";
 
 
+//Mui
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+import Button from "@material-ui/core/Button";
+
+
 //util
 import LoadingComponent from "../utils/loadingComponent";
 
@@ -26,7 +32,8 @@ class MaitreDouvrage extends Component {
     maitreDouvrageCorebeille: [],
     rowsSelected: [],
     tab: "maitreDouvrages",
-    addToCorbeilleDialog : false
+    addToCorbeilleDialog : false,
+    message : ""
   };
   
   componentDidMount() {
@@ -54,7 +61,7 @@ class MaitreDouvrage extends Component {
 
   Supprimer = () => {
     if (this.state.rowsSelected.length === 0) {
-      alert("Selectionnner des maitreDouvrages");
+      this.setState({message : "Selectionnner des maitreDouvrages"});
     } else {
       if (this.state.tab !== "maitreDouvrageCorebeille") {
         this.handleOpenCloseaddToCorbeilleDialog();
@@ -111,6 +118,11 @@ class MaitreDouvrage extends Component {
         break;
     }
   };
+  closeAlert = () => {
+    this.setState({
+      message: "",
+    });
+  };
   render() {
     return (
       <div>
@@ -119,6 +131,21 @@ class MaitreDouvrage extends Component {
             this.props.loading !== undefined ? this.props.loading : false
           }
         />
+        <Dialog open={this.state.message !== ""} onClose={this.closeAlert}>
+          <DialogContent>
+            <p>{this.state.message}</p>
+          </DialogContent>
+
+          <DialogActions>
+            <Button
+              onClick={this.closeAlert}
+              variant="contained"
+              color="primary"
+            >
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
           <Dialog
           open={this.state.addToCorbeilleDialog}
           onClose={this.handleOpenCloseaddToCorbeilleDialog}

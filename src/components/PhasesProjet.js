@@ -11,7 +11,10 @@ import LoadingComponent from "../utils/loadingComponent";
 
 
 //Mui
-import Dialog from '@material-ui/core/Dialog'
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+import Button from "@material-ui/core/Button";
 
 //redux
 import {
@@ -32,6 +35,7 @@ class PhasesProjet extends Component {
     rowsSelected: [],
     tab: "pahsesProjets",
     addToCorbeilleDialog: false,
+    message : ""
   };
   componentDidMount() {
     this.props.getAllPhasesProjet();
@@ -99,7 +103,7 @@ class PhasesProjet extends Component {
   };
   Supprimer = () => {
     if (this.state.rowsSelected.length === 0) {
-      alert("Selectionnner des phase du projet");
+      this.setState({message : "Selectionnner des phase du projet"});
     } else {
       if (this.state.tab !== "phasesProjetCorebeille") {
         this.handleOpenCloseaddToCorbeilleDialog();
@@ -117,7 +121,11 @@ class PhasesProjet extends Component {
     this.setState({ rowsSelected: [] });
   };
 
-
+  closeAlert = () => {
+    this.setState({
+      message: "",
+    });
+  };
   render() {
     return (
       <div>
@@ -126,6 +134,21 @@ class PhasesProjet extends Component {
             this.props.loading !== undefined ? this.props.loading : false
           }
         />
+        <Dialog open={this.state.message !== ""} onClose={this.closeAlert}>
+          <DialogContent>
+            <p>{this.state.message}</p>
+          </DialogContent>
+
+          <DialogActions>
+            <Button
+              onClick={this.closeAlert}
+              variant="contained"
+              color="primary"
+            >
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
           <Dialog
           open={this.state.addToCorbeilleDialog}
           onClose={this.handleOpenCloseaddToCorbeilleDialog}

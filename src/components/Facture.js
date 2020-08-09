@@ -8,7 +8,9 @@ import { NavLink } from "react-router-dom";
 
 //mui
 import Dialog from '@material-ui/core/Dialog'
-
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+import Button from "@material-ui/core/Button";
 //util
 import LoadingComponent from "../utils/loadingComponent";
 
@@ -39,6 +41,7 @@ class Facture extends Component {
         rowsSelected: [],
         tab: "factures",
         addToCorbeilleDialog: false,
+        message : ""
       };
       componentDidMount() {
         this.props.getAllFacture();
@@ -116,7 +119,7 @@ class Facture extends Component {
       };
       Supprimer = () => {
         if (this.state.rowsSelected.length === 0) {
-          alert("Selectionnner des devis");
+          this.setState({message : "Selectionnner des devis"});
         } else {
           if (this.state.tab !== "factureCorebeille") {
             this.handleOpenCloseaddToCorbeilleDialog();
@@ -131,6 +134,11 @@ class Facture extends Component {
         const rowsSelected = [...this.state.rowsSelected];
         this.props.addToCorbeilleMultiple({factures : rowsSelected });
         this.setState({ rowsSelected: [] });
+      };
+      closeAlert = () => {
+        this.setState({
+          message: "",
+        });
       };
       render() {
         return (
@@ -154,6 +162,21 @@ class Facture extends Component {
               </button>
             </div>
     
+            <Dialog open={this.state.message !== ""} onClose={this.closeAlert}>
+          <DialogContent>
+            <p>{this.state.message}</p>
+          </DialogContent>
+
+          <DialogActions>
+            <Button
+              onClick={this.closeAlert}
+              variant="contained"
+              color="primary"
+            >
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
             <Dialog
               open={this.state.addToCorbeilleDialog}
               onClose={this.handleOpenCloseaddToCorbeilleDialog}
