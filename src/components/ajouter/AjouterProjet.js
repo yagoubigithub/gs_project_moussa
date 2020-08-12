@@ -15,6 +15,8 @@ import Grid from "@material-ui/core/Grid";
 import MenuItem from "@material-ui/core/MenuItem";
 import Paper from "@material-ui/core/Paper";
 
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
 
 
 
@@ -294,6 +296,11 @@ class AjouterProjet extends Component {
       this.setState({ duree_phase, prix_totale });
    })
   }
+  closeAlert = () => {
+    this.setState({
+      message: "",
+    });
+  };
   render() {
   
 
@@ -304,6 +311,22 @@ class AjouterProjet extends Component {
             this.props.loading !== undefined ? this.props.loading : false
           }
         />
+
+<Dialog open={this.state.message !== ""} onClose={this.closeAlert}>
+          <DialogContent>
+            <p>{this.state.message}</p>
+          </DialogContent>
+
+          <DialogActions>
+            <Button
+              onClick={this.closeAlert}
+              variant="contained"
+              color="primary"
+            >
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
 
         <Dialog
           open={this.state.maitreDouvrageDialog}

@@ -9,8 +9,11 @@ import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Grid from "@material-ui/core/Grid";
 
-import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+
 
 //icons
 
@@ -27,8 +30,7 @@ import {removePhasesProjetCreated,ajouterPahsesProjet} from '../../store/actions
  class AjouterPhaseProjet extends Component {
   state = {
     open: true,
-    error  : "",
-    success : "",
+    message  : "",  success : "",
 
 
 
@@ -45,8 +47,8 @@ import {removePhasesProjetCreated,ajouterPahsesProjet} from '../../store/actions
 
     if(nextProps.phasesProjetCreated){
       this.setState({
-        error :  "",
-        success : "Phase de projet a été ajouter",
+       
+        message : "Phase de projet a été ajouter",
 
         titre : "",
         description : "",
@@ -60,7 +62,7 @@ import {removePhasesProjetCreated,ajouterPahsesProjet} from '../../store/actions
       const data  = {...this.state};
       delete data.open;
       if(data.titre.trim().length  === 0){
-        this.setState({error : "le titre et obligatoire"});
+        this.setState({message : "le titre et obligatoire"});
         return;
       }
       
@@ -75,6 +77,11 @@ import {removePhasesProjetCreated,ajouterPahsesProjet} from '../../store/actions
           [e.target.name] : e.target.value
       })
   }
+  closeAlert = () => {
+    this.setState({
+      message: "",
+    });
+  };
 
   render() {
     return (
@@ -93,10 +100,25 @@ import {removePhasesProjetCreated,ajouterPahsesProjet} from '../../store/actions
             </Link>
           </Toolbar>
         </AppBar>
+
+        <Dialog open={this.state.message !== ""} onClose={this.closeAlert}>
+          <DialogContent>
+            <p>{this.state.message}</p>
+          </DialogContent>
+
+          <DialogActions>
+            <Button
+              onClick={this.closeAlert}
+              variant="contained"
+              color="primary"
+            >
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
         <div style={{ marginTop: 30, padding: 15 }}></div>
         <h1 style={{ textAlign: "center" }}>Ajouter Une Phase du projet</h1>
-        <div className="alert error">{this.state.error} </div>
-        <div className="alert success">{this.state.success} </div>
+      
         <Grid container spacing={2} style={{ padding: 25 }}>
           <Grid item xs={12}>
             <h3 style={{ margin: 0 }}>Désignation * </h3>

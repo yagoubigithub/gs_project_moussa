@@ -13,6 +13,8 @@ import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Grid from "@material-ui/core/Grid";
 import MenuItem from '@material-ui/core/MenuItem';
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
 
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -46,12 +48,9 @@ import PhasesProjetTable from '../tables/PhasesProjetTable'
 class AjouterFacture extends Component {
   state = {
     open: true,
-    error: "",
-    success: "",
+    message: "",
     maitreDouvrageDialog: false,
-
     buttonReturn: "/facture/",
-
     nom: "",
     objet: "",
     adresse: "",
@@ -84,12 +83,10 @@ class AjouterFacture extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.factureCreated) {
       this.setState({
-        error: "",
-        success: "Facture a été ajouter",
+        message: "Facture a été ajouter",
         nom: "",
         objet: "",
         adresse: "",
-
         delais: 0,
         date_debut: "",
         date_depot: "",
@@ -150,25 +147,25 @@ class AjouterFacture extends Component {
   ajouter = () => {
     const d = { ...this.state };
     if (d.nom.trim().length === 0) {
-      this.setState({ error: "le champ nom et obligatoire *" });
+      this.setState({ message: "le champ nom et obligatoire *" });
       return;
     }
     if (d.maitreDouvrage === undefined) {
-      this.setState({ error: "le champ Maitre d'ouvrage et obligatoire *" });
+      this.setState({ message: "le champ Maitre d'ouvrage et obligatoire *" });
       return;
     }
     if (d.phasesProjetsSelected.length === 0) {
-      this.setState({ error: "le champ Phase du projet et obligatoire *" });
+      this.setState({ message: "le champ Phase du projet et obligatoire *" });
       return;
     }
 
     if(d.unite_remise === "%" && d.remise > 100){
-      this.setState({ error: "le champ Remise et superieur a 100%" }); 
+      this.setState({ message: "le champ Remise et superieur a 100%" }); 
       return;
     }
 
     if(d.unite_paye === "%" && d.pay > 100){
-      this.setState({ error: "le champ Payé et superieur a 100%" }); 
+      this.setState({ message: "le champ Payé et superieur a 100%" }); 
       return;
     }
    const paye = this.calculPaye(d.prix_totale,d.tva ,d.remise, d.unite_remise,d.paye, d.unite_paye)
@@ -326,6 +323,11 @@ class AjouterFacture extends Component {
        });
     }
   };
+  closeAlert = () => {
+    this.setState({
+      message: "",
+    });
+  };
 
   render() {
     const options = [];
@@ -346,6 +348,21 @@ class AjouterFacture extends Component {
             this.props.loading !== undefined ? this.props.loading : false
           }
         />
+         <Dialog open={this.state.message !== ""} onClose={this.closeAlert}>
+          <DialogContent>
+            <p>{this.state.message}</p>
+          </DialogContent>
+
+          <DialogActions>
+            <Button
+              onClick={this.closeAlert}
+              variant="contained"
+              color="primary"
+            >
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
 
         <Dialog
           open={this.state.maitreDouvrageDialog}
@@ -406,8 +423,8 @@ class AjouterFacture extends Component {
         </AppBar>
         <div style={{ marginTop: 50, padding: 15 }}></div>
         <h1 style={{ textAlign: "center" }}>Créer une facture</h1>
-        <div className="alert error">{this.state.error} </div>
-        <div className="alert success">{this.state.success} </div>
+        <div className="alert message">{this.state.message} </div>
+        <div className="alert message">{this.state.message} </div>
         <Grid container spacing={2} style={{ padding: 25 }}>
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}>Nom de projet * </h3>

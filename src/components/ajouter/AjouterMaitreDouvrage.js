@@ -9,6 +9,9 @@ import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Grid from "@material-ui/core/Grid";
 
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 
@@ -27,12 +30,7 @@ import {removeMaitreDouvrageCreated,ajouterMaitreDouvrage} from '../../store/act
  class AjouterMaitreDouvrage extends Component {
   state = {
     open: true,
-    error  : "",
-    success : "",
-
-
-
-
+    message  : "",
     nom : "",
     prenom : "",
     telephone : "",
@@ -48,9 +46,7 @@ import {removeMaitreDouvrageCreated,ajouterMaitreDouvrage} from '../../store/act
 
     if(nextProps.maitreDouvrageCreated){
       this.setState({
-        error :  "",
-        success : "",
-
+        message :  "Maître d'ouvrage a été ajouter",
         nom : "",
         prenom : "",
         telephone : "",
@@ -67,10 +63,10 @@ import {removeMaitreDouvrageCreated,ajouterMaitreDouvrage} from '../../store/act
       const data  = {...this.state};
       delete data.open;
       if(data.nom.trim().length  === 0){
-        this.setState({error : "le Nom et obligatoire"});
+        this.setState({message : "le Nom et obligatoire*"});
         return;
       }
-      this.setState({success :  "Maître d'ouvrage a été ajouter"})
+   
       this.props.ajouterMaitreDouvrage(data);
 
   }
@@ -98,6 +94,11 @@ import {removeMaitreDouvrageCreated,ajouterMaitreDouvrage} from '../../store/act
       });
     }
   };
+  closeAlert = () => {
+    this.setState({
+      message: "",
+    });
+  };
   render() {
     return (
       <Dialog fullScreen open={this.state.open}>
@@ -106,6 +107,21 @@ import {removeMaitreDouvrageCreated,ajouterMaitreDouvrage} from '../../store/act
             this.props.loading !== undefined ? this.props.loading : false
           }
         />
+         <Dialog open={this.state.message !== ""} onClose={this.closeAlert}>
+          <DialogContent>
+            <p>{this.state.message}</p>
+          </DialogContent>
+
+          <DialogActions>
+            <Button
+              onClick={this.closeAlert}
+              variant="contained"
+              color="primary"
+            >
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
         <AppBar className="bg-dark">
           <Toolbar style={{ display: "flax", justifyContent: "space-between" }}>
             <Link to="/maitre_douvrage/">
@@ -117,8 +133,7 @@ import {removeMaitreDouvrageCreated,ajouterMaitreDouvrage} from '../../store/act
         </AppBar>
         <div style={{ marginTop: 50, padding: 15 }}></div>
         <h1 style={{ textAlign: "center" }}>Ajouter Maître d'ouvrage</h1>
-        <div className="alert error">{this.state.error} </div>
-        <div className="alert success">{this.state.success} </div>
+      
         <Grid container spacing={2} style={{ padding: 25 }}>
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}>Nom * </h3>
