@@ -51,7 +51,11 @@ function User(){
         );
        }else{
            db.all(
-          `SELECT * FROM user WHERE username='${value.username}' AND password='${value.password}'  AND (status='undo' OR status='admin') `,
+          `SELECT * FROM user WHERE username=? AND password=?  AND (status='undo' OR status='admin') `,
+          [
+            value.username,
+            value.password
+          ],
           function(err, rows) {
             if (err) mainWindow.webContents.send("user", err);
             mainWindow.webContents.send("user", rows);
@@ -74,10 +78,20 @@ function User(){
               mainWindow.webContents.send("user:ajouter", {error : "Utilisateur déja exist"});
             }else{
 
-              console.log(rows)
+            
               db.run(
                 `
-                    INSERT INTO user(nom , prenom  , username ,  password , status  ) VALUES ('${value.nom}','${value.prenom}','${value.username}','${value.password}' , 'undo') `,
+                    INSERT INTO user(nom , prenom  , username ,  password , status  ) VALUES (?,?,?,? , ?) `,
+                    [
+                      value.nom , 
+                      value.prenom , 
+                      value.username ,
+                      value.password ,
+                      'undo'
+
+
+                    ]
+                    ,
                 function(err) {
                   if (err) mainWindow.webContents.send("user:ajouter", err);
                   db.all(
@@ -153,7 +167,16 @@ function User(){
           if(value.admin_nom !== undefined){
          
             db.run(
-              `UPDATE user  SET nom='${value.nom}' ,  prenom='${value.prenom}' ,  username='${value.username}' ,  password='${value.password}'   WHERE id = ${value.id};`,
+              `UPDATE user  SET nom=? ,  prenom=? ,  username=? ,  password=?   WHERE id = ?;`,
+              [
+                value.nom,
+                value.prenom ,
+                value.username , 
+                value.password ,
+                value.id 
+              ]
+
+              ,
               function (err) {
                 if (err) mainWindow.webContents.send("auth:modifier", err);
                 db.all(
@@ -170,7 +193,14 @@ function User(){
 
           }else{
             db.run(
-              `UPDATE user  SET nom='${value.nom}' ,  prenom='${value.prenom}' ,  username='${value.username}' ,  password='${value.password}'   WHERE id = ${value.id};`,
+              `UPDATE user  SET nom=? ,  prenom=? ,  username=? ,  password=?   WHERE id = ?;`,
+              [
+                value.nom,
+                value.prenom,
+                value.username,
+                value.password,
+                value.id
+              ],
               function (err) {
                 if (err) mainWindow.webContents.send("auth:modifier", err);
                 db.all(
