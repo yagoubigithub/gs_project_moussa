@@ -120,58 +120,124 @@ function Facture() {
    
     //ajouter projet
     db.run(
-      `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , user_id , remise  , tva ,  status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.delais},'${value.date_debut}','${value.date_depot}' , 'en cours',${value.duree_phase},${value.maitreDouvrage_id} , ${value.user_id} , ${value.remise}  ,  ${value.tva} , 'undo') `,
+      `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , user_id , remise  , tva ,  status) VALUES (?,?,?,?,?,? , ?,?,? , ? , ?  , ? , ?) `,
+     
+      [
+        value.nom,
+        value.objet,
+        value.adresse,
+        value.delais,
+        value.date_debut,
+        value.date_depot,
+        'en cours',
+        value.duree_phase,
+        value.maitreDouvrage_id,
+        value.user_id,
+        value.remise,
+        value.tva,
+        'undo'
+
+
+
+
+
+
+      ],
       function (err) {
         if (err) mainWindow.webContents.send("facture:ajouter", err);
 
-       
+     
         //add phase de projet
         const projet_id = this.lastID;
         
         let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , titre ,description , duree , prix , status) VALUES   `;
 
-        
+        const params = [];
         value.phasesProjetsSelected.forEach((phase) => {
 
-          const placeholder = ` (${projet_id},'${phase.id}' ,  '${phase.titre}' , '${phase.description}' , ${phase.duree} , ${phase.prix} , 'undo') ,`;
+          const placeholder = ` (?,? ,  ? , ? , ? , ? , ?) ,`;
+
+          params.push(projet_id,phase.id,phase.titre,phase.description,phase.duree,phase.prix,'undo')
 
           sql = sql + placeholder;
         });
 
         sql = sql.slice(0, sql.lastIndexOf(",") - 1);
 
-        db.run(sql, function (err) {
+        db.run(sql,params, function (err) {
           if (err) mainWindow.webContents.send("facture:ajouter", err);
-          
+        
           db.run(
-            `INSERT INTO devis(projet_id , user_id  , nom , objet , adresse  , duree_phase , prix_totale , remise , date_devis ,  maitreDouvrage_id ,  tva , status) VALUES (${projet_id},${value.user_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_facture}' , ${value.maitreDouvrage_id} , ${value.tva}  , 'undo') `,
+            `INSERT INTO devis(projet_id , user_id  , nom , objet , adresse  , duree_phase , prix_totale , remise , date_devis ,  maitreDouvrage_id ,  tva , status) VALUES (?,?,?,?,? ,?, ?, ? ,? , ? , ?  ,?) `,
+
+            [
+              projet_id,
+              value.user_id,
+              value.nom,
+              value.objet,
+              value.adresse,
+              value.duree_phase,
+              value.prix_totale,
+              value.remise,
+              value.date_facture,
+              value.maitreDouvrage_id,
+              value.tva,
+              'undo'
+
+
+
+
+            ],
+
             function (err) {
               if (err) mainWindow.webContents.send("facture:ajouter", err);
              
-      
+          
               //add phase de devis
               const devis_id = this.lastID;
               let sql = `INSERT INTO devis_phases_projets(devis_id , phases_devis_id , titre ,description , duree , prix , status) VALUES   `;
             
+              const params = []
               value.phasesProjetsSelected.forEach((phase) => {
 
-                const placeholder = ` (${devis_id},'${phase.id}' ,  '${phase.titre}' , '${phase.description}' , ${phase.duree} , ${phase.prix} , 'undo') ,`;
-
+                const placeholder = ` (?,? ,  ? , ? , ? , ? , ?) ,`;
+                params.push(devis_id,phase.id,phase.titre,phase.description,phase.duree,phase.prix,'undo')
                 sql = sql + placeholder;
               });
       
               sql = sql.slice(0, sql.lastIndexOf(",") - 1);
       
-              db.run(sql, function (err) {
+              db.run(sql ,params , function (err) {
                 if (err) mainWindow.webContents.send("facture:ajouter", err);
 
-              
+                
                 
              //ajouter facture 
         
  //ajouter facture
  db.run(
-  `INSERT INTO facture(projet_id ,user_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, date_facture ,  maitreDouvrage_id , tva , status) VALUES (${projet_id},${value.user_id},'${value.nom}','${value.objet}','${value.adresse}' ,${value.duree_phase}, ${value.prix_totale}, ${value.remise} , '${value.date_facture}' , ${value.maitreDouvrage_id} , ${value.tva} , 'undo') `,
+  `INSERT INTO facture(projet_id ,user_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, date_facture ,  maitreDouvrage_id , tva , status) VALUES (? ,?,?,?,? ,?, ?, ? , ? , ? , ? , ?) `,
+
+  [
+    projet_id,
+    value.user_id,
+
+    value.nom,
+    value.objet,
+    value.adresse,
+    value.duree_phase,
+    value.prix_totale,
+    value.remise,
+    value.date_facture,
+    value.maitreDouvrage_id,
+    value.tva,
+    'undo'
+
+
+
+
+
+  ],
   function (err) {
     if (err) mainWindow.webContents.send("facture:ajouter", err);
   
@@ -179,7 +245,15 @@ function Facture() {
     const facture_id = this.lastID;
 
     db.run(
-      `INSERT INTO paye(facture_id  , paye , user_id , date_paye  ) VALUES (${facture_id},  ${value.paye} , ${value.user_id},  '${value.date_facture}' ) `,
+      `INSERT INTO paye(facture_id  , paye , user_id , date_paye  ) VALUES (?,  ? , ?,  ? ) `,
+      [
+        facture_id,
+        value.paye,
+        value.user_id,
+        value.date_facture
+
+      ]
+      ,
       function (err) {
         if (err) mainWindow.webContents.send("facture:ajouter", err);
 
@@ -187,17 +261,18 @@ function Facture() {
         /*phases_facture_id:
          */
 
+         const params = []
         value.phasesProjetsSelected.forEach((phase) => {
-          const placeholder = ` (${facture_id},'${phase.id}' ,  '${phase.titre}' , '${phase.description}' , ${phase.duree} , ${phase.prix} , 'undo') ,`;
-
+          const placeholder = ` (?,? ,  ? , ? , ? , ? , ?) ,`;
+          params.push(facture_id,phase.id,phase.titre,phase.description,phase.duree,phase.prix,'undo')
           sql = sql + placeholder;
         });
 
         sql = sql.slice(0, sql.lastIndexOf(",") - 1);
 
-        db.run(sql, function (err) {
+        db.run(sql,params, function (err) {
          
-
+         
           if (err) mainWindow.webContents.send("facture:ajouter", err);
           ReturnAllFacture()
             .then((factures) =>
@@ -278,7 +353,7 @@ function Facture() {
       function (err, statistique) {
 
         if(err) mainWindow.webContents.send("facture:statistique", err)
-        console.log(statistique)
+      
         mainWindow.webContents.send("facture:statistique", statistique)
         
       })
@@ -364,7 +439,7 @@ function Facture() {
    db.run(`DELETE FROM phases_projets
    WHERE projet_id=${value.projet_id}` , (err)=>{
     if (err) mainWindow.webContents.send("facture:modifier", err);
-    console.log(err)
+  
     new Promise((resolve, reject)=>{
       let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , titre ,description , duree , prix , status) VALUES   `;
       let count = 0;
