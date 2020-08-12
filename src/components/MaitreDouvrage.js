@@ -55,6 +55,12 @@ class MaitreDouvrage extends Component {
 
       })
 
+      maitreDouvrageCorebeille.sort((a,b )=> parseInt(a.id) -  parseInt(b.id))
+      maitreDouvrageCorebeille.reverse()
+
+      maitreDouvrages.sort((a,b )=> parseInt(a.id) -  parseInt(b.id))
+      maitreDouvrages.reverse()
+
       this.setState({ maitreDouvrageCorebeille,maitreDouvrages });
     }
   }
