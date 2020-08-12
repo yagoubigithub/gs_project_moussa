@@ -364,10 +364,27 @@ function Projet() {
   ipcMain.on("projet:modifier", (event, value) => {
     if (value.nom !== undefined) {
       db.run(
-        `UPDATE projet SET nom='${value.nom}', objet='${value.objet}', adresse='${value.adresse}', delais=${value.delais} , date_debut='${value.date_debut}', date_depot='${value.date_depot}', etat='${value.etat}', duree_phase=${value.duree_phase}  , maitreDouvrage_id=${value.maitreDouvrage_id} , remise=${value.remise}  , tva=${value.tva} , status='${value.status}'  WHERE id=${value.id} `,
+        `UPDATE projet SET nom=?, objet=?, adresse=?, delais=? , date_debut=?, date_depot=?, etat=?, duree_phase=?  , maitreDouvrage_id=? , remise=?  , tva=? , status=?  WHERE id=? `,
+        [
+          value.nom ,
+          value.objet , 
+          value.adresse ,
+          value.delais ,
+          value.date_debut ,
+          value.date_depot ,
+          value.etat , 
+          value.duree_phase ,
+          value.maitreDouvrage_id ,
+          value.remise ,
+          value.tva ,
+          value.status ,
+          value.id 
+        ] 
+        ,
         function (err) {
           if (err) mainWindow.webContents.send("projet:modifier", err);
 
+         
           db.run(
             `DELETE FROM phases_projets
    WHERE projet_id=${value.id}`,
@@ -378,22 +395,27 @@ function Projet() {
                 let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , titre ,description , duree , prix , status) VALUES   `;
                 let count = 0;
 
+                const params = []
                 value.phasesProjetsSelected.forEach((phase) => {
-                  const placeholder = ` (${value.id},${phase.id} ,  '${phase.titre}' , '${phase.description}' , ${phase.duree} , ${phase.prix}  , 'undo') ,`;
+                  const placeholder = ` (?,? ,  ? , ? , ? , ?  , ?) ,`;
+
                   sql = sql + placeholder;
+
+                  params.push(value.id,phase.id,phase.titre,phase.description,phase.duree,phase.prix,'undo')
+
                   count++;
 
                   if (count === value.phasesProjetsSelected.length) {
-                    resolve(sql);
+                    resolve({sql,params});
                   }
                 });
-              }).then((sql) => {
+              }).then(({sql , params}) => {
                 sql = sql.slice(0, sql.lastIndexOf(",") - 1);
 
-                db.run(sql, function (err) {
+                db.run(sql, params ,  function (err) {
                   if (err) mainWindow.webContents.send("projet:modifier", err);
                   // modifier facture
-
+                 
                   db.get(
                     `SELECT id  FROM facture WHERE projet_id=${value.id}`,
                     (err, result) => {
@@ -403,14 +425,27 @@ function Projet() {
                       const facture_id = result.id;
 
                       db.run(
-                        `UPDATE facture SET nom='${value.nom}', objet='${value.objet}', adresse='${value.adresse}' , duree_phase=${value.duree_phase}  , prix_totale=${value.prix_totale}   , maitreDouvrage_id=${value.maitreDouvrage_id} , remise=${value.remise}  , tva=${value.tva} , status='${value.status}'  WHERE projet_id=${value.id} `,
+                        `UPDATE facture SET nom=?, objet=?, adresse=? , duree_phase=?  , prix_totale=?   , maitreDouvrage_id=? , remise=?  , tva=? , status=?  WHERE projet_id=? `,
+                        [
+                          value.nom , 
+                          value.objet , 
+                          value.adresse ,
+                          value.duree_phase ,
+                          value.prix_totale , 
+                          value.maitreDouvrage_id, 
+                          value.remise,
+                          value.tva ,
+                          value.status ,
+                          value.id
+                        ],
                         (err) => {
                           if (err)
                             mainWindow.webContents.send("projet:modifier", err);
 
+                           
                           db.run(
                             `DELETE FROM facture_phases_projets
-WHERE facture_id=${facture_id};`,
+                              WHERE facture_id=${facture_id};`,
                             (err) => {
                               if (err)
                                 mainWindow.webContents.send(
@@ -422,27 +457,30 @@ WHERE facture_id=${facture_id};`,
                                 let sql = `INSERT INTO facture_phases_projets(facture_id , phases_facture_id , titre ,description , duree , prix , status) VALUES   `;
                                 let count = 0;
 
+                                const params = [];
+
                                 value.phasesProjetsSelected.forEach((phase) => {
-                                  const placeholder = ` (${facture_id},${phase.id} ,  '${phase.titre}' , '${phase.description}' , ${phase.duree} , ${phase.prix}  , 'undo') ,`;
+                                  const placeholder = ` (?,? ,  ? , ? , ? , ?  , ?) ,`;
                                   sql = sql + placeholder;
                                   count++;
+                                  params.push(facture_id,phase.id,phase.titre,phase.description,phase.duree,phase.prix,'undo')
 
                                   if (
                                     count === value.phasesProjetsSelected.length
                                   ) {
-                                    resolve(sql);
+                                    resolve({sql, params});
                                   }
                                 });
-                              }).then((sql) => {
+                              }).then(({sql, params}) => {
                                 sql = sql.slice(0, sql.lastIndexOf(",") - 1);
 
-                                db.run(sql, function (err) {
+                                db.run(sql,params ,  function (err) {
                                   if (err)
                                     mainWindow.webContents.send(
                                       "projet:modifier",
                                       err
                                     );
-
+                                
                                   //modfier devis
 
                                   db.get(
@@ -457,14 +495,28 @@ WHERE facture_id=${facture_id};`,
                                       const devis_id = result.id;
 
                                       db.run(
-                                        `UPDATE devis SET nom='${value.nom}', objet='${value.objet}', adresse='${value.adresse}' , duree_phase=${value.duree_phase}  , prix_totale=${value.prix_totale} , maitreDouvrage_id=${value.maitreDouvrage_id} , remise=${value.remise}  , tva=${value.tva} , status='${value.status}'  WHERE projet_id=${value.id} `,
+                                        `UPDATE devis SET nom=?, objet=?, adresse=? , duree_phase=?  , prix_totale=? , maitreDouvrage_id=? , remise=?  , tva=? , status=?  WHERE projet_id=? `,
+                                        
+                                        [
+
+                                          value.nom,
+                                          value.objet,
+                                          value.adresse,
+                                          value.duree_phase,
+                                          value.prix_totale,
+                                          value.maitreDouvrage_id,
+                                          value.remise,
+                                          value.tva,
+                                          value.status,
+                                          value.id
+                                        ],
                                         (err) => {
                                           if (err)
                                             mainWindow.webContents.send(
                                               "projet:modifier",
                                               err
                                             );
-
+                                        
                                           db.run(
                                             `DELETE FROM devis_phases_projets
 WHERE devis_id=${devis_id};`,
@@ -479,10 +531,13 @@ WHERE devis_id=${devis_id};`,
                                                 let sql = `INSERT INTO devis_phases_projets(devis_id , phases_devis_id , titre ,description , duree , prix , status) VALUES   `;
                                                 let count = 0;
 
+                                                const params= [];
                                                 value.phasesProjetsSelected.forEach(
                                                   (phase) => {
-                                                    const placeholder = ` (${devis_id},${phase.id} ,  '${phase.titre}' , '${phase.description}' , ${phase.duree} , ${phase.prix}  , 'undo') ,`;
+                                                    const placeholder = ` (?,? ,  ? , ? , ? , ?  , ?) ,`;
                                                     sql = sql + placeholder;
+                                                    params.push(devis_id,phase.id,phase.titre,phase.description,phase.duree,phase.prix,'undo')
+
                                                     count++;
 
                                                     if (
@@ -491,23 +546,23 @@ WHERE devis_id=${devis_id};`,
                                                         .phasesProjetsSelected
                                                         .length
                                                     ) {
-                                                      resolve(sql);
+                                                      resolve({sql,params});
                                                     }
                                                   }
                                                 );
-                                              }).then((sql) => {
+                                              }).then(({sql,params}) => {
                                                 sql = sql.slice(
                                                   0,
                                                   sql.lastIndexOf(",") - 1
                                                 );
 
-                                                db.run(sql, function (err) {
+                                                db.run(sql,params,function (err) {
                                                   if (err)
                                                     mainWindow.webContents.send(
                                                       "projet:modifier",
                                                       err
                                                     );
-
+                                                  
                                                   ReturnAllProject()
                                                     .then((projets) =>
                                                       mainWindow.webContents.send(
