@@ -430,7 +430,24 @@ function Facture() {
      
      
   db.run(
-        `UPDATE projet SET nom='${value.nom}', objet='${value.objet}', adresse='${value.adresse}' , duree_phase=${value.duree_phase}  , maitreDouvrage_id=${value.maitreDouvrage_id} , remise=${value.remise} , date_debut='${value.date_debut}', date_depot='${value.date_depot}' ,   tva=${value.tva} , status='${value.status}'  WHERE id=${value.projet_id} `,
+        `UPDATE projet SET nom=?, objet=?, adresse=? , duree_phase=?  , maitreDouvrage_id=? , remise=? , date_debut=?, date_depot=? ,   tva=? , status=?  WHERE id=? `,
+
+        [
+          value.nom , 
+          value.objet ,
+          value.adresse , 
+          value.duree_phase , 
+          value.maitreDouvrage_id , 
+          value.remise ,
+          value.date_debut ,
+          value.date_depot , 
+          value.tva ,
+          value.status , 
+          value.projet_id
+
+
+        ],
+
         function (err) {
           if (err) mainWindow.webContents.send("facture:modifier", err);
 
@@ -444,19 +461,22 @@ function Facture() {
       let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , titre ,description , duree , prix , status) VALUES   `;
       let count = 0;
     
+      const params = [];
       value.phasesProjetsSelected.forEach((phase) => {
       
-        const placeholder = ` (${value.projet_id},${phase.id} ,  '${phase.titre}' , '${phase.description}' , ${phase.duree} , ${phase.prix}  , 'undo') ,`;
+        const placeholder = ` (?,? ,  ? , ? , ? , ?  , ?) ,`;
+        params.push(value.projet_id,phase.id,phase.titre,phase.description,phase.duree,phase.prix,'undo')
+
         sql = sql + placeholder;
         count++;
 
-        if(count === value.phasesProjetsSelected.length) {resolve(sql)}
+        if(count === value.phasesProjetsSelected.length) {resolve({sql, params})}
       })
-    }).then((sql)=>{
+    }).then(({sql, params})=>{
      
       sql = sql.slice(0, sql.lastIndexOf(",") - 1);
      
-      db.run(sql, function (err) {
+      db.run(sql, params,  function (err) {
         if (err) mainWindow.webContents.send("facture:modifier", err);
       // modifier facture
 
@@ -466,7 +486,23 @@ db.get(`SELECT id  FROM facture WHERE projet_id=${value.projet_id}` ,  (err,resu
  const facture_id = result.id;
 
  db.run(
-  `UPDATE facture SET nom='${value.nom}', objet='${value.objet}', adresse='${value.adresse}' , duree_phase=${value.duree_phase}  , prix_totale=${value.prix_totale}   , maitreDouvrage_id=${value.maitreDouvrage_id} , remise=${value.remise}  , tva=${value.tva} , status='${value.status}'  WHERE projet_id=${value.projet_id} `,
+  `UPDATE facture SET nom=?, objet=?, adresse=? , duree_phase=?  , prix_totale=?   , maitreDouvrage_id=? , remise=?  , tva=? , status=?  WHERE projet_id=? `,
+
+  [
+    value.nom,
+    value.objet, 
+    value.adresse , 
+    value.duree_phase , 
+    value.prix_totale , 
+    value.maitreDouvrage_id ,
+    value.remise , 
+    value.tva , 
+    value.status, 
+    value.projet_id
+
+
+
+  ],
    (err) =>{
     if (err) mainWindow.webContents.send("facture:modifier", err);
        
@@ -480,20 +516,21 @@ new Promise((resolve, reject)=>{
 let sql = `INSERT INTO facture_phases_projets(facture_id , phases_facture_id , titre ,description , duree , prix , status) VALUES   `;
 let count = 0;
 
+const params = []
 value.phasesProjetsSelected.forEach((phase) => {
 
-  const placeholder = ` (${facture_id},${phase.id} ,  '${phase.titre}' , '${phase.description}' , ${phase.duree} , ${phase.prix}  , 'undo') ,`;
+  const placeholder = ` (?,? ,  ? , ? , ? , ?  , ?) ,`;
   sql = sql + placeholder;
   count++;
-
-  if(count === value.phasesProjetsSelected.length) {resolve(sql)}
+  params.push(facture_id,phase.id,phase.titre,phase.description,phase.duree,phase.prix,'undo')
+  if(count === value.phasesProjetsSelected.length) {resolve({sql,params})}
 })
 
-}).then((sql)=>{
+}).then(({sql, params})=>{
 
 sql = sql.slice(0, sql.lastIndexOf(",") - 1);
 
-db.run(sql, function (err) {
+db.run(sql,params, function (err) {
 
  
   if (err) mainWindow.webContents.send("facture:modifier", err);
@@ -509,7 +546,19 @@ db.get(`SELECT id  FROM devis WHERE projet_id=${value.projet_id}` ,  (err,result
 
  
  db.run(
-  `UPDATE devis SET nom='${value.nom}', objet='${value.objet}', adresse='${value.adresse}' , duree_phase=${value.duree_phase}  , prix_totale=${value.prix_totale} , maitreDouvrage_id=${value.maitreDouvrage_id} , remise=${value.remise}  , tva=${value.tva} , status='${value.status}'  WHERE projet_id=${value.projet_id} `,
+  `UPDATE devis SET nom=?, objet=?, adresse=? , duree_phase=?  , prix_totale=? , maitreDouvrage_id=? , remise=?  , tva=? , status=?  WHERE projet_id=? `,
+  [
+    value.nom,
+    value.objet,
+    value.adresse,
+    value.duree_phase,
+    value.prix_totale,
+    value.maitreDouvrage_id , 
+    value.remise , 
+    value.tva , 
+    value.status , 
+    value.projet_id
+  ],
    (err) =>{
     if (err) mainWindow.webContents.send("facture:modifier", err);
     
@@ -523,20 +572,22 @@ new Promise((resolve, reject)=>{
 let sql = `INSERT INTO devis_phases_projets(devis_id , phases_devis_id , titre ,description , duree , prix , status) VALUES   `;
 let count = 0;
 
+const params = [];
+
 value.phasesProjetsSelected.forEach((phase) => {
 
-  const placeholder = ` (${devis_id},${phase.id} ,  '${phase.titre}' , '${phase.description}' , ${phase.duree} , ${phase.prix}  , 'undo') ,`;
+  const placeholder = ` (?,? ,  ? , ? , ? , ?  , ?) ,`;
   sql = sql + placeholder;
   count++;
-
-  if(count === value.phasesProjetsSelected.length) {resolve(sql)}
+  params.push(devis_id,phase.id,phase.titre,phase.description,phase.duree,phase.prix,'undo')
+  if(count === value.phasesProjetsSelected.length) {resolve({sql , params})}
 })
 
-}).then((sql)=>{
+}).then(({sql , params})=>{
 
 sql = sql.slice(0, sql.lastIndexOf(",") - 1);
 
-db.run(sql, function (err) {
+db.run(sql,params, function (err) {
 
  
   if (err) mainWindow.webContents.send("facture:modifier", err);
