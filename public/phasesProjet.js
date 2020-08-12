@@ -43,7 +43,17 @@ db.run(`CREATE TABLE IF NOT EXISTS phases_projet (
    
       db.run(
         `
-               INSERT INTO phases_projet(titre , description , duree , prix , status) VALUES ('${value.titre}','${value.description}' , ${value.duree} , ${value.prix} , 'undo') `,
+               INSERT INTO phases_projet(titre , description , duree , prix , status) VALUES (?,? ,? , ? , ?) `,
+
+               [
+                value.titre ,
+                value.description , 
+                value.duree , 
+                value.prix ,
+                'undo'
+
+
+               ],
         function (err) {
          
           if (err) mainWindow.webContents.send("phases_projet:ajouter", err);
@@ -115,9 +125,18 @@ db.run(`CREATE TABLE IF NOT EXISTS phases_projet (
       
       db.run(
         `
-               UPDATE phases_projet SET titre='${value.titre}', description='${value.description}' , duree=${value.duree} , prix=${value.prix}  WHERE id=${value.id} `,
+               UPDATE phases_projet SET titre=?, description=? , duree=? , prix=?  WHERE id=? `,
+
+               [
+                 value.titre,
+                 value.description,
+                 value.duree, 
+                 value.prix ,
+                 value.id ,
+              ],
+
         function (err) {
-          console.log(err)
+        
           if (err) mainWindow.webContents.send("phases_projet:modifier", err);
           db.all(`SELECT * FROM phases_projet ORDER BY id`, function (err, rows) {
             if (err)
