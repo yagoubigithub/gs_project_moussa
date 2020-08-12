@@ -41,7 +41,21 @@ function MaitreDouvrage() {
     if (value.nom !== undefined) {
       db.run(
         `
-               INSERT INTO maitre_douvrage(nom , prenom , raison_social , rg , telephone , email , adresse , logo,status) VALUES ('${value.nom}','${value.prenom}','${value.raison_social}','${value.rg}','${value.telephone}','${value.email}','${value.adresse}','${value.logo}', 'undo') `,
+               INSERT INTO maitre_douvrage(nom , prenom , raison_social , rg , telephone , email , adresse , logo,status) VALUES (?,?,?,?,?,?,?,?, ?) `,
+               [
+                value.nom,
+                value.prenom , 
+                value.raison_social , 
+                value.rg  ,
+                value.telephone , 
+                value.email , 
+                value.adresse , 
+                value.logo ,
+                'undo'
+
+
+
+               ],
         function (err) {
           if (err) mainWindow.webContents.send("maitre_douvrage:ajouter", err);
           db.all("SELECT * FROM maitre_douvrage ", function (err, rows) {
@@ -106,9 +120,32 @@ function MaitreDouvrage() {
     if (value.nom !== undefined) {
       db.run(
         `
-               UPDATE maitre_douvrage SET nom='${value.nom}', prenom='${value.prenom}', raison_social='${value.raison_social}', rg='${value.rg}', telephone='${value.telephone}', email='${value.email}', adresse='${value.adresse}', logo='${value.logo}'  WHERE id=${value.id} `,
+               UPDATE maitre_douvrage SET nom=?, prenom=?, raison_social=?, rg=?, telephone=?, email=?, adresse=?, logo=?  WHERE id=? `,
+               [
+                value.nom , 
+                value.prenom , 
+                value.raison_social , 
+                value.rg ,
+                value.telephone ,
+                value.email ,
+
+                value.adresse ,
+
+                value.logo ,
+                value.id
+
+
+
+
+
+
+
+               ]
+               ,
         function (err) {
           if (err) mainWindow.webContents.send("maitre_douvrage:modifier", err);
+
+          console.log(err)
           db.all("SELECT * FROM maitre_douvrage ", function (err, rows) {
             if (err)
               mainWindow.webContents.send("maitre_douvrage:modifier", err);

@@ -30,6 +30,7 @@ const MaitreDouvrageReducer = (state = initStat, action) =>{
                 maitreDouvrageCreated : true
             }
             case "MODIFIER_MAITRE_DOUVRAGE" :
+                console.log(action.payload)
                 return {
                     ...state,
                     error : null,

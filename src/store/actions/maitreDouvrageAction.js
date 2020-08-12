@@ -263,7 +263,7 @@ export const modifierMaitreDouvrage = (data) =>{
     dispatch({
       type : "STOP_LOADING_MAITRE_DOUVRAGE"
   });
-  if(data){
+  if(data.maitreDouvrage){
     dispatch({
         type : "MODIFIER_MAITRE_DOUVRAGE",
         payload : data
