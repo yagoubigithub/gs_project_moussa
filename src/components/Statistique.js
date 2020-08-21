@@ -45,7 +45,7 @@ class Statistique extends Component {
         </div>
         <h1>Revenu</h1>
 
-        <BarChart width={800} height={550} data={this.state.statistique}>
+        <BarChart width={800} height={500} data={this.state.statistique}>
           <XAxis dataKey="annee" />
           <YAxis dataKey="revenu" />
           <Tooltip />

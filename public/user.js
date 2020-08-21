@@ -28,7 +28,7 @@ function User(){
         function (err) {
 
 
-          console.log(err)
+        
         });
        if(Object.keys(value).length === 0){
         db.all(
