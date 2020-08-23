@@ -293,6 +293,52 @@ class ModifierProjet extends Component {
       message: "",
     });
   };
+
+  handlePhasesProjetDureeChange = (e,index) =>{
+
+    const duree = e.target.value;
+    const phasesProjetsSelected = [...this.state.phasesProjetsSelected];
+  
+    phasesProjetsSelected[index].duree = duree;
+    this.setState({ phasesProjetsSelected }  , ()=>{
+      let duree_phase = 0;
+      let prix_totale = 0;
+   if (phasesProjetsSelected !== null) {
+          phasesProjetsSelected.map((phase) => {
+            duree_phase =
+              Number.parseInt(duree_phase) + Number.parseInt(phase.duree);
+            prix_totale =
+              prix_totale +
+              (Number.parseFloat(phase.prix));
+          });
+        }
+  
+        this.setState({ duree_phase, prix_totale });
+     });
+    }
+    handlePhasesProjetPrixChange = (e,index) =>{
+  
+      const prix = e.target.value;
+      const phasesProjetsSelected = [...this.state.phasesProjetsSelected];
+    
+      phasesProjetsSelected[index].prix = prix;
+      this.setState({ phasesProjetsSelected }  , ()=>{
+        let duree_phase = 0;
+        let prix_totale = 0;
+     if (phasesProjetsSelected !== null) {
+            phasesProjetsSelected.map((phase) => {
+              duree_phase =
+                Number.parseInt(duree_phase) + Number.parseInt(phase.duree);
+              prix_totale =
+                prix_totale +
+                (Number.parseFloat(phase.prix));
+            });
+          }
+    
+          this.setState({ duree_phase, prix_totale });
+       });
+      }
+ 
   render() {
    
    
@@ -484,8 +530,8 @@ class ModifierProjet extends Component {
         <td>{index + 1}</td>
         <td>{phasesProjet.titre}</td>
         <td>{phasesProjet.description}</td>
-        <td>{phasesProjet.duree}</td>
-        <td>{phasesProjet.prix}</td>
+        <td><input type="number" value={ this.state.phasesProjetsSelected[index].duree} onChange={(e)=>this.handlePhasesProjetDureeChange(e,index)} /></td>
+        <td><input type="number" value={ this.state.phasesProjetsSelected[index].prix} onChange={(e)=>this.handlePhasesProjetPrixChange(e,index)} /></td>
         <td>
 
           <Button onClick={()=>this.removePhaseProjet(index)}>
