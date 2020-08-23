@@ -156,3 +156,34 @@ export const _export = () =>{
   })
   }
 }
+
+
+//import
+
+export const _import = () =>{
+  return (dispatch ,  getState) =>{
+   
+    
+    dispatch({
+      type : "LOADING_ENTREPRISE"
+  })
+  ipcRenderer.send("_import", {});
+
+  ipcRenderer.once('_import', function (event,data) {
+
+    dispatch({
+      type : "STOP_LOADING_ENTREPRISE"
+  });
+  if(data._import){
+    dispatch({
+        type : "IMPORT_DATA"
+    });
+  }else{
+    dispatch({
+      type : "ERROR_ENTREPRISE",
+      payload : data
+  });
+  }
+  })
+  }
+}

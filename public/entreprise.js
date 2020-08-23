@@ -94,9 +94,18 @@ function Entreprise(){
     generateCSV()
   })
    
+  //IMPORT
+ ipcMain.on("_import", (event, value) => {
+
+
+})
+
+
 }
 
 
+ 
+ 
 function generateCSV  ()  {
 
   const tables = ["projet","phases_projets", "devis","devis_phases_projets", "facture","facture_phases_projets" , "paye","maitre_douvrage","phases_projet"]
