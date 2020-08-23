@@ -260,7 +260,7 @@ class ModifierDevis extends Component {
   };
   handlePhasesProjetDureeChange = (e,index) =>{
 
-    const duree = e.target.value;
+    const duree = e.target.value !== "" ? e.target.value  : 0;
     const phasesProjetsSelected = [...this.state.phasesProjetsSelected];
   
     phasesProjetsSelected[index].duree = duree;
@@ -282,7 +282,7 @@ class ModifierDevis extends Component {
     }
     handlePhasesProjetPrixChange = (e,index) =>{
   
-      const prix = e.target.value;
+      const prix = e.target.value !== "" ? e.target.value  : 0;
       const phasesProjetsSelected = [...this.state.phasesProjetsSelected];
     
       phasesProjetsSelected[index].prix = prix;
