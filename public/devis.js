@@ -7,8 +7,8 @@ const isDev = require("electron-is-dev");
 const methode = Devis.prototype;
 
 function Devis() {
- //db.run('DROP TABLE devis');
- //db.run('DROP TABLE devis_phases_projets');
+ db.run('DROP TABLE devis');
+ db.run('DROP TABLE devis_phases_projets');
 
   db.run(`CREATE TABLE IF NOT EXISTS devis (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -20,6 +20,12 @@ const entrepriseReducer = (state = initStat, action) =>{
                 ...state,
                 error : action.payload
             }
+        case 'ERROR_ENTREPRISE' : 
+
+        return {
+            ...state,
+            error : action.payload
+        }
         case "AJOUTER_ENTREPRISE" :
             return {
                 ...state,
@@ -37,6 +43,11 @@ const entrepriseReducer = (state = initStat, action) =>{
                     ...state,
                     error :null,
                     info : action.payload
+                }
+            case 'REMOVE_ENTREPRISE_ERROR':
+                return{
+                    ...state,
+                    error : null
                 }
         default :
         return {

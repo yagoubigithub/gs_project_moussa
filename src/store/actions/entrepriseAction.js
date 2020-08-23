@@ -1,32 +1,60 @@
+import queryString from 'query-string';
 const electron = window.require("electron");
 const {ipcRenderer}  = electron;
 
 export const ajouterntreprise = (data) =>{
     return (dispatch ,getState)=>{
 
-        dispatch({
-            type : "LOADING_ENTREPRISE"
-        })
-        ipcRenderer.send("entreprise:ajouter", {...data});
+      dispatch({
+        type : "LOADING_ENTREPRISE"
+    })
+      const key = { key : data.key };
+  
+
+      fetch('http://localhost:9093/atech-api/testKey.php', {
+        method: 'POST', // or 'PUT'
+        headers: {'Content-Type':'application/x-www-form-urlencoded'},
+        body: queryString.stringify(key),
+      })
+      .then(response => { console.log(response.body);return response.text()})
+      .then(key_response => {
+       
+        const obj = JSON.parse(key_response);
+        
+        if(obj.key){
+
+
+          ipcRenderer.send("entreprise:ajouter", {...data});
     
-        ipcRenderer.once('entreprise:ajouter', function (event,data) {
-         
-          dispatch({
-            type : "STOP_LOADING_ENTREPRISE"
-        });
-        if(data){
-          dispatch({
-              type : "AJOUTER_ENTREPRISE",
+          ipcRenderer.once('entreprise:ajouter', function (event,data) {
+           
+            dispatch({
+              type : "STOP_LOADING_ENTREPRISE"
+          });
+          if(data){
+            dispatch({
+                type : "AJOUTER_ENTREPRISE",
+                payload : data
+            });
+          }else{
+            dispatch({
+              type : "ERROR_ENTREPRISE",
               payload : data
           });
+          }
+      });
+            
         }else{
           dispatch({
             type : "ERROR_ENTREPRISE",
-            payload : data
+            payload : "clé invalid"
         });
         }
-    });
-          
+
+      })
+
+       
+       
        
     }
 }
@@ -90,3 +118,12 @@ export const modifierAgence  = (data) =>{
   
   }
 }
+//removeEntrepriseError
+
+export const removeEntrepriseError = ()=>{
+  return (dispatch,getState)=>{
+    dispatch({
+      type : "REMOVE_ENTREPRISE_ERROR"
+  });
+
+}}

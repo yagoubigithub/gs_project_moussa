@@ -5,9 +5,9 @@ const mainWindow = require("./mainWindow");
 const methode = Facture.prototype;
 
 function Facture() {
- //db.run('DROP TABLE facture');
- //db.run('DROP TABLE facture_phases_projets');
- // db.run('DROP TABLE paye');
+ db.run('DROP TABLE facture');
+ db.run('DROP TABLE facture_phases_projets');
+ db.run('DROP TABLE paye');
 
   db.run(`CREATE TABLE IF NOT EXISTS facture (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
