@@ -11,6 +11,8 @@ import Grid from "@material-ui/core/Grid";
 
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
 
 //icons
 
@@ -27,8 +29,8 @@ import { getPhasesProjet,modifierPhasesProjet ,removePhasesProjetEdited} from '.
  class ModifierPhaseProjet extends Component {
   state = {
     open: true,
-    error  : "",
-    success : "",
+    message  : "",
+  
    
     titre : "",
     description : "",
@@ -41,8 +43,8 @@ import { getPhasesProjet,modifierPhasesProjet ,removePhasesProjetEdited} from '.
   componentDidMount() {
     const id = this.props.match.params.id;
     this.setState({
-        success :"",
-        error : ""
+      
+        message : ""
     })
     this.props.getPhasesProjet(id)
    
@@ -60,8 +62,8 @@ import { getPhasesProjet,modifierPhasesProjet ,removePhasesProjetEdited} from '.
       if(nextProps.phasesProjetEdited){
           this.setState({
             ...nextProps.phasesProjet,
-            success :"Phase de projet a été modifier",
-            error : null,
+            message :"Phase de projet a été modifier",
+           
           })
       }
 
@@ -71,7 +73,7 @@ import { getPhasesProjet,modifierPhasesProjet ,removePhasesProjetEdited} from '.
       const data  = {...this.state};
       delete data.open;
       if(data.titre.trim().length  === 0){
-        this.setState({error : "le Désignation et obligatoire"});
+        this.setState({message : "le Désignation et obligatoire"});
         return;
       }
       
@@ -88,6 +90,11 @@ import { getPhasesProjet,modifierPhasesProjet ,removePhasesProjetEdited} from '.
       })
   }
   
+  closeAlert = () => {
+    this.setState({
+      message: "",
+    });
+  };
   render() {
     return (
       <Dialog fullScreen open={this.state.open}>
@@ -105,10 +112,24 @@ import { getPhasesProjet,modifierPhasesProjet ,removePhasesProjetEdited} from '.
             </Link>
           </Toolbar>
         </AppBar>
+        <Dialog open={this.state.message !== ""} onClose={this.closeAlert}>
+          <DialogContent>
+            <p>{this.state.message}</p>
+          </DialogContent>
+
+          <DialogActions>
+            <Button
+              onClick={this.closeAlert}
+              variant="contained"
+              color="primary"
+            >
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
         <div style={{ marginTop: 50, padding: 15 }}></div>
         <h1 style={{ textAlign: "center" }}>Modifier Phase du projet</h1>
-        <div className="alert error">{this.state.error} </div>
-        <div className="alert success">{this.state.success} </div>
+        
         <Grid container spacing={2} style={{ padding: 25 }}>
      
         <Grid item xs={12}>

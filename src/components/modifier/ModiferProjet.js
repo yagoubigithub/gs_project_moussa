@@ -17,6 +17,9 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+
 
 
 //icons
@@ -43,8 +46,7 @@ import PhasesProjetTable from "../tables/PhasesProjetTable";
 class ModifierProjet extends Component {
   state = {
     open: true,
-    error: "",
-    success: "",
+    message: "",
     maitreDouvrageDialog: false,
     phasesProjetDialog : false,
 
@@ -73,8 +75,8 @@ class ModifierProjet extends Component {
     const buttonReturn = this.props.match.params.buttonReturn;
     
     this.setState({
-      success: "",
-      error: "",
+    
+      message: "",
       buttonReturn
     });
     this.props.getAllPhasesProjet()
@@ -120,8 +122,8 @@ class ModifierProjet extends Component {
     if (nextProps.projetEdited) {
       this.setState({
         ...nextProps.projet,
-        success: "projet a été modifier",
-        error: null,
+        message: "projet a été modifier",
+      
       });
     }
   }
@@ -130,19 +132,19 @@ class ModifierProjet extends Component {
   modifier = () => {
     const d = { ...this.state };
     if (d.nom.trim().length === 0) {
-      this.setState({ error: "le champ nom et obligatoire *" });
+      this.setState({ message: "le champ nom et obligatoire *" });
       return;
     }
     if (d.maitreDouvrage === undefined) {
-      this.setState({ error: "le champ Maitre d'ouvrage et obligatoire *" });
+      this.setState({ message: "le champ Maitre d'ouvrage et obligatoire *" });
       return;
     }
     if (d.phasesProjetsSelected.length === 0) {
-      this.setState({ error: "le champ Phase du projet et obligatoire *" });
+      this.setState({ message: "le champ Phase du projet et obligatoire *" });
       return;
     }
     if (d.unite_remise === "%" && d.remise > 100) {
-      this.setState({ error: "le champ Remise et superieur de 100%" });
+      this.setState({ message: "le champ Remise et superieur de 100%" });
       return;
     }
 
@@ -286,6 +288,11 @@ class ModifierProjet extends Component {
    })
   }
 
+  closeAlert = () => {
+    this.setState({
+      message: "",
+    });
+  };
   render() {
    
    
@@ -296,6 +303,21 @@ class ModifierProjet extends Component {
             this.props.loading !== undefined ? this.props.loading : false
           }
         />
+          <Dialog open={this.state.message !== ""} onClose={this.closeAlert}>
+          <DialogContent>
+            <p>{this.state.message}</p>
+          </DialogContent>
+
+          <DialogActions>
+            <Button
+              onClick={this.closeAlert}
+              variant="contained"
+              color="primary"
+            >
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
         <Dialog
           open={this.state.maitreDouvrageDialog}
           maxWidth="lg"
@@ -356,8 +378,7 @@ class ModifierProjet extends Component {
         </AppBar>
         <div style={{ marginTop: 50, padding: 15 }}></div>
         <h1 style={{ textAlign: "center" }}>Modifier Projet</h1>
-        <div className="alert error">{this.state.error} </div>
-        <div className="alert success">{this.state.success} </div>
+       
         <Grid container spacing={2} style={{ padding: 25 }}>
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}>Nom * </h3>

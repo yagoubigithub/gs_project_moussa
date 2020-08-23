@@ -49,8 +49,8 @@ import PhasesProjetTable from "../tables/PhasesProjetTable";
 class AjouterProjet extends Component {
   state = {
     open: true,
-    error: "",
-    success: "",
+    message: "",
+   
     maitreDouvrageDialog: false,
     phasesProjetDialog: false,
 
@@ -85,8 +85,8 @@ class AjouterProjet extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.projetCreated) {
       this.setState({
-        error: "",
-        success: "Projet a été ajouter",
+     
+        message: "Projet a été ajouter",
         nom: "",
         objet: "",
         adresse: "",
@@ -135,19 +135,19 @@ class AjouterProjet extends Component {
   ajouter = () => {
     const d = { ...this.state };
     if (d.nom.trim().length === 0) {
-      this.setState({ error: "le champ nom et obligatoire *" });
+      this.setState({ message: "le champ nom et obligatoire *" });
       return;
     }
     if (d.maitreDouvrage === undefined) {
-      this.setState({ error: "le champ Maitre d'ouvrage et obligatoire *" });
+      this.setState({ message: "le champ Maitre d'ouvrage et obligatoire *" });
       return;
     }
     if (d.phasesProjetsSelected.length === 0) {
-      this.setState({ error: "le champ Phase du projet et obligatoire *" });
+      this.setState({ message: "le champ Phase du projet et obligatoire *" });
       return;
     }
     if (d.unite_remise === "%" && d.remise > 100) {
-      this.setState({ error: "le champ Remise et superieur de 100%" });
+      this.setState({ message: "le champ Remise et superieur de 100%" });
       return;
     }
 
@@ -387,9 +387,7 @@ class AjouterProjet extends Component {
         </AppBar>
         <div style={{ marginTop: 50, padding: 15 }}></div>
         <h1 style={{ textAlign: "center" }}>Ajouter Projet</h1>
-        <div className="alert error">{this.state.error} </div>
-        <div className="alert success">{this.state.success} </div>
-        <Grid container spacing={2} style={{ padding: 25 }}>
+        <Grid container spacing={1} style={{ padding: 10 }}>
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}>Nom * </h3>
 
@@ -400,6 +398,7 @@ class AjouterProjet extends Component {
               variant="outlined"
               onChange={this.handleChange}
               fullWidth
+              margin="dense"
             />
           </Grid>
           <Grid item xs={6}>
@@ -411,6 +410,7 @@ class AjouterProjet extends Component {
               variant="outlined"
               onChange={this.handleChange}
               fullWidth
+              margin="dense"
             />
           </Grid>
           <Grid item xs={6}>
@@ -422,6 +422,7 @@ class AjouterProjet extends Component {
               variant="outlined"
               onChange={this.handleChange}
               fullWidth
+              margin="dense"
             />
           </Grid>
           <Grid item xs={6}>
@@ -529,6 +530,7 @@ class AjouterProjet extends Component {
                 variant="outlined"
                 onChange={this.handleChange}
                 fullWidth
+                margin="dense"
               />
             ) : (
               <TextField
@@ -540,12 +542,14 @@ class AjouterProjet extends Component {
                 onChange={this.handleChange}
                 fullWidth
                 InputProps={{ inputProps: { min: 0, step: 1, max: 100 } }}
+                margin="dense"
               />
             )}
 
             <MuiSelect
               value={this.state.unite_remise}
               onChange={this.handleUniteRemiseChange}
+              margin="dense"
             >
               <MenuItem value={"%"}>%</MenuItem>
               <MenuItem value={"DA"}>DA</MenuItem>
@@ -562,6 +566,7 @@ class AjouterProjet extends Component {
               variant="outlined"
               fullWidth
               InputProps={{ inputProps: { min: 0, step: 1, max: 100 } }}
+              margin="dense"
             />
           </Grid>
           <Grid item xs={6}>
@@ -575,6 +580,7 @@ class AjouterProjet extends Component {
               variant="outlined"
               fullWidth
               InputProps={{ inputProps: { min: 0, step: 1 } }}
+              margin="dense"
             />
           </Grid>
           <Grid item xs={6}>
@@ -595,6 +601,7 @@ class AjouterProjet extends Component {
               InputLabelProps={{
                 shrink: true,
               }}
+              margin="dense"
             />
           </Grid>
           <Grid item xs={6}>
@@ -629,7 +636,7 @@ const mapStateToProps = (state) => {
   return {
     loading: state.projet.loading,
     projetCreated: state.projet.projetCreated,
-    maitreDouvrages: state.maitre_douvrage.maitreDouvrages.filter(mD=>mD.status === "undo"),
+    maitreDouvrages: state.maitre_douvrage.maitreDouvrages,
     phasesProjets: state.phases_projet.phasesProjets,
     user : state.auth.user
   };

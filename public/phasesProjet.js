@@ -6,7 +6,7 @@ const mainWindow = require("./mainWindow");
 const methode = PhasesProjet.prototype;
 
 function PhasesProjet() {
- db.run('DROP TABLE phases_projet');
+ //db.run('DROP TABLE phases_projet');
 
 
 

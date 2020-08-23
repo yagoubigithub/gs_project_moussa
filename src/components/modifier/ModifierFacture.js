@@ -18,6 +18,9 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import  Paper from "@material-ui/core/Paper";
 import MuiSelect from '@material-ui/core/Select';
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+
 
 
 
@@ -48,8 +51,8 @@ import PhasesProjetTable from '../tables/PhasesProjetTable'
 class ModifierFacture extends Component {
   state = {
     open: true,
-    error: "",
-    success: "",
+    message: "",
+   
     maitreDouvrageDialog: false,
 
     buttonReturn: "/facture/",
@@ -74,8 +77,8 @@ class ModifierFacture extends Component {
     const buttonReturn = "/" + this.props.match.params.buttonReturn + "/";
     
     this.setState({
-      success: "",
-      error: "",
+    
+      message: "",
       buttonReturn
     });
     this.props.getAllPhasesProjet()
@@ -90,8 +93,7 @@ class ModifierFacture extends Component {
     if (nextProps.factureEdited) {
       this.setState({
         ...nextProps.facture,
-        success: "facture a été modifier",
-        error: null,
+        message: "facture a été modifier",
       });
     }
     if(nextProps.phasesProjets){
@@ -149,33 +151,32 @@ class ModifierFacture extends Component {
   modifier = () => {
     const d = { ...this.state };
     if (d.nom.trim().length === 0) {
-      this.setState({ error: "le champ nom et obligatoire *" });
+      this.setState({ message: "le champ nom et obligatoire *" });
       return;
     }
     if (d.maitreDouvrage === undefined) {
-      this.setState({ error: "le champ Maitre d'ouvrage et obligatoire *" });
+      this.setState({ message: "le champ Maitre d'ouvrage et obligatoire *" });
       return;
     }
     if (d.phasesProjetsSelected.length === 0) {
-      this.setState({ error: "le champ Phase du projet et obligatoire *" });
+      this.setState({ message: "le champ Phase du projet et obligatoire *" });
       return;
     }
 
     if(d.unite_remise === "%" && d.remise > 100){
-      this.setState({ error: "le champ Remise et superieur a 100%" }); 
+      this.setState({ message: "le champ Remise et superieur a 100%" }); 
       return;
     }
 
     if(d.unite_paye === "%" && d.pay > 100){
-      this.setState({ error: "le champ Payé et superieur a 100%" }); 
+      this.setState({ message: "le champ Payé et superieur a 100%" }); 
       return;
     }
    
    const remise = this.calculRemise(d.prix_totale,d.tva ,d.remise, d.unite_remise);
 
     const data = {
-        id: d.id,
-
+      id: d.id,
       projet_id: d.projet_id,
       nom: d.nom,
       objet: d.objet,
@@ -190,7 +191,6 @@ class ModifierFacture extends Component {
       tva : d.tva,
       prix_totale: d.prix_totale ,
       remise:remise,
-     
       status : d.status
       
      
@@ -312,6 +312,11 @@ class ModifierFacture extends Component {
        });
     }
   };
+  closeAlert = () => {
+    this.setState({
+      message: "",
+    });
+  };
 
   render() {
     const options = [];
@@ -332,7 +337,21 @@ class ModifierFacture extends Component {
             this.props.loading !== undefined ? this.props.loading : false
           }
         />
+ <Dialog open={this.state.message !== ""} onClose={this.closeAlert}>
+          <DialogContent>
+            <p>{this.state.message}</p>
+          </DialogContent>
 
+          <DialogActions>
+            <Button
+              onClick={this.closeAlert}
+              variant="contained"
+              color="primary"
+            >
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
         <Dialog
           open={this.state.maitreDouvrageDialog}
           maxWidth="lg"
@@ -392,7 +411,7 @@ class ModifierFacture extends Component {
         </AppBar>
         <div style={{ marginTop: 50, padding: 15 }}></div>
         <h1 style={{ textAlign: "center" }}>Modfier une facture</h1>
-        <div className="alert error">{this.state.error} </div>
+        <div className="alert message">{this.state.message} </div>
         <div className="alert success">{this.state.success} </div>
         <Grid container spacing={2} style={{ padding: 25 }}>
           <Grid item xs={6}>

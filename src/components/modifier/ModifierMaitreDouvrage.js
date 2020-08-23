@@ -11,6 +11,10 @@ import Grid from "@material-ui/core/Grid";
 
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+
+
 
 //icons
 
@@ -27,8 +31,7 @@ import { getMaitreDouvrage,modifierMaitreDouvrage} from '../../store/actions/mai
  class ModifierMaitreDouvrage extends Component {
   state = {
     open: true,
-    error  : "",
-    success : "",
+    message  : "",
     nom : "",
     prenom : "",
     telephone : "",
@@ -43,7 +46,6 @@ import { getMaitreDouvrage,modifierMaitreDouvrage} from '../../store/actions/mai
 
   componentDidMount() {
     const id = this.props.match.params.id;
-    console.log(id)
     this.props.getMaitreDouvrage(id)
    
   }
@@ -59,7 +61,7 @@ import { getMaitreDouvrage,modifierMaitreDouvrage} from '../../store/actions/mai
       const data  = {...this.state};
       delete data.open;
       if(data.nom.trim().length  === 0){
-        this.setState({error : "le Nom et obligatoire"});
+        this.setState({message : "le Nom et obligatoire *"});
         return;
       }
       
@@ -91,6 +93,12 @@ import { getMaitreDouvrage,modifierMaitreDouvrage} from '../../store/actions/mai
       });
     }
   };
+  closeAlert = () => {
+    this.setState({
+      message: "",
+    });
+  };
+
   render() {
     return (
       <Dialog fullScreen open={this.state.open}>
@@ -108,10 +116,23 @@ import { getMaitreDouvrage,modifierMaitreDouvrage} from '../../store/actions/mai
             </Link>
           </Toolbar>
         </AppBar>
+        <Dialog open={this.state.message !== ""} onClose={this.closeAlert}>
+          <DialogContent>
+            <p>{this.state.message}</p>
+          </DialogContent>
+
+          <DialogActions>
+            <Button
+              onClick={this.closeAlert}
+              variant="contained"
+              color="primary"
+            >
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
         <div style={{ marginTop: 50, padding: 15 }}></div>
         <h1 style={{ textAlign: "center" }}>Modifier Maître d'ouvrage</h1>
-        <div className="alert error">{this.state.error} </div>
-        <div className="alert success">{this.state.success} </div>
         <Grid container spacing={2} style={{ padding: 25 }}>
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}>Nom * </h3>

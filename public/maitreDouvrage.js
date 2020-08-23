@@ -5,7 +5,7 @@ const mainWindow = require("./mainWindow");
 const methode = MaitreDouvrage.prototype;
 
 function MaitreDouvrage() {
- db.run('DROP TABLE maitre_douvrage');
+ //db.run('DROP TABLE maitre_douvrage');
 
   db.run(`CREATE TABLE IF NOT EXISTS maitre_douvrage (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
