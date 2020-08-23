@@ -13,6 +13,7 @@ import { connect } from "react-redux";
 import {
   getEtreprise,
   modifierAgence,
+  _export
   
 } from "./../store/actions/entrepriseAction";
 
@@ -139,6 +140,13 @@ class Agence extends Component {
       [e.target.name]: e.target.value,
     });
   };
+  _export = () =>{
+
+    this.props._export()
+  }
+  _import = () =>{
+
+  }
   render() {
     return (
       <div >
@@ -336,6 +344,18 @@ class Agence extends Component {
               </Grid>
             </div>
           </Tab>
+          <Tab index={2} title="Données">
+            <div style={{ padding: 25 }}>
+              <h1>Données</h1>
+
+<Button onClick={this._export} style={{margin : 15}} color="primary" variant="contained" margin="normal">Sauvgarder les données</Button>
+<Button onClick={this._import}  style={{margin : 15}} color="primary" variant="contained" margin="normal">Importer</Button>
+
+
+
+              </div>
+
+              </Tab>
         </Tabs>
       </div>
     );
@@ -346,7 +366,8 @@ const mapActionToProps = (dispatch) => {
     modifierAgence: (data) => dispatch(modifierAgence(data)),
     modifier_user: (data) => dispatch(modifier_user(data)),
     getEtreprise: () => dispatch(getEtreprise()),
-    getUser: (id) =>dispatch(getUser(id))
+    getUser: (id) =>dispatch(getUser(id)),
+    _export :  ()=> dispatch(_export())
   };
 };
 const mapStateToProps = (state) => {

@@ -99,9 +99,7 @@ export const modifierAgence  = (data) =>{
    
     dispatch({
       type : "STOP_LOADING_ENTREPRISE"
-  });dispatch({
-    type : "STOP_LOADING_ENTREPRISE"
-});
+  });
   if(Array.isArray(data)){
     dispatch({
         type : "MODIFIER_ENTREPRISE",
@@ -127,3 +125,34 @@ export const removeEntrepriseError = ()=>{
   });
 
 }}
+
+
+//export
+
+export const _export = () =>{
+  return (dispatch ,  getState) =>{
+   
+    
+    dispatch({
+      type : "LOADING_ENTREPRISE"
+  })
+  ipcRenderer.send("_export", {});
+
+  ipcRenderer.once('_export', function (event,data) {
+
+    dispatch({
+      type : "STOP_LOADING_ENTREPRISE"
+  });
+  if(data._export){
+    dispatch({
+        type : "EXPORT_DATA"
+    });
+  }else{
+    dispatch({
+      type : "ERROR_ENTREPRISE",
+      payload : data
+  });
+  }
+  })
+  }
+}

@@ -1,8 +1,10 @@
-const {   ipcMain } =  require("electron");
+const {   ipcMain , dialog} =  require("electron");
 const db = require('./db');
 const mainWindow = require('./mainWindow');
-
-
+const converter = require('json-2-csv');
+const fs = require('fs')
+//utils
+const {getCurrentDateTime } = require('./utils/methods')
 const methode = Entreprise.prototype;
 
 function Entreprise(){
@@ -85,7 +87,95 @@ function Entreprise(){
   });
 
 
+
+  //export
+  ipcMain.on("_export", (event, value) => {
+
+    generateCSV()
+  })
    
 }
+
+
+function generateCSV  ()  {
+
+  const tables = ["projet","phases_projets", "devis","devis_phases_projets", "facture","facture_phases_projets" , "paye","maitre_douvrage","phases_projet"]
+
+  let count = 0;
+  
+
+  new Promise((resolve, reject)=>{
+    const json_s = []
+    tables.forEach((table) => {
+   
+db.all(`SELECT * FROM ${table}`, (err, rows)=>{
+
+  if (err) reject(err)
+  json_s.push({
+    name : table,
+    value : rows
+  })
+  count++;
+  if(count === tables.length)
+  resolve(json_s)
+})
+    
+    });
+  }).then(json_s=>{
+
+    dialog.showOpenDialog(mainWindow, {
+      properties: ['openFile', 'openDirectory' , 'promptToCreate' , 'showHiddenFiles']
+    }).then(result => {
+     
+      if(!result.canceled){
+        const d = getCurrentDateTime(new Date().getTime()).split('T')[0];
+        const path = `${result.filePaths}/save-${d}`
+        fs.mkdir(path, (err)=>{
+          if(err) console.log(err)
+          let count=0;
+          new Promise((resolve, reject)=>{
+  
+            json_s.forEach(table => {
+              converter.json2csv( table.value, 
+                (err, csv) => {
+                if (err) {
+                    reject(err);
+                }
+                  // write CSV to a file
+              fs.writeFile(`${path}/${table.name}.csv`, csv, (err)=>{
+                if(err) reject(err)
+                console.log("finish : ", table.name) 
+                count++;
+                if(count === json_s.length) resolve()
+             
+              });
+              },{
+                delimiter  : {
+                  field  :";"
+                }
+              })
+            });
+          }).then(()=>{
+            mainWindow.webContents.send("_export", {_export : true});
+          }).catch(err=>{
+            mainWindow.webContents.send("_export", err);
+          })
+        });
+       
+
+
+
+      }})
+
+
+   
+
+
+  }).catch(err=>mainWindow.webContents.send("_export", err))
+ 
+
+
+}
+
 module.exports = Entreprise;
 

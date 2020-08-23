@@ -49,6 +49,13 @@ const entrepriseReducer = (state = initStat, action) =>{
                     ...state,
                     error : null
                 }
+            case 'EXPORT_DATA' :
+                return {
+                    ...state,
+                    loading : false,
+                    error : null
+                }
+            
         default :
         return {
             ...state

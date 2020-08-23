@@ -39,6 +39,7 @@
     "electron-is-dev": "^1.1.0",
     "html-pdf": "^2.2.0",
     "html2canvas": "^1.0.0-rc.5",
+    "json-2-csv": "^3.7.6",
     "jspdf": "^1.5.3",
     "mkdirp": "^1.0.3",
     "phantomjs": "^2.1.7",
