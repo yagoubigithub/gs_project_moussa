@@ -346,7 +346,7 @@ class Agence extends Component {
             </div>
           </Tab>
           {
-            /*
+            
               <Tab index={2} title="Données">
             <div style={{ padding: 25 }}>
               <h1>Données</h1>
@@ -360,7 +360,7 @@ class Agence extends Component {
 
               </Tab>
 
-            */          }
+                   }
         
         </Tabs>
       </div>
