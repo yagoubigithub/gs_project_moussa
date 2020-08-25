@@ -11,6 +11,9 @@ export default class PageFacture extends Component {
     row: {},
   };
 
+  componentDidMount(){
+    console.log(this.props)
+  }
   
   render() {
     const info = { ...this.props.entreprise };
@@ -145,7 +148,11 @@ export default class PageFacture extends Component {
            </h5>
               
            <hr />
-
+           <h5>
+           Avance  :{" "}
+                {round(Number.parseFloat(this.props.row[0].facture.paye))}
+                DA
+              </h5>
 
   <h5>
                 Total a Payer :{" "}

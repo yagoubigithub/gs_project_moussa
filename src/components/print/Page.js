@@ -173,7 +173,7 @@ export default class Page extends Component {
               <hr />
 
               <h5>
-                Total a Payer :{" "}
+                Total  :{" "}
                 {round(
                   Number.parseFloat(this.props.row[0].prixTotale) +
                     (Number.parseFloat(this.props.row[0].prixTotale) *
@@ -185,7 +185,7 @@ export default class Page extends Component {
               </h5>
 
               <h6>
-                Total a Payer :{" "}
+                Total  :{" "}
                 {floatToDrahem(
                   Number.parseFloat(this.props.row[0].prixTotale) +
                     (Number.parseFloat(this.props.row[0].prixTotale) *

@@ -14,11 +14,10 @@ import {
   getEtreprise,
   modifierAgence,
   _export,
-  _import
-  
+  _import,
 } from "./../store/actions/entrepriseAction";
 
-import { modifier_user,getUser } from "./../store/actions/authAction";
+import { modifier_user, getUser } from "./../store/actions/authAction";
 
 import SaveIcon from "@material-ui/icons/Save";
 class Agence extends Component {
@@ -34,6 +33,7 @@ class Agence extends Component {
     user_id: 0,
     error: "",
     user_error: "",
+    user_status: "undo",
   };
   componentDidMount() {
     this.props.getEtreprise();
@@ -51,10 +51,11 @@ class Agence extends Component {
         user_prenom: nextProps.user.prenom,
         user_id: nextProps.user.id,
         user_nom: nextProps.user.nom,
+        user_status: nextProps.user.status,
       });
     }
     if (nextProps.user_2) {
-      console.log(nextProps.user_2)
+      console.log(nextProps.user_2);
       this.setState({
         username: nextProps.user_2.username,
         password: nextProps.user_2.password,
@@ -63,11 +64,11 @@ class Agence extends Component {
         user_nom: nextProps.user_2.nom,
       });
     }
- 
-    if(nextProps.userEdited){
+
+    if (nextProps.userEdited) {
       this.setState({
-        user_error : ""
-      })
+        user_error: "",
+      });
     }
   }
   modifier = () => {
@@ -127,13 +128,13 @@ class Agence extends Component {
 
     const user = {
       id: d.id,
-      admin_nom : d.user_nom,
+      admin_nom: d.user_nom,
       nom: d.user_nom,
       prenom: d.user_prenom,
       username: d.username,
       password: d.password,
     };
-   
+
     this.props.modifier_user(user);
   };
   handleChange = (e) => {
@@ -141,16 +142,15 @@ class Agence extends Component {
       [e.target.name]: e.target.value,
     });
   };
-  _export = () =>{
-
-    this.props._export()
-  }
-  _import = () =>{
-    this.props._import()
-  }
+  _export = () => {
+    this.props._export();
+  };
+  _import = () => {
+    this.props._import();
+  };
   render() {
     return (
-      <div >
+      <div>
         <LoadingComponent
           loading={
             this.props.loading !== undefined ? this.props.loading : false
@@ -158,10 +158,12 @@ class Agence extends Component {
         />
         <LoadingComponent
           loading={
-            this.props.loadingAuth !== undefined ? this.props.loadingAuth : false
+            this.props.loadingAuth !== undefined
+              ? this.props.loadingAuth
+              : false
           }
         />
-         <div className="sous-nav-container" style={{ paddingBottom: 15 }}>
+        <div className="sous-nav-container" style={{ paddingBottom: 15 }}>
           <h1 style={{ color: "white", marginRight: 100 }}>Bureau d'étude</h1>
         </div>
         <Tabs>
@@ -282,7 +284,6 @@ class Agence extends Component {
               </Grid>
             </div>
           </Tab>
-
           <Tab index={1} title="Utilisateur">
             <div style={{ padding: 25 }}>
               <Grid container spacing={2}>
@@ -345,23 +346,35 @@ class Agence extends Component {
               </Grid>
             </div>
           </Tab>
-          {
-            
-              <Tab index={2} title="Données">
-            <div style={{ padding: 25 }}>
-              <h1>Données</h1>
 
-<Button onClick={this._export} style={{margin : 15}} color="primary" variant="contained" margin="normal">Sauvgarder les données</Button>
-<Button onClick={this._import}  style={{margin : 15}} color="primary" variant="contained" margin="normal">Importer</Button>
+          {this.state.user_status === "admin" && (
+            <Tab index={2} title="Données">
+              <div style={{ padding: 25 }}>
+                <h1>Données</h1>
 
-
-
+                <Button
+                  onClick={this._export}
+                  style={{ margin: 15 }}
+                  color="primary"
+                  variant="contained"
+                  margin="normal"
+                >
+                  Sauvgarder les données
+                </Button>
+                <Button
+                  onClick={this._import}
+                  style={{ margin: 15 }}
+                  color="primary"
+                  variant="contained"
+                  margin="normal"
+                >
+                  Importer
+                </Button>
               </div>
+            </Tab>
+          )}
 
-              </Tab>
-
-                   }
-        
+          {}
         </Tabs>
       </div>
     );
@@ -372,9 +385,9 @@ const mapActionToProps = (dispatch) => {
     modifierAgence: (data) => dispatch(modifierAgence(data)),
     modifier_user: (data) => dispatch(modifier_user(data)),
     getEtreprise: () => dispatch(getEtreprise()),
-    getUser: (id) =>dispatch(getUser(id)),
-    _export :  ()=> dispatch(_export()),
-    _import : ()=> dispatch(_import())
+    getUser: (id) => dispatch(getUser(id)),
+    _export: () => dispatch(_export()),
+    _import: () => dispatch(_import()),
   };
 };
 const mapStateToProps = (state) => {
@@ -384,7 +397,7 @@ const mapStateToProps = (state) => {
     loadingAuth: state.auth.loading,
     user_2: state.auth.user_2,
     user: state.auth.user,
-    userEdited : state.auth.userEdited,
+    userEdited: state.auth.userEdited,
   };
 };
 

@@ -386,3 +386,25 @@ hr{
 }
 
 /****************************************************************/
+
+
+.sign{
+display: grid;
+grid-template-columns: repeat(2,1fr);
+
+}
+.sign .sign-col{
+
+  margin-top: 2rem;
+  text-align: center;
+}
+.print-page-sign{
+  font-weight: 800;
+}
+.nb {
+  width : 100%;
+  border : 1px solid black;
+  padding : 5px;
+  margin-bottom: 15px;
+  text-align: center;
+}

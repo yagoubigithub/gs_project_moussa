@@ -23,6 +23,7 @@ import PictureAsPdfIcon from "@material-ui/icons/PictureAsPdf";
 import { connect } from "react-redux";
 import { getDevis, printToPdf, print , search } from "../../store/actions/devisAction";
 import Page from "./Page";
+import PageContrat from "./PageContrat";
 
 const head = [
   { access: "numero", value: "N°" },
@@ -174,7 +175,7 @@ class PrintDevis extends Component {
         
       }
     }
-    this.setState({pagesNumber : rows_to_print.length})
+    this.setState({pagesNumber : rows_to_print.length + 1})
    
     return rows_to_print;
   };
@@ -252,13 +253,15 @@ class PrintDevis extends Component {
                   head={head}
                   row={row}
                   index={index}
-                  id={index+1}
+                  id={index + 1}
                   key={index}
                   entreprise={this.props.entreprise}
                    user={this.state.user}
                 />
               );
             })}
+            <PageContrat rows_to_print={[...this.state.rows_to_print]} index={rows_to_print.length }  entreprise={this.props.entreprise}
+                   user={this.state.user} id={rows_to_print.length + 1} />
           </div>
         </div>
       </Dialog>
