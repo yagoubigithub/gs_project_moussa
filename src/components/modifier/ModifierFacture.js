@@ -531,7 +531,7 @@ class ModifierFacture extends Component {
                 <tr>
                   <th>N°</th>
                   <th>Désignation</th>
-                  <th>Description</th>
+                
                   <th>Durée</th>
                   <th>Prix</th>
                   <th></th>
@@ -544,7 +544,6 @@ class ModifierFacture extends Component {
                 return  (<tr key={index}>
         <td>{index + 1}</td>
         <td>{phasesProjet.titre}</td>
-        <td>{phasesProjet.description}</td>
         <td><input type="number" value={ this.state.phasesProjetsSelected[index].duree} onChange={(e)=>this.handlePhasesProjetDureeChange(e,index)} /></td>
         <td><input type="number" value={ this.state.phasesProjetsSelected[index].prix} onChange={(e)=>this.handlePhasesProjetPrixChange(e,index)} /></td>
         <td>
