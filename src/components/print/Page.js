@@ -59,7 +59,7 @@ export default class Page extends Component {
                 {new Date(this.props.row[0].devis.date_devis).getFullYear()}
               </h2>
               <p>Date : {this.props.row[0].devis.date_devis.split("T")[0]}</p>
-              <p>Par : {user.nom + " " + user.prenom}</p>
+              <p>Par : {this.props.row[0].devis.user_nom + " " + this.props.row[0].devis.user_prenom}</p>
               <p>Objet : {this.props.row[0].devis.objet}</p>
               <p>Projet : {this.props.row[0].devis.nom}</p>
             </div>

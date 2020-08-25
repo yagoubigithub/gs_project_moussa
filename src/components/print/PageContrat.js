@@ -65,7 +65,7 @@ export default class PageContrat extends Component {
                     )[0]
                   }
                 </p>
-                <p>Par : {user.nom + " " + user.prenom}</p>
+                <p>Par : {this.state.rows_to_print[0][0].devis.user_nom + " " + this.state.rows_to_print[0][0].devis.user_prenom}</p>
                 <p>Objet : {this.state.rows_to_print[0][0].devis.objet}</p>
                 <p>Projet : {this.state.rows_to_print[0][0].devis.nom}</p>
               </div>

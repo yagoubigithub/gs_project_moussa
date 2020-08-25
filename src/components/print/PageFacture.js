@@ -57,7 +57,7 @@ export default class PageFacture extends Component {
             <div className="page-col">
               <h2>Facture : N° {this.props.row[0].facture.id} / {new Date(this.props.row[0].facture.date_facture).getFullYear()}</h2>
               <p>Date : {this.props.row[0].facture.date_facture.split('T')[0]}</p>
-              <p>Par : {user.nom + " " + user.prenom}</p>
+              <p>Par : {this.props.row[0].facture.user_nom + " " + this.props.row[0].facture.user_prenom}</p>
               <p>Objet :  {this.props.row[0].facture.objet}</p>
               <p>Projet  : {this.props.row[0].facture.nom}</p>
             </div>
