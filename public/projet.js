@@ -6,8 +6,8 @@ var os = require("os");
 const methode = Projet.prototype;
 
 function Projet() {
-  //db.run('DROP TABLE projet');
-  // db.run('DROP TABLE phases_projets');
+ // db.run('DROP TABLE projet');
+// db.run('DROP TABLE phases_projets');
 
   db.run(`CREATE TABLE IF NOT EXISTS projet (
     id INTEGER PRIMARY KEY AUTOINCREMENT ,
@@ -23,6 +23,7 @@ function Projet() {
     user_id   INTEGER,
     remise REAL,
     tva REAL,
+    ht INTEGER ,
    status TEXT
 )`);
 
@@ -75,7 +76,7 @@ function Projet() {
   //AJOUTER
   ipcMain.on("projet:ajouter", (event, value) => {
     db.run(
-      `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , user_id , remise  , tva ,  status) VALUES (?,?,?,?,?,? , ?,?,? , ? , ? ,  ? , ?) `,
+      `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , user_id , remise  , tva , ht ,  status) VALUES (?,?,?,?,?,? , ?,?,? , ? , ? ,  ?,? , ?) `,
 
       [
         value.nom,
@@ -90,12 +91,13 @@ function Projet() {
         value.user_id,
         value.remise,
         value.tva,
+        value.ht,
         "undo",
       ],
       function (err) {
         if (err) mainWindow.webContents.send("projet:ajouter", err);
 
-      
+    
         //add phase de projet
         const projet_id = this.lastID;
 
@@ -129,7 +131,7 @@ function Projet() {
             if (err) mainWindow.webContents.send("projet:ajouter", err);
           
             db.run(
-              `INSERT INTO devis(projet_id , user_id  ,nom , objet , adresse  , duree_phase , prix_totale , remise, date_devis ,  maitreDouvrage_id ,  tva , status) VALUES (? , ?,?,?,? ,?, ?,? , ? , ?, ?  ,?) `,
+              `INSERT INTO devis(projet_id , user_id  ,nom , objet , adresse  , duree_phase , prix_totale , remise, date_devis ,  maitreDouvrage_id ,  tva, ht , status) VALUES (? , ?,?,?,? ,?, ?,? , ? , ?, ? , ? ,?) `,
               [
                 projet_id,
                 value.user_id,
@@ -175,7 +177,7 @@ function Projet() {
                
                   //ajouter facture
                   db.run(
-                    `INSERT INTO facture(projet_id , user_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, date_facture ,  maitreDouvrage_id , tva , status) VALUES (?, ?, ?,?,? ,?, ?, ? , ? , ? , ? , ?) `,
+                    `INSERT INTO facture(projet_id , user_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, date_facture ,  maitreDouvrage_id , tva, ht , status) VALUES (?, ?, ?,?,? ,?, ?, ? , ? , ? , ?, ? , ?) `,
 
                     [
                       projet_id,
@@ -189,6 +191,8 @@ function Projet() {
                       value.date_projet,
                       value.maitreDouvrage_id,
                       value.tva,
+                      value.ht,
+
                       "undo",
                     ],
 
@@ -364,7 +368,7 @@ function Projet() {
   ipcMain.on("projet:modifier", (event, value) => {
     if (value.nom !== undefined) {
       db.run(
-        `UPDATE projet SET nom=?, objet=?, adresse=?, delais=? , date_debut=?, date_depot=?, etat=?, duree_phase=?  , maitreDouvrage_id=? , remise=?  , tva=? , status=?  WHERE id=? `,
+        `UPDATE projet SET nom=?, objet=?, adresse=?, delais=? , date_debut=?, date_depot=?, etat=?, duree_phase=?  , maitreDouvrage_id=? , remise=?  , tva=? , ht=? , status=?  WHERE id=? `,
         [
           value.nom ,
           value.objet , 
@@ -377,6 +381,7 @@ function Projet() {
           value.maitreDouvrage_id ,
           value.remise ,
           value.tva ,
+          value.ht ,
           value.status ,
           value.id 
         ] 
@@ -425,7 +430,7 @@ function Projet() {
                       const facture_id = result.id;
 
                       db.run(
-                        `UPDATE facture SET nom=?, objet=?, adresse=? , duree_phase=?  , prix_totale=?   , maitreDouvrage_id=? , remise=?  , tva=? , status=?  WHERE projet_id=? `,
+                        `UPDATE facture SET nom=?, objet=?, adresse=? , duree_phase=?  , prix_totale=?   , maitreDouvrage_id=? , remise=?  , tva=?, ht=? , status=?  WHERE projet_id=? `,
                         [
                           value.nom , 
                           value.objet , 
@@ -435,6 +440,8 @@ function Projet() {
                           value.maitreDouvrage_id, 
                           value.remise,
                           value.tva ,
+                          value.ht ,
+
                           value.status ,
                           value.id
                         ],
@@ -495,7 +502,7 @@ function Projet() {
                                       const devis_id = result.id;
 
                                       db.run(
-                                        `UPDATE devis SET nom=?, objet=?, adresse=? , duree_phase=?  , prix_totale=? , maitreDouvrage_id=? , remise=?  , tva=? , status=?  WHERE projet_id=? `,
+                                        `UPDATE devis SET nom=?, objet=?, adresse=? , duree_phase=?  , prix_totale=? , maitreDouvrage_id=? , remise=?  , tva=?, ht=? , status=?  WHERE projet_id=? `,
                                         
                                         [
 
@@ -507,6 +514,7 @@ function Projet() {
                                           value.maitreDouvrage_id,
                                           value.remise,
                                           value.tva,
+                                          value.ht,
                                           value.status,
                                           value.id
                                         ],

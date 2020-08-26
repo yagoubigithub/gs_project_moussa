@@ -67,11 +67,13 @@ class Facture extends Component {
           });
          
 
-          factureCorebeille.sort((a,b )=> new Date(a.date_facture).getTime() -  new Date(b.date_facture).getTime())
-          factureCorebeille.reverse()
+       
 
-          factures.sort((a,b )=> new Date(a.date_facture).getTime() -  new Date(b.date_facture).getTime())
-          factures.reverse()
+
+          factureCorebeille.sort((a,b )=> parseInt(a.id) -  parseInt(b.id))
+          factures.sort((a,b )=> parseInt(a.id) -  parseInt(b.id))
+          factures.reverse();
+          factureCorebeille.reverse()
     
           this.setState({ factureCorebeille, factures });
         }

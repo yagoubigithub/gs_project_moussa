@@ -23,7 +23,7 @@ function Devis() {
     date_devis TEXT,
     maitreDouvrage_id INTEGER ,
     tva REAL,
-    
+    ht INTEGER ,
    status TEXT
 )`);
 
@@ -85,7 +85,7 @@ function Devis() {
   ipcMain.on("devis:ajouter", (event, value) => {
     const deviss = [];
     db.run(
-      `INSERT INTO devis(projet_id , user_id  , nom , objet , adresse  , duree_phase , prix_totale , remise , date_devis ,  maitreDouvrage_id , tva , status) VALUES (?, ? , ?,?,? ,?, ?, ? ,  ? , ? , ? , ?) `,
+      `INSERT INTO devis(projet_id , user_id  , nom , objet , adresse  , duree_phase , prix_totale , remise , date_devis ,  maitreDouvrage_id , tva , ht ,  status) VALUES (?, ? , ?,?,? ,?, ?, ? ,  ? , ? , ? , ? , ?) `,
       [
         value.projet_id,
         value.user_id,
@@ -98,6 +98,7 @@ function Devis() {
         value.date_devis,
         value.maitreDouvrage_id,
         value.tva,
+        value.ht ,
         'undo'
 
       ]
@@ -288,7 +289,7 @@ function Devis() {
 
      
   db.run(
-        `UPDATE projet SET nom=?, objet=?, adresse=? , duree_phase=?  , maitreDouvrage_id=? , remise=? ,  tva=? , status=?  WHERE id=? `,
+        `UPDATE projet SET nom=?, objet=?, adresse=? , duree_phase=?  , maitreDouvrage_id=? , remise=? ,  tva=? , ht=? , status=?  WHERE id=? `,
 
         [
           value.nom,
@@ -298,6 +299,7 @@ function Devis() {
           value.maitreDouvrage_id,
           value.remise,
           value.tva,
+          value.ht,
           value.status,
           value.projet_id
 
@@ -345,7 +347,7 @@ db.get(`SELECT id  FROM facture WHERE projet_id=${value.projet_id}` ,  (err,resu
  
 
  db.run(
-  `UPDATE facture SET nom=?, objet=?, adresse=? , duree_phase=?  , prix_totale=?   , maitreDouvrage_id=? , remise=?  , tva=? , status=?  WHERE projet_id=? `,
+  `UPDATE facture SET nom=?, objet=?, adresse=? , duree_phase=?  , prix_totale=?   , maitreDouvrage_id=? , remise=?  , tva=? , ht=?, status=?  WHERE projet_id=? `,
 
   [
     value.nom,
@@ -356,6 +358,7 @@ db.get(`SELECT id  FROM facture WHERE projet_id=${value.projet_id}` ,  (err,resu
     value.maitreDouvrage_id,
     value.remise,
     value.tva,
+    value.ht,
     value.status,
     value.projet_id,
 
@@ -410,7 +413,7 @@ db.get(`SELECT id  FROM devis WHERE projet_id=${value.projet_id}` ,  (err,result
 
  
  db.run(
-  `UPDATE devis SET nom=?, objet=?, adresse=? , duree_phase=?  , prix_totale=? , maitreDouvrage_id=? , remise=?  , tva=? , status=?  WHERE projet_id=? `,
+  `UPDATE devis SET nom=?, objet=?, adresse=? , duree_phase=?  , prix_totale=? , maitreDouvrage_id=? , remise=?  , tva=? , ht=? ,status=?  WHERE projet_id=? `,
 
   [
     value.nom,
@@ -421,6 +424,7 @@ db.get(`SELECT id  FROM devis WHERE projet_id=${value.projet_id}` ,  (err,result
     value.maitreDouvrage_id,
     value.remise,
     value.tva,
+    value.ht,
     value.status,
     value.projet_id
   ],
@@ -515,7 +519,7 @@ db.run(sql, params ,  function (err) {
      // edit devis without project
 
      db.run(
-      `UPDATE devis SET nom=?, objet=?, adresse=? , duree_phase=?  , prix_totale=? , maitreDouvrage_id=? , remise=?  , tva=? , status=?  WHERE id=? `,
+      `UPDATE devis SET nom=?, objet=?, adresse=? , duree_phase=?  , prix_totale=? , maitreDouvrage_id=? , remise=?  , tva=? , ht=? ,status=?  WHERE id=? `,
       [
         value.nom,
         value.objet,
@@ -525,6 +529,7 @@ db.run(sql, params ,  function (err) {
         value.maitreDouvrage_id,
         value.remise,
         value.tva,
+        value.ht,
         value.status,
         value.id
 
