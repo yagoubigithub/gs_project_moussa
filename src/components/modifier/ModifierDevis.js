@@ -42,6 +42,7 @@ import { getAllPhasesProjet } from "../../store/actions/pahsesProjetAction";
 //tables
 import MaitreDouvrageTable from "../tables/MaitreDouvrageTable";
 import PhasesProjetTable from "../tables/PhasesProjetTable";
+import { Checkbox, FormControlLabel } from "@material-ui/core";
 class ModifierDevis extends Component {
   state = {
     open: true,
@@ -63,6 +64,7 @@ class ModifierDevis extends Component {
     unite_remise: "DA",
     remise: 0,
     tva: 0,
+    ht : true,
     prix_totale: 0,
 
     maitreDouvrages : [],
@@ -75,7 +77,6 @@ class ModifierDevis extends Component {
     const buttonReturn = this.props.match.params.buttonReturn;
     
     this.setState({
-    
       message: "",
       buttonReturn
     });
@@ -161,7 +162,8 @@ class ModifierDevis extends Component {
       prix_totale: d.prix_totale ,
       remise: d.remise,
       projet_id : d.projet_id,
-      tva: d.tva,    
+      tva: d.tva,  
+      ht :d.ht,  
       status : d.status
     };
 
@@ -171,9 +173,17 @@ class ModifierDevis extends Component {
   };
 
   handleChange = (e) => {
-    this.setState({
+    if(e.target.name === "ht"){
+      this.setState({
+        [e.target.name]: e.target.value === "true" ? false : true,
+        tva : 0
+      });
+    
+    }else{
+      this.setState({
       [e.target.name]: e.target.value,
     });
+    }
    
   };
   
@@ -540,18 +550,39 @@ class ModifierDevis extends Component {
           </Grid>
 
           <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}> TVA (%)</h3>
+            <div style={{ display: "flex" }}>
+              <div style={{ flex: 1 }}>
+                <h3 style={{ margin: 0 }}> Hors taxes</h3>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={this.state.ht}
+                      value={this.state.ht}
+                      onChange={this.handleChange}
+                      name="ht"
+                    />
+                  }
+                  label=" Hors taxes"
+                />
+              </div>
+              <div style={{ flex: 2 }}>
+                <h3 style={{ margin: 0 , color : this.state.ht ? "gray" : "black" }}> TVA (%)</h3>
 
-            <TextField
-              name="tva"
-              value={this.state.tva}
-              onChange={this.handleChange}
-              type="number"
-              variant="outlined"
-              fullWidth
-              InputProps={{ inputProps: { min: 0, step: 1, max: 100 } }}
-            />
+                <TextField
+                  name="tva"
+                  value={this.state.tva}
+                  onChange={this.handleChange}
+                  disabled={this.state.ht}
+                  type="number"
+                  variant="outlined"
+                  fullWidth
+                  InputProps={{ inputProps: { min: 0, step: 1, max: 100 } }}
+                />
+              </div>
+            </div>
           </Grid>
+   
+      
 
           
           <Grid item xs={12}>

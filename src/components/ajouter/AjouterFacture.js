@@ -44,6 +44,7 @@ import { getAllPhasesProjet } from "../../store/actions/pahsesProjetAction";
 //tables
 import MaitreDouvrageTable from "../tables/MaitreDouvrageTable";
 import PhasesProjetTable from '../tables/PhasesProjetTable'
+import { FormControlLabel, Checkbox } from "@material-ui/core";
 
 class AjouterFacture extends Component {
   state = {
@@ -67,6 +68,7 @@ class AjouterFacture extends Component {
     unite_paye :"%",
     prix_totale: 0,
     tva : 0,
+    ht: true,
 
     maitreDouvrages: [],
     phasesProjetsSelected: [],
@@ -92,6 +94,7 @@ class AjouterFacture extends Component {
         date_depot: "",
         prix_totale: 0,
         tva : 0,
+        ht: true,
         remise: 0,
         unite_remise : "%",
         paye : 0,
@@ -184,6 +187,7 @@ class AjouterFacture extends Component {
       date_debut: d.date_debut === "" ? getCurrentDateTime(new Date().getTime()) : d.date_debut,
       date_depot: d.date_depot === "" ? getCurrentDateTime(new Date().getTime()) : d.date_depot,
       tva : d.tva,
+      ht : d.ht,
       prix_totale: d.prix_totale ,
       remise:remise,
       paye:paye,
@@ -223,9 +227,18 @@ class AjouterFacture extends Component {
 
   }
   handleChange = (e) => {
-    this.setState({
+    if(e.target.name === "ht"){
+      this.setState({
+        [e.target.name]: e.target.value === "true" ? false : true,
+         tva : 0
+      });
+    
+    }else{
+      this.setState({
       [e.target.name]: e.target.value,
     });
+    }
+    
     if (e.target.name === "date_debut") {
       this.calculDateDepotWithDateDebut(
         e.target.value !== ""
@@ -662,18 +675,38 @@ class AjouterFacture extends Component {
           </Grid>
 
           <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}> TVA (%)</h3>
-           
-            <TextField
-              name="tva"
-              value={this.state.tva}
-              onChange={this.handleChange}
-              type="number"
-              variant="outlined"
-              fullWidth
-              InputProps={{inputProps : {min  : 0, step : 1 , max : 100}}}
-            />
+            <div style={{ display: "flex" }}>
+              <div style={{ flex: 1 }}>
+                <h3 style={{ margin: 0 }}> Hors taxes</h3>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={this.state.ht}
+                      value={this.state.ht}
+                      onChange={this.handleChange}
+                      name="ht"
+                    />
+                  }
+                  label=" Hors taxes"
+                />
+              </div>
+              <div style={{ flex: 2 }}>
+                <h3 style={{ margin: 0 , color : this.state.ht ? "gray" : "black" }}> TVA (%)</h3>
+
+                <TextField
+                  name="tva"
+                  value={this.state.tva}
+                  onChange={this.handleChange}
+                  disabled={this.state.ht}
+                  type="number"
+                  variant="outlined"
+                  fullWidth
+                  InputProps={{ inputProps: { min: 0, step: 1, max: 100 } }}
+                />
+              </div>
+            </div>
           </Grid>
+         
 
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}>Payé <small><span className="red">(Unité : {this.state.unite_paye} )</span></small></h3>

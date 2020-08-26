@@ -45,6 +45,7 @@ import { getAllPhasesProjet } from "../../store/actions/pahsesProjetAction";
 //tables
 import MaitreDouvrageTable from "../tables/MaitreDouvrageTable";
 import PhasesProjetTable from "../tables/PhasesProjetTable";
+import { FormControlLabel, Checkbox } from "@material-ui/core";
 
 class AjouterProjet extends Component {
   state = {
@@ -67,6 +68,7 @@ class AjouterProjet extends Component {
     unite_remise: "%",
     remise: 0,
     tva: 0,
+    ht: true,
     prix_totale: 0,
     render: [],
 
@@ -99,7 +101,7 @@ class AjouterProjet extends Component {
         prix_totale: 0,
         remise: 0,
         tva: 0,
-
+        ht: true,
         phasesProjetsSelected: [],
       });
     }
@@ -172,6 +174,7 @@ class AjouterProjet extends Component {
       prix_totale: d.prix_totale ,
       remise: remise,
       tva: d.tva,
+      ht : d.ht,
       date_projet: getCurrentDateTime(new Date().getTime()),
     };
 
@@ -189,9 +192,17 @@ class AjouterProjet extends Component {
   };
 
   handleChange = (e) => {
-    this.setState({
+    if(e.target.name === "ht"){
+      this.setState({
+        [e.target.name]: e.target.value === "true" ? false : true,
+        tva : 0
+      });
+    
+    }else{
+      this.setState({
       [e.target.name]: e.target.value,
     });
+    }
     if (e.target.name === "date_debut") {
       this.calculDateDepotWithDateDebut(
         e.target.value !== ""
@@ -601,19 +612,38 @@ class AjouterProjet extends Component {
             </MuiSelect>
           </Grid>
           <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}> TVA (%)</h3>
+            <div style={{ display: "flex" }}>
+              <div style={{ flex: 1 }}>
+                <h3 style={{ margin: 0 }}> Hors taxes</h3>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={this.state.ht}
+                      value={this.state.ht}
+                      onChange={this.handleChange}
+                      name="ht"
+                    />
+                  }
+                  label=" Hors taxes"
+                />
+              </div>
+              <div style={{ flex: 2 }}>
+                <h3 style={{ margin: 0 , color : this.state.ht ? "gray" : "black" }}> TVA (%)</h3>
 
-            <TextField
-              name="tva"
-              value={this.state.tva}
-              onChange={this.handleChange}
-              type="number"
-              variant="outlined"
-              fullWidth
-              InputProps={{ inputProps: { min: 0, step: 1, max: 100 } }}
-              margin="dense"
-            />
+                <TextField
+                  name="tva"
+                  value={this.state.tva}
+                  onChange={this.handleChange}
+                  disabled={this.state.ht}
+                  type="number"
+                  variant="outlined"
+                  fullWidth
+                  InputProps={{ inputProps: { min: 0, step: 1, max: 100 } }}
+                />
+              </div>
+            </div>
           </Grid>
+         
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}> délais de Maitre d’ouvrage (jours)</h3>
 
