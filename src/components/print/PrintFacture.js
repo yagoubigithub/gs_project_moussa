@@ -101,7 +101,7 @@ class PrintFacture extends Component {
             id={index + 1}
           />
         ),
-        id: row.facture.id,
+        id: row[0].facture.id,
       });
     });
 

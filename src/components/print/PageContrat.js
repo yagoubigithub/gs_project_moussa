@@ -16,7 +16,7 @@ export default class PageContrat extends Component {
         this.setState({
           rows_to_print: nextProps.rows_to_print,
         });
-        console.log(nextProps.rows_to_print);
+       
       }
     }
   }
@@ -48,60 +48,60 @@ export default class PageContrat extends Component {
 
           <hr />
 
-          {this.state.rows_to_print.length > 0 && (
+          {this.props.rows_to_print.length > 0 && (
             <div className="page-row">
               <div className="page-col">
                 <h2>
-                  Devis : N° {this.state.rows_to_print[0][0].devis.id} /{" "}
+                  Devis : N° {this.props.rows_to_print[0][0].devis.id} /{" "}
                   {new Date(
-                    this.state.rows_to_print[0][0].devis.date_devis
+                    this.props.rows_to_print[0][0].devis.date_devis
                   ).getFullYear()}
                 </h2>
                 <p>
                   Date :{" "}
                   {
-                    this.state.rows_to_print[0][0].devis.date_devis.split(
+                    this.props.rows_to_print[0][0].devis.date_devis.split(
                       "T"
                     )[0]
                   }
                 </p>
-                <p>Par : {this.state.rows_to_print[0][0].devis.user_nom + " " + this.state.rows_to_print[0][0].devis.user_prenom}</p>
-                <p>Objet : {this.state.rows_to_print[0][0].devis.objet}</p>
-                <p>Projet : {this.state.rows_to_print[0][0].devis.nom}</p>
+                <p>Par : {this.props.rows_to_print[0][0].devis.user_nom + " " + this.props.rows_to_print[0][0].devis.user_prenom}</p>
+                <p>Objet : {this.props.rows_to_print[0][0].devis.objet}</p>
+                <p>Projet : {this.props.rows_to_print[0][0].devis.nom}</p>
               </div>
               <div className="page-col">
                 <h5>
                   Maitre d'ouvrage{" "}
-                  {this.state.rows_to_print[0][0].devis.maitre_douvrage_prenom}{" "}
-                  {this.state.rows_to_print[0][0].devis.maitre_douvrage_nom}
+                  {this.props.rows_to_print[0][0].devis.maitre_douvrage_prenom}{" "}
+                  {this.props.rows_to_print[0][0].devis.maitre_douvrage_nom}
                 </h5>
 
                 <p>
                   raison social :{" "}
                   {
-                    this.state.rows_to_print[0][0].devis
+                    this.props.rows_to_print[0][0].devis
                       .maitre_douvrage_raison_social
                   }
                 </p>
                 <p>
                   Adresse :{" "}
-                  {this.state.rows_to_print[0][0].devis.maitre_douvrage_adresse}
+                  {this.props.rows_to_print[0][0].devis.maitre_douvrage_adresse}
                 </p>
                 <p>
                   numero de RC :{" "}
-                  {this.state.rows_to_print[0][0].devis.maitre_douvrage_rg}
+                  {this.props.rows_to_print[0][0].devis.maitre_douvrage_rg}
                 </p>
                 <p>
                   {" "}
                   numero de tel :{" "}
                   {
-                    this.state.rows_to_print[0][0].devis
+                    this.props.rows_to_print[0][0].devis
                       .maitre_douvrage_telephone
                   }{" "}
                 </p>
                 <p>
                   email :{" "}
-                  {this.state.rows_to_print[0][0].devis.maitre_douvrage_email}
+                  {this.props.rows_to_print[0][0].devis.maitre_douvrage_email}
                 </p>
               </div>
             </div>
@@ -109,11 +109,13 @@ export default class PageContrat extends Component {
         </div>
 
         <div className="print-page-content" style={{height : "45%"}}>
-          <div className="page-row pt-1">
-          <div className="nb">
+        
+         
+          <div>
+  <div className="nb">
           <p>NB : il est demandé au client de payer 30 % du devis âpres la validation de l’offre.</p>
           </div>
-            {this.state.rows_to_print.length > 0 && (
+  {this.props.rows_to_print.length > 0 && (
               <div>
                 <table>
                 <tbody>
@@ -123,31 +125,30 @@ export default class PageContrat extends Component {
                     <td>
                       {round(
                         Number.parseFloat(
-                          this.state.rows_to_print[0][0].prixTotale
+                          this.props.rows_to_print[0][0].prixTotale
                         ) +
                           (Number.parseFloat(
-                            this.state.rows_to_print[0][0].prixTotale
+                            this.props.rows_to_print[0][0].prixTotale
                           ) *
-                            this.state.rows_to_print[0][0].devis["tva"]) /
+                            this.props.rows_to_print[0][0].devis["tva"]) /
                             100 -
                           Number.parseFloat(
-                            this.state.rows_to_print[0][0].devis.remise
+                            this.props.rows_to_print[0][0].devis.remise
                           )
                       )}
-                      DA
                     </td>
                     <td>
                       {floatToDrahem(
                         Number.parseFloat(
-                          this.state.rows_to_print[0][0].prixTotale
+                          this.props.rows_to_print[0][0].prixTotale
                         ) +
                           (Number.parseFloat(
-                            this.state.rows_to_print[0][0].prixTotale
+                            this.props.rows_to_print[0][0].prixTotale
                           ) *
-                            this.state.rows_to_print[0][0].devis["tva"]) /
+                            this.props.rows_to_print[0][0].devis["tva"]) /
                             100 -
                           Number.parseFloat(
-                            this.state.rows_to_print[0][0].devis.remise
+                            this.props.rows_to_print[0][0].devis.remise
                           )
                       )}
                     </td>
@@ -157,15 +158,15 @@ export default class PageContrat extends Component {
                     <td>
                       {round(
                         ((Number.parseFloat(
-                          this.state.rows_to_print[0][0].prixTotale
+                          this.props.rows_to_print[0][0].prixTotale
                         ) +
                           (Number.parseFloat(
-                            this.state.rows_to_print[0][0].prixTotale
+                            this.props.rows_to_print[0][0].prixTotale
                           ) *
-                            this.state.rows_to_print[0][0].devis["tva"]) /
+                            this.props.rows_to_print[0][0].devis["tva"]) /
                             100 -
                           Number.parseFloat(
-                            this.state.rows_to_print[0][0].devis.remise
+                            this.props.rows_to_print[0][0].devis.remise
                           )) *
                           30) /
                           100
@@ -174,15 +175,15 @@ export default class PageContrat extends Component {
                     <td>
                       {floatToDrahem(
                         ((Number.parseFloat(
-                          this.state.rows_to_print[0][0].prixTotale
+                          this.props.rows_to_print[0][0].prixTotale
                         ) +
                           (Number.parseFloat(
-                            this.state.rows_to_print[0][0].prixTotale
+                            this.props.rows_to_print[0][0].prixTotale
                           ) *
-                            this.state.rows_to_print[0][0].devis["tva"]) /
+                            this.props.rows_to_print[0][0].devis["tva"]) /
                             100 -
                           Number.parseFloat(
-                            this.state.rows_to_print[0][0].devis.remise
+                            this.props.rows_to_print[0][0].devis.remise
                           )) *
                           30) /
                           100
@@ -195,26 +196,26 @@ export default class PageContrat extends Component {
                     <td>
                       {round(
                         Number.parseFloat(
-                          this.state.rows_to_print[0][0].prixTotale
+                          this.props.rows_to_print[0][0].prixTotale
                         ) +
                           (Number.parseFloat(
-                            this.state.rows_to_print[0][0].prixTotale
+                            this.props.rows_to_print[0][0].prixTotale
                           ) *
-                            this.state.rows_to_print[0][0].devis["tva"]) /
+                            this.props.rows_to_print[0][0].devis["tva"]) /
                             100 -
                           Number.parseFloat(
-                            this.state.rows_to_print[0][0].devis.remise
+                            this.props.rows_to_print[0][0].devis.remise
                           ) -
                           ((Number.parseFloat(
-                            this.state.rows_to_print[0][0].prixTotale
+                            this.props.rows_to_print[0][0].prixTotale
                           ) +
                             (Number.parseFloat(
-                              this.state.rows_to_print[0][0].prixTotale
+                              this.props.rows_to_print[0][0].prixTotale
                             ) *
-                              this.state.rows_to_print[0][0].devis["tva"]) /
+                              this.props.rows_to_print[0][0].devis["tva"]) /
                               100 -
                             Number.parseFloat(
-                              this.state.rows_to_print[0][0].devis.remise
+                              this.props.rows_to_print[0][0].devis.remise
                             )) *
                             30) /
                             100
@@ -224,26 +225,26 @@ export default class PageContrat extends Component {
                       {" "}
                       {floatToDrahem(
                         Number.parseFloat(
-                          this.state.rows_to_print[0][0].prixTotale
+                          this.props.rows_to_print[0][0].prixTotale
                         ) +
                           (Number.parseFloat(
-                            this.state.rows_to_print[0][0].prixTotale
+                            this.props.rows_to_print[0][0].prixTotale
                           ) *
-                            this.state.rows_to_print[0][0].devis["tva"]) /
+                            this.props.rows_to_print[0][0].devis["tva"]) /
                             100 -
                           Number.parseFloat(
-                            this.state.rows_to_print[0][0].devis.remise
+                            this.props.rows_to_print[0][0].devis.remise
                           ) -
                           ((Number.parseFloat(
-                            this.state.rows_to_print[0][0].prixTotale
+                            this.props.rows_to_print[0][0].prixTotale
                           ) +
                             (Number.parseFloat(
-                              this.state.rows_to_print[0][0].prixTotale
+                              this.props.rows_to_print[0][0].prixTotale
                             ) *
-                              this.state.rows_to_print[0][0].devis["tva"]) /
+                              this.props.rows_to_print[0][0].devis["tva"]) /
                               100 -
                             Number.parseFloat(
-                              this.state.rows_to_print[0][0].devis.remise
+                              this.props.rows_to_print[0][0].devis.remise
                             )) *
                             30) /
                             100
@@ -256,8 +257,13 @@ export default class PageContrat extends Component {
               </div>
             )}
 
-            
           </div>
+        
+          
+          
+
+            
+         
         </div>
         <div className="print-page-sign" style={{height : "18.33%"}}>
         <div className="sign">

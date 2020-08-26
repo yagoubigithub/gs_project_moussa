@@ -123,7 +123,29 @@ function PrintDevis() {
       padding-top : 10px;
     }
     
-  
+    /****************************************************************/
+
+
+    .sign{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    
+    }
+    .sign .sign-col{
+    
+      margin-top: 2rem;
+      text-align: center;
+    }
+    .print-page-sign{
+      font-weight: 800;
+    }
+    .nb {
+      width : 100%;
+      border : 1px solid black;
+      padding : 5px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
     </style>
     </head>
     <body>`;
@@ -281,10 +303,9 @@ flex :19;
 display:  flex;
 width : 100%;
 justify-content: space-between;
+
 }
-.page-col{
-flex: 5;
-}
+
 .print-page-container table{
 width : 100%;
 border : 1px double black;
@@ -330,9 +351,33 @@ font-family: Arial, Helvetica, sans-serif;
 }
 .pt-1{
 padding-top : 10px;
+display : flex;
 }
 
-    
+/****************************************************************/
+
+
+.sign{
+display: grid;
+grid-template-columns: repeat(2,1fr);
+
+}
+.sign .sign-col{
+
+  margin-top: 2rem;
+  text-align: center;
+}
+.print-page-sign{
+  font-weight: 800;
+}
+.nb {
+  width : 100%;
+  border : 1px solid black;
+  padding : 5px;
+  margin-bottom: 15px;
+  text-align: center;
+
+}  
   
     </style>
     </head>
