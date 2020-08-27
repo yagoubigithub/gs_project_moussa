@@ -151,6 +151,7 @@ class AjouterDevis extends Component {
       this.setState({ message: "le champ Remise et superieur de 100%" });
       return;
     }
+    const remise = this.calculRemise(d.prix_totale,d.tva ,d.remise, d.unite_remise);
     const data = {
       projet_id: 0,
       nom: d.nom,
@@ -162,7 +163,7 @@ class AjouterDevis extends Component {
       duree_phase: d.duree_phase,
 
       prix_totale: d.prix_totale,
-      remise: d.remise,
+      remise: remise,
       unite_remise: d.unite_remise,
       tva: d.tva,
       ht : d.ht,
@@ -171,6 +172,16 @@ class AjouterDevis extends Component {
 
     this.props.ajouterDevis(data);
   };
+  calculRemise = (total_net, tva,remise, unite_remise) =>{
+
+    if(unite_remise === "%"){
+      return parseFloat(remise*(total_net  + parseFloat(tva*total_net/100))/100)
+    }else{
+
+      return remise
+    }
+
+  }
 
   handleChange = (e) => {
     if(e.target.name === "ht"){

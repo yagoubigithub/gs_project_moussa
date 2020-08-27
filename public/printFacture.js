@@ -115,8 +115,8 @@ function PrintFacture(){
     .print-page-container table td,th{
       border-bottom: 1px solid rgba(0, 0, 0, 1);
       text-align: left;
-      padding : 3px;
-      max-height: 60px;
+      padding : 10px;
+      max-height: 70px;
       max-width: 350px;
       text-align: center;
     }
@@ -325,14 +325,13 @@ font-weight: 400;
   width : 35%;
 }
 
-
 .print-page-container table td,th{
-border-bottom: 1px solid rgba(0, 0, 0, 1);
-text-align: left;
-padding : 3px;
-max-height: 60px;
-max-width: 350px;
-text-align: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 1);
+  text-align: left;
+  padding : 10px;
+  max-height: 70px;
+  max-width: 350px;
+  text-align: center;
 }
 .print-page-container p,h1,h2,h3,h4,h5,h6{
 margin: 5px;

@@ -112,6 +112,15 @@ export default class PageContrat extends Component {
         
          
           <div>
+          <div>
+         { this.props.rows_to_print.length > 0 &&   <h4 style={{textAlign : "center"}}>Arrête le Montant du présent offre a la somme {this.props.rows_to_print[0][0].devis.ht  ? "en HT" : null}  </h4>}
+          
+            {this.props.rows_to_print.length > 0 &&   <h4 style={{textAlign : "center"}}>{   floatToDrahem(Number.parseFloat(
+                          this.props.rows_to_print[0][0].prixTotale
+                        )  -  Number.parseFloat(
+                            this.props.rows_to_print[0][0].devis.remise
+                          ) )}</h4>}
+          </div>
   <div className="nb">
           <p>NB : il est demandé au client de payer 30 % du devis âpres la validation de l’offre.</p>
           </div>

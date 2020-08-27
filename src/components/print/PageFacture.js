@@ -11,10 +11,7 @@ export default class PageFacture extends Component {
     row: {},
   };
 
-  componentDidMount(){
-    console.log(this.props)
-  }
-  
+
   render() {
     const info = { ...this.props.entreprise };
     const user = {...this.props.user}
@@ -64,11 +61,11 @@ export default class PageFacture extends Component {
             <div className="page-col">
               <h5>Maitre d'ouvrage  {this.props.row[0].facture.maitre_douvrage_nom} {" "} {this.props.row[0].facture.maitre_douvrage_prenom}</h5>
               
-              <p>raison social  : {this.props.row[0].facture.maitre_douvrage_raison_social}</p>
+              <p>Raison social  : {this.props.row[0].facture.maitre_douvrage_raison_social}</p>
               <p>Adresse : {this.props.row[0].facture.maitre_douvrage_adresse}</p>
-              <p>numero de  RC : {this.props.row[0].facture.maitre_douvrage_rg}</p>
-             <p> numero de tel : {this.props.row[0].facture.maitre_douvrage_telephone} </p>
-<p>email : {this.props.row[0].facture.maitre_douvrage_email}</p>
+              <p>Numero de  RC : {this.props.row[0].facture.maitre_douvrage_rg}</p>
+             <p> Numero de tel : {this.props.row[0].facture.maitre_douvrage_telephone} </p>
+<p>Email : {this.props.row[0].facture.maitre_douvrage_email}</p>
 
             </div>
           </div>
@@ -81,7 +78,8 @@ export default class PageFacture extends Component {
                 {this.props.head.map((title, index) => {
                   return <th key={index}>{title.value}</th>;
                 })}
-                <th>Motant HT</th>
+                {this.props.row[0].facture.ht ? <th>Motant HT</th> : <th>Total</th>
+                }
               </tr>
             </thead>
             <tbody>
@@ -114,9 +112,12 @@ export default class PageFacture extends Component {
                             </td>
                           );
                       })}
-                    <td>
-                      {row.rows_to_print["prix"] + (row.rows_to_print["prix"] * row.facture["tva"]) /100} DA
-                    </td>
+                      <td>
+                      {this.props.row[0].facture.ht ? `${(row.rows_to_print["prix"] +
+                          (row.rows_to_print["prix"] * row.facture["tva"]) / 100 )} `  : `${row.rows_to_print["prix"]} ` }
+              
+                        
+                      </td>
                     </tr>
                   );
                 } else return null;
@@ -125,6 +126,9 @@ export default class PageFacture extends Component {
           </table>
 
           <div className="page-row pt-1">
+
+          {!this.props.row[0].facture.ht ? 
+          <div>
             <div className="page-col" style={{flex : 6}}>
             <small>  <h5>Total à reporter : {totalReporter} DA</h5> 
             { <h6>Total à reporter : {floatToDrahem(totalReporter)} </h6> }
@@ -173,7 +177,34 @@ export default class PageFacture extends Component {
              
    
             </div>
+            </div>
+         
+          : 
+          
+          <div>
+          <div className="page-col" style={{ flex: 6 }}>
+              <small>
+                {" "}
+                <h5>Total à reporter : {totalReporter} DA</h5>
+                {<h6>Total à reporter : {floatToDrahem(totalReporter)} </h6>}
+              </small>
+            </div>
+          <div className="page-col " style={{ flex: 4 }}>
+              <h5>Total  : {this.props.row[0].prixTotale} DA</h5>
+             
+              <h5>
+                Remise sur le Total : {round(this.props.row[0].facture.remise)} DA
+              </h5>
+
+<hr />
+              <h5>Total HT : {round(this.props.row[0].prixTotale - this.props.row[0].facture.remise)} DA</h5>
+
+
+              </div>
           </div>
+          }
+
+           </div>
         </div>
         <div className="print-page-footer">{this.props.index + 1}</div>
       </div>

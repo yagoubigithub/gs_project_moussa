@@ -10,6 +10,7 @@ export default class Page extends Component {
     row: {},
   };
 
+ 
   render() {
     const info = { ...this.props.entreprise };
     const user = {...this.props.user}
@@ -93,7 +94,9 @@ export default class Page extends Component {
                 {this.props.head.map((title, index) => {
                   return <th key={index}>{title.value}</th>;
                 })}
-                <th>Motant HT</th>
+                {this.props.row[0].devis.ht ? <th>Motant HT</th> : <th>Total</th>
+                }
+                
               </tr>
             </thead>
             <tbody>
@@ -121,10 +124,10 @@ export default class Page extends Component {
                         );
                       })}
                       <td>
-                        {row.rows_to_print["prix"] +
-                          (row.rows_to_print["prix"] * row.devis["tva"]) /
-                            100}{" "}
-                        DA
+                      {this.props.row[0].devis.ht ? `${(row.rows_to_print["prix"] +
+                          (row.rows_to_print["prix"] * row.devis["tva"]) / 100 )} `  : `${row.rows_to_print["prix"]} ` }
+              
+                        
                       </td>
                     </tr>
                   );
@@ -134,7 +137,9 @@ export default class Page extends Component {
           </table>
 
           <div className="page-row pt-1">
-            <div className="page-col" style={{ flex: 6 }}>
+          {!this.props.row[0].devis.ht ? 
+          <div>
+          <div className="page-col" style={{ flex: 6 }}>
               <small>
                 {" "}
                 <h5>Total à reporter : {totalReporter} DA</h5>
@@ -195,7 +200,33 @@ export default class Page extends Component {
                 )}
               </h6>
             </div>
+        
           </div>
+          : 
+          <div>
+          <div className="page-col" style={{ flex: 6 }}>
+              <small>
+                {" "}
+                <h5>Total à reporter : {totalReporter} DA</h5>
+                {<h6>Total à reporter : {floatToDrahem(totalReporter)} </h6>}
+              </small>
+            </div>
+          <div className="page-col " style={{ flex: 4 }}>
+              <h5>Total  : {this.props.row[0].prixTotale} DA</h5>
+             
+              <h5>
+                Remise sur le Total : {round(this.props.row[0].devis.remise)} DA
+              </h5>
+
+<hr />
+              <h5>Total HT : {round(this.props.row[0].prixTotale - this.props.row[0].devis.remise)} DA</h5>
+
+
+              </div>
+          </div>
+          }
+      
+        </div>
         </div>
         <div className="print-page-footer">{this.props.index + 1}</div>
       </div>
