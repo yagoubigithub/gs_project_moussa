@@ -320,14 +320,16 @@ height : 33.33%;
   height : 63.33%;
 
 }
-
+*{
+  box-sizing: border-box;
+}
 .page-row{
   
   width : 100%;
-  justify-content: space-between;
 }
 .page-col{
  float : left;
+ max-width : 50%;
  width : 50%;
  
 }

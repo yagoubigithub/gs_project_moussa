@@ -42,19 +42,20 @@ function PrintDevis() {
     .print-page-head{
     height : 77mm;
     min-height : 77mm;
+  
     
     }
     .print-page-footer{
       height : 10mm;
       min-height : 10mm;
-      
+    
      
     }
     .print-page-content {
       
       height : 190mm;
       min-height : 190mm;
-    
+      
     
     }
     
@@ -62,10 +63,12 @@ function PrintDevis() {
       
       width : 100%;
       justify-content: space-between;
+    
     }
     .page-col{
      float : left;
      width : 50%;
+    
      
     }
     .print-page-container table{
@@ -139,29 +142,31 @@ function PrintDevis() {
       padding-top : 10px;
     }
     
-    /****************************************************************/
+   /****************************************************************/
 
 
-    .sign{
-    display: grid;
-    grid-template-columns: repeat(2,1fr);
-    
-    }
-    .sign .sign-col{
-    
-      margin-top: 2rem;
-      text-align: center;
-    }
-    .print-page-sign{
-      font-weight: 800;
-    }
-    .nb {
-      width : 100%;
-      border : 1px solid black;
-      padding : 5px;
-      margin-bottom: 15px;
-      text-align: center;
-    }
+.sign{
+  
+
+box-sizing : border-box;
+}
+.sign .sign-col{
+  float : left;
+  width : 50%;
+  
+  margin-top: 25px;
+  text-align: center;
+}
+.print-page-sign{
+  font-weight: 800;
+}
+.nb {
+  width : 100%;
+  border : 1px solid black;
+  padding : 5px;
+  margin-bottom: 15px;
+  text-align: center;
+}
     </style>
     </head>
     <body>`;
@@ -315,11 +320,21 @@ flex: 1;
 flex :19;
 
 }
+*{
+  box-sizing : border-box;
+}
+
 .page-row{
 display:  flex;
 width : 100%;
 justify-content: space-between;
 
+flex-wrap: nowrap;
+
+}
+.page-col{
+  flex-grow: 1;
+  
 }
 
 .print-page-container table{

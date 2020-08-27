@@ -136,17 +136,17 @@ export default class Page extends Component {
             </tbody>
           </table>
 
-          <div className="page-row pt-1">
+          
           {!this.props.row[0].devis.ht ? 
-          <div>
-          <div className="page-col" style={{ flex: 6 }}>
+            <div className="page-row" style={{width : "100%" , paddingTop : 20}}>
+          <div className="page-col">
               <small>
                 {" "}
                 <h5>Total à reporter : {totalReporter} DA</h5>
                 {<h6>Total à reporter : {floatToDrahem(totalReporter)} </h6>}
               </small>
             </div>
-            <div className="page-col " style={{ flex: 4 }}>
+            <div className="page-col " >
               <h5>Total net : {this.props.row[0].prixTotale} DA</h5>
               <h5>TVA : {this.props.row[0].devis.tva} %</h5>
 
@@ -203,15 +203,15 @@ export default class Page extends Component {
         
           </div>
           : 
-          <div>
-          <div className="page-col" style={{ flex: 6 }}>
+          <div className="page-row" style={{width : "100%" , paddingTop : 20}}>
+          <div className="page-col" >
               <small>
                 {" "}
                 <h5>Total à reporter : {totalReporter} DA</h5>
                 {<h6>Total à reporter : {floatToDrahem(totalReporter)} </h6>}
               </small>
             </div>
-          <div className="page-col " style={{ flex: 4 }}>
+          <div className="page-col " >
               <h5>Total  : {this.props.row[0].prixTotale} DA</h5>
              
               <h5>
@@ -226,7 +226,7 @@ export default class Page extends Component {
           </div>
           }
       
-        </div>
+        
         </div>
         <div className="print-page-footer">{this.props.index + 1}</div>
       </div>

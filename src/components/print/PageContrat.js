@@ -108,7 +108,7 @@ export default class PageContrat extends Component {
           )}
         </div>
 
-        <div className="print-page-content" style={{height : "45%"}}>
+        <div className="print-page-content" style={{height : this.props.type === "print"  ? "45%" : "133.65mm !important",minHeight :this.props.type === "print"  ? "45%" : "133.65mm !important" }}>
         
          
           <div>
@@ -274,7 +274,7 @@ export default class PageContrat extends Component {
             
          
         </div>
-        <div className="print-page-sign" style={{height : "18.33%"}}>
+        <div className="print-page-sign" style={{height :this.props.type === "print"  ? "18.33%" : "54.44mm !important" , minHeight :this.props.type === "print"  ? "18.33%" : "54.44mm !important"  }}>
         <div className="sign">
                 <div className="sign-col">
                 Le maitre d’ouvrage
