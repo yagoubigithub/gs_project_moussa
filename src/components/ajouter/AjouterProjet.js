@@ -69,7 +69,7 @@ class AjouterProjet extends Component {
     remise: 0,
     tva: 0,
     ht: true,
-    prix_totale: 0,
+   
     render: [],
 
     maitreDouvrages: [],
@@ -683,6 +683,7 @@ class AjouterProjet extends Component {
             <h3 style={{ margin: 0 }}> Date de dépôt </h3>
             <p>{this.state.date_depot}</p>
           </Grid>
+        
           <Grid item xs={12}>
             <br />
             <Button
