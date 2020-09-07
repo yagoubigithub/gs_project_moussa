@@ -340,6 +340,8 @@ font-family: Arial, Helvetica, sans-serif;
 }
 .pt-1{
 padding-top : 10px;
+
+
 }
 
     

@@ -125,18 +125,18 @@ export default class PageFacture extends Component {
             </tbody>
           </table>
 
-          <div className="page-row pt-1">
+          
 
           {!this.props.row[0].facture.ht ? 
-          <div>
-            <div className="page-col" style={{flex : 6}}>
+          <div className="page-row pt-1">
+            <div className="page-col pt-2" style={{flex : 6}}>
             <small>  <h5>Total à reporter : {totalReporter} DA</h5> 
             { <h6>Total à reporter : {floatToDrahem(totalReporter)} </h6> }
 </small>
            
           
             </div>
-            <div className="page-col " style={{flex : 4}}>
+            <div className="page-col pt-2" style={{flex : 4}}>
           
               <h5>Total net : {round(this.props.row[0].prixTotale)} DA</h5>
               <h5>TVA : {this.props.row[0].facture.tva} %</h5>
@@ -181,15 +181,15 @@ export default class PageFacture extends Component {
          
           : 
           
-          <div>
-          <div className="page-col" style={{ flex: 6 }}>
+          <div className="page-row pt-1">
+          <div className="page-col pt-2" style={{ flex: 6 }}>
               <small>
                 {" "}
                 <h5>Total à reporter : {totalReporter} DA</h5>
                 {<h6>Total à reporter : {floatToDrahem(totalReporter)} </h6>}
               </small>
             </div>
-          <div className="page-col " style={{ flex: 4 }}>
+          <div className="page-col pt-2 " style={{ flex: 4 }}>
               <h5>Total  : {this.props.row[0].prixTotale} DA</h5>
              
               <h5>
@@ -204,7 +204,7 @@ export default class PageFacture extends Component {
           </div>
           }
 
-           </div>
+          
         </div>
         <div className="print-page-footer">{this.props.index + 1}</div>
       </div>
