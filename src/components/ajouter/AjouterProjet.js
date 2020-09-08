@@ -211,7 +211,6 @@ class AjouterProjet extends Component {
       );
     }
     if (e.target.name === "delais") {
-      console.log(e.target.value);
       this.calculDateDepotWithDelais(
         e.target.value !== "" ? e.target.value : 0
       );

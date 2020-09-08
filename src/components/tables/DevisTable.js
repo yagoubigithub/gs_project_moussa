@@ -219,7 +219,7 @@ class ProjetTable extends Component {
       maitreDouvrageSelected,
     });
   };
-  handeleDevisChange = (e) => {
+  handleChange = (e) => {
     const devis = { ...this.state.devis };
     devis[e.target.name] = e.target.value;
 
@@ -249,6 +249,7 @@ class ProjetTable extends Component {
     }
     this.setState({ devis });
   };
+  
 
   render() {
     const columns = [
