@@ -132,50 +132,29 @@ class ProjetTable extends Component {
     );
   };
   ajouter = () => {
-   /* const d = { ...this.state.devis };
+    const d = { ...this.state.devis };
 
     const data = {
       id: d.id,
-      projet_id: d.projet_id,
       nom: d.nom,
       objet: d.objet,
       maitreDouvrage_id: d.maitreDouvrage_id,
+      user_id :d.user_id, 
       adresse: d.adresse,
-      phasesProjetsSelected: [...d.devis_phases_projets],
-      duree_phase: d.duree_phase,
-      delais: d.delais,
-      date_debut: d.date_debut,
-      date_depot: d.date_depot,
-    };
-
-    /*
- const remise = this.calculRemise(
-      d.prix_totale,
-      d.tva,
-      d.remise,
-      d.unite_remise
-    );
-
-    const data = {
-      nom: d.nom,
-      objet: d.objet,
-      maitreDouvrage_id: d.maitreDouvrage.id,
-      user_id :this.props.user.id, 
-      adresse: d.adresse,
-      phasesProjetsSelected: [...this.state.phasesProjetsSelected],
+     phasesProjetsSelected: [...d.devis_phases_projets],
       duree_phase: d.duree_phase,
       delais: d.delais,
       date_debut: d.date_debut === "" ? getCurrentDateTime(new Date().getTime()) : d.date_debut,
       date_depot: d.date_depot === "" ? getCurrentDateTime(new Date().getTime()) : d.date_depot,
       prix_totale: d.prix_totale ,
-      remise: remise,
+      remise: d.remise,
       tva: d.tva,
       ht : d.ht,
       date_projet: getCurrentDateTime(new Date().getTime()),
     };
-    */
-   /// this.props.transformDevisAProjet(data);
-   console.log(this.state)
+    
+   this.props.transformDevisAProjet(data);
+   
   };
 
   handeleCheckCheckboxRow = (e, id) => {

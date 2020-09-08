@@ -147,43 +147,135 @@ function Devis() {
 
   //AJOUTER
   ipcMain.on("devis:transform", (event, value) => {
+
+
     db.run(
-      `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , user_id , remise  , status) VALUES ('${value.nom}','${value.objet}','${value.adresse}',${value.delais},'${value.date_debut}','${value.date_depot}' , 'en cours',${value.duree_phase},${value.maitreDouvrage_id} , ${value.user_id} , ${value.remise} , 'undo') `,
+      `INSERT INTO projet(nom , objet , adresse , delais , date_debut , date_depot , etat , duree_phase , maitreDouvrage_id , user_id , remise  , tva , ht ,  status) VALUES (?,?,?,?,?,? , ?,?,? , ? , ? ,  ?,? , ?) `,
+
+      [
+        value.nom,
+        value.objet,
+        value.adresse,
+        value.delais,
+        value.date_debut,
+        value.date_depot,
+        "en cours",
+        value.duree_phase,
+        value.maitreDouvrage_id,
+        value.user_id,
+        value.remise,
+        value.tva,
+        value.ht,
+        "undo",
+      ],
       function (err) {
         if (err) mainWindow.webContents.send("devis:transform", err);
 
-        //add phase de projet
-        const projet_id = this.lastID;
-       
-        let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , titre ,description , duree , prix , status) VALUES   `;
-          
-        value.phasesProjetsSelected.forEach((phase) => {
-          const placeholder = ` (${projet_id},${phase.id} ,  '${phase.titre}' , '${phase.description}' , ${phase.duree} , ${phase.prix}  , 'undo') ,`;
-          sql = sql + placeholder;
-        });
+   //add phase de projet
+   const projet_id = this.lastID;
+   new Promise((resolve, reject) => {
+    let sql = `INSERT INTO phases_projets(projet_id , phases_projet_id , titre ,description , duree , prix , status) VALUES   `;
+    let count = 0;
 
-        sql = sql.slice(0, sql.lastIndexOf(",") - 1);
+    const params = [];
+    value.phasesProjetsSelected.forEach((phase) => {
+      const placeholder = ` (?,? ,  ? , ? , ? , ?  , ?) ,`;
+      sql = sql + placeholder;
+      count++;
+      params.push(
+        projet_id,
+        phase.id,
+        phase.titre,
+        phase.description,
+        phase.duree,
+        phase.prix,
+        "undo"
+      );
 
-        db.run(sql, function (err) {
-          if (err) mainWindow.webContents.send("devis:transform", err);
-
-          db.run(
-            `
-                 UPDATE devis SET projet_id=${projet_id}  WHERE id=${value.id} `,
-
-            function (err) {
-              ReturnAllDevis()
-                .then((projets) =>
-                  mainWindow.webContents.send("devis:transform", projets)
-                )
-                .catch((err) =>
-                  mainWindow.webContents.send("devis:transform", err)
-                );
-            }
-          );
-        });
+      if (count === value.phasesProjetsSelected.length) {
+        resolve({ sql, params });
       }
-    );
+    });
+  }).then(({ sql, params }) => {
+    sql = sql.slice(0, sql.lastIndexOf(",") - 1);
+
+    db.run(sql, params, function (err) {
+      if (err) mainWindow.webContents.send("devis:transform", err);
+    
+ //ajouter facture
+ db.run(
+  `INSERT INTO facture(projet_id , user_id  , nom , objet , adresse  , duree_phase , prix_totale , remise, date_facture ,  maitreDouvrage_id , tva, ht , status) VALUES (?, ?, ?,?,? ,?, ?, ? , ? , ? , ?, ? , ?) `,
+
+  [
+    projet_id,
+    value.user_id,
+    value.nom,
+    value.objet,
+    value.adresse,
+    value.duree_phase,
+    value.prix_totale,
+    value.remise,
+    value.date_projet,
+    value.maitreDouvrage_id,
+    value.tva,
+    value.ht,
+
+    "undo",
+  ],
+
+  function (err) {
+    if (err)
+      mainWindow.webContents.send("devis:transform", err);
+
+   //add phase de facture
+   const facture_id = this.lastID;
+
+   let sql = `INSERT INTO facture_phases_projets(facture_id , phases_facture_id , titre ,description , duree , prix , status) VALUES   `;
+
+   /*phases_facture_id:
+    */
+   const params = [];
+
+   value.phasesProjetsSelected.forEach((phase) => {
+     const placeholder = ` (?,? ,  ? , ? , ? , ? , ?) ,`;
+     
+     params.push( facture_id ,phase.id,phase.titre,phase.description,phase.duree,phase.prix,'undo')
+
+     sql = sql + placeholder;
+   });
+
+   sql = sql.slice(0, sql.lastIndexOf(",") - 1);
+
+   db.run(sql, params ,function (err) {
+     if (err)
+       mainWindow.webContents.send("devis:transform", err);
+
+ 
+     ReturnAllDevis()
+       .then((devis) =>
+         mainWindow.webContents.send(
+           "devis:transform",
+           devis
+         )
+       )
+       .catch((err) =>
+         mainWindow.webContents.send("devis:transform", err)
+       );
+   });
+
+  }
+ )
+
+    })
+
+  })
+
+      }
+
+
+    )
+
+  
   });
 
  
