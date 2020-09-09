@@ -145,7 +145,7 @@ class Entreprise extends Component {
   render() {
     return (
       <div style={{ backgroundColor: "#f2f2f2", padding : 15 }}>
-
+ <LoadingComponent loading={this.props.loading !== undefined ? this.props.loading : false} />
 <Dialog open={this.state.error !== "" && this.state.error !== null} onClose={this.closeAlert}>
           <DialogContent>
             <p>{this.state.error}</p>
@@ -380,7 +380,7 @@ const mapActionToProps = (dispatch) => {
 const mapStateToProps = (state) => {
   return {
     entreprise: state.entreprise.info,
-    loading: state.auth.loading,
+    loading: state.auth.loading || state.entreprise.loading,
     error : state.entreprise.error
   };
 };

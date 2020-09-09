@@ -247,6 +247,8 @@ function Entreprise() {
               console.log(err, 4);
               mainWindow.webContents.send("_import", err);
             });
+        }else{
+          mainWindow.webContents.send("_import", { _import: true });
         }
       });
   });
@@ -401,6 +403,8 @@ function generateCSV() {
                   mainWindow.webContents.send("_export", err);
                 });
             });
+          }else{
+            mainWindow.webContents.send("_export", { _export: false }); 
           }
         });
     })

@@ -11,7 +11,7 @@ export const ajouterntreprise = (data) =>{
       const key = { key : data.key };
   
 
-      fetch('http://localhost:9093/atech-api/testKey.php', {
+      fetch('https://atech-info.com/atech-api/testKey.php', {
         method: 'POST', // or 'PUT'
         headers: {'Content-Type':'application/x-www-form-urlencoded'},
         body: queryString.stringify(key),
@@ -20,7 +20,9 @@ export const ajouterntreprise = (data) =>{
       .then(key_response => {
        
         const obj = JSON.parse(key_response);
-        
+        dispatch({
+          type : "STOP_LOADING_ENTREPRISE"
+      });
         if(obj.key){
 
 
