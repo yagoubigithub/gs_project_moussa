@@ -153,14 +153,14 @@ class Facture extends Component {
             <div className="sous-nav-container">
             <h1 style={{color: "white", marginRight : 100}}>Facture</h1>
               <NavLink onClick={this.props.getAllFacture} to="/facture">
-                <button className="btn btn-nav">Actualisé</button>
+                <button className="btn">Actualisé</button>
               </NavLink>
     
               <NavLink to="/facture/ajouter/facture">
-                <button className="btn btn-nav">Ajouter</button>
+                <button className="btn">Ajouter</button>
               </NavLink>
     
-              <button className="btn btn-nav" onClick={this.Supprimer}>
+              <button className="btn" onClick={this.Supprimer}>
                 {this.state.delete_button_text}
               </button>
             </div>

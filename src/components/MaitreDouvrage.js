@@ -175,14 +175,14 @@ class MaitreDouvrage extends Component {
             onClick={this.props.getAllMaitreDouvrage}
             to="/maitre_douvrage"
           >
-            <button className="btn btn-nav">Actualisé</button>
+            <button className="btn ">Actualisé</button>
           </NavLink>
 
           <NavLink to="/maitre_douvrage/ajouter">
-            <button className="btn btn-nav">Ajouter</button>
+            <button className="btn">Ajouter</button>
           </NavLink>
 
-          <button className="btn btn-nav" onClick={this.Supprimer}>
+          <button className="btn " onClick={this.Supprimer}>
             {this.state.delete_button_text}
           </button>
         </div>

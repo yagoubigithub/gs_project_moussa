@@ -14,6 +14,7 @@ import AccessTimeIcon from "@material-ui/icons/AccessTime";
 import DescriptionIcon from "@material-ui/icons/Description";
 import WorkIcon from "@material-ui/icons/Work";
 import FormatListNumberedIcon from "@material-ui/icons/FormatListNumbered";
+import GroupAddIcon from '@material-ui/icons/GroupAdd';
 
 class Navbar extends Component {
   render() {
@@ -64,7 +65,7 @@ class Navbar extends Component {
             className="nav-link"
           >
             <span className="nav-link-icon">
-              
+            <DomainIcon />
               <AccessTimeIcon />
             </span>
 
@@ -101,6 +102,7 @@ class Navbar extends Component {
             <span>
               
               <DescriptionIcon />
+              <AccessTimeIcon />
             </span>
             <span>Etat du Facture</span>
           </NavLink>
@@ -137,7 +139,7 @@ class Navbar extends Component {
           >
             <span className="nav-link-icon">
               
-              <AssessmentIcon />
+              <GroupAddIcon />
             </span>
 
             <span> Utilisateur</span>

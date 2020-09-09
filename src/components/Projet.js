@@ -145,14 +145,14 @@ class Projet extends Component {
         <div className="sous-nav-container">
         <h1 style={{color: "white", marginRight : 100}}>Projet</h1>
           <NavLink onClick={this.props.getAllProjet} to="/projet">
-            <button className="btn btn-nav">Actualisé</button>
+            <button className="btn ">Actualisé</button>
           </NavLink>
 
           <NavLink to="/projet/ajouter/projet">
-            <button className="btn btn-nav">Ajouter</button>
+            <button className="btn ">Ajouter</button>
           </NavLink>
 
-          <button className="btn btn-nav" onClick={this.Supprimer}>
+          <button className="btn " onClick={this.Supprimer}>
             {this.state.delete_button_text}
           </button>
         </div>

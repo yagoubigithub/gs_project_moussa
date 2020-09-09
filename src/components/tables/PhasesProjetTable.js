@@ -193,6 +193,7 @@ handleSelectOneChange =  (PhasesProjetSelected) =>{
     {
       Header: 'Description',
       accessor: 'description',
+      width : 400,
       filterMethod: (filter, row) =>
       {
         const regx =  `.*${filter.value}.*`;
@@ -387,7 +388,7 @@ handleSelectOneChange =  (PhasesProjetSelected) =>{
           defaultFilterMethod={(filter, row) =>
             String(row[filter.id]) === filter.value}
             columns={columns}
-            defaultPageSize={this.props.type=== "choose-one" ? 5 : 8}
+            defaultPageSize={this.props.type=== "choose-one" ? 5 : 5}
 
           />
         </div>

@@ -509,7 +509,7 @@ class MaitreDouvrageTable extends Component {
               String(row[filter.id]) === filter.value
             }
             columns={columns}
-            defaultPageSize={this.props.type === "choose-one" ? 5 : 8}
+            defaultPageSize={this.props.type === "choose-one" ? 5 : 5}
           />
         </div>
       </Fragment>

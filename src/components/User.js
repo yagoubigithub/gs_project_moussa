@@ -304,12 +304,12 @@ class User extends Component {
         <div className="sous-nav-container">
         <h1 style={{color: "white", marginRight : 100}}>Utilsateur</h1>
           <NavLink onClick={this.props.getAllUser} to="/user">
-            <button className="btn btn-nav">Actualisé</button>
+            <button className="btn">Actualisé</button>
           </NavLink>
 
           {this.state.user.status === "admin" ? (
             <button
-              className="btn btn-nav"
+              className="btn"
               onClick={this.handleOpenCloseAjouterDialog}
             >
               Ajouter
@@ -317,7 +317,7 @@ class User extends Component {
           ) : null}
 
           {this.state.user.status === "admin" ? (
-            <button className="btn btn-nav" onClick={this.Supprimer}>
+            <button className="btn" onClick={this.Supprimer}>
               {this.state.delete_button_text}
             </button>
           ) : null}
