@@ -25,7 +25,6 @@ export const ajouterntreprise = (data) =>{
       });
         if(obj.key){
 
-
           ipcRenderer.send("entreprise:ajouter", {...data});
     
           ipcRenderer.once('entreprise:ajouter', function (event,data) {
