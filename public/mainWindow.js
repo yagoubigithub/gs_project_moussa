@@ -8,10 +8,10 @@ const { BrowserWindow, app } = require("electron");
 
 let mainWindow = new BrowserWindow({
     show :false,
-   // frame : false,
+   frame : false,
     webPreferences: {
-      nodeIntegration: true,
-      nativeWindowOpen: true,
+      nodeIntegration : true,
+      nativeWindowOpen : true,
      
     },
     icon: `${path.join(__dirname, "./logo512.png")}`

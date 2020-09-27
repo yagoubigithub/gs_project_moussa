@@ -226,6 +226,20 @@ class Agence extends Component {
                     margin="normal"
                   />
                 </Grid>
+                <Grid item xs={6}>
+                  <h3 style={{ margin: 0 }}>
+                    NA (numéro d'agrément){" "}
+                  </h3>
+                  <TextField
+                    placeholder="NA (numéro d'agrément) "
+                    value={this.state.na}
+                    name="na"
+                    variant="outlined"
+                    onChange={this.handleChange}
+                    fullWidth
+                    margin="normal"
+                  />
+                </Grid>
 
                 <Grid item xs={6}>
                   <h3 style={{ margin: 0 }}>

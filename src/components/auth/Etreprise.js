@@ -38,6 +38,7 @@ class Entreprise extends Component {
     nis: "",
     nif: "",
     rc: "",
+    na : "",
     key : ""
   };
   componentWillMount() {
@@ -125,6 +126,7 @@ class Entreprise extends Component {
         rc: data.rc,
         nif: data.nif,
         nis: data.nis,
+        na : data.na,
       },
       user: {
         nom: data.nom,
@@ -221,6 +223,18 @@ class Entreprise extends Component {
             />
           </Grid>
 
+          <Grid item xs={6}>
+            <h3 style={{ margin: 0 }}>NA (numéro d'agrément) </h3>
+            <TextField
+              placeholder="NA (numéro d'agrément) "
+              value={this.state.na}
+              name="na"
+              variant="outlined"
+              onChange={this.handleChange}
+              fullWidth
+              margin="dense"
+            />
+          </Grid>
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}>RC (Numero du registre de commerce) </h3>
             <TextField

@@ -33,15 +33,17 @@ export default class PageFacture extends Component {
             <div className="page-col  entreprise-info-2">
               <img className="logo-entreprise-page" src={logo} />
               <div className="entreprise-fiscaux">
-              {info.rc !== "" ?   <p>RC :{info.rc}</p> : null}
+              {info.na !== "" ?   <p><small>Numéro d'agrément :{info.na}</small></p> : null}
+
+              {info.rc !== "" ?   <p><small>RC :{info.rc}</small></p> : null}
               {
                 info.nis !== "" ? 
-                <p>NIS : {info.nis}</p>
+                <p><small>NIS : {info.nis}</small></p>
                 : null
               }
               {
                 info.nif !== "" ? 
-                <p>NIF : {info.nif }</p>
+                <p><small>NIF : {info.nif }</small></p>
                 : null
               }
                
@@ -63,7 +65,7 @@ export default class PageFacture extends Component {
               
               <p>Raison social  : {this.props.row[0].facture.maitre_douvrage_raison_social}</p>
               <p>Adresse : {this.props.row[0].facture.maitre_douvrage_adresse}</p>
-              <p>Numero de  RC : {this.props.row[0].facture.maitre_douvrage_rg}</p>
+              <p>Numero de  RC ou agrément : {this.props.row[0].facture.maitre_douvrage_rg}</p>
              <p> Numero de tel : {this.props.row[0].facture.maitre_douvrage_telephone} </p>
 <p>Email : {this.props.row[0].facture.maitre_douvrage_email}</p>
 

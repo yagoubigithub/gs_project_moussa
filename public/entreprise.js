@@ -10,7 +10,7 @@ const methode = Entreprise.prototype;
 function Entreprise() {
   //Entreprise
 
-  // db.run('DROP TABLE entreprise');
+ //db.run('DROP TABLE entreprise');
 
   db.run(`CREATE TABLE IF NOT EXISTS entreprise (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,7 +20,8 @@ function Entreprise() {
     adresse TEXT,
     rc TEXT,
     nif TEXT,
-    nis TEXT
+    nis TEXT,
+    na TEXT
    
 )`);
 
@@ -38,11 +39,33 @@ function Entreprise() {
       // ajouter
       db.run(
         `
-               INSERT INTO entreprise(nom  , telephone , email , adresse ,rc , nis , nif) VALUES ('${value.entreprise.nom}','${value.entreprise.telephone}','${value.entreprise.email}','${value.entreprise.adresse}' ,'${value.entreprise.rc}','${value.entreprise.nis}','${value.entreprise.nif}') `,
+               INSERT INTO entreprise(nom  , telephone , email , adresse ,rc , nis , nif , na) VALUES (?,?,?,? ,?,?,?,?) `,
+               [
+                value.entreprise.nom,
+                value.entreprise.telephone,
+                value.entreprise.email,
+                value.entreprise.adresse,
+                value.entreprise.rc,
+                value.entreprise.nis,
+                value.entreprise.nif,
+                value.entreprise.na
+               ]
+               , 
         function (err) {
           db.run(
             `
-                INSERT INTO user(nom , prenom  , username ,  password , status  ) VALUES ('${value.user.nom}','${value.user.prenom}','${value.user.username}','${value.user.password}' , 'admin') `,
+                INSERT INTO user(nom , prenom  , username ,  password , status  ) VALUES (?,?,?,? ,? ) `,
+                [
+                  value.user.nom,
+                  value.user.prenom,
+                  value.user.username,
+                  value.user.password,
+                  'admin'
+
+
+
+                ]
+                , 
             function (err) {
               db.all("SELECT * FROM entreprise ", function (err, rows) {
                 if (err) mainWindow.webContents.send("entreprise:ajouter", err);
@@ -67,7 +90,23 @@ function Entreprise() {
 
       db.run(
         `
-     UPDATE entreprise SET nom='${value.nom}' , telephone='${value.telephone}' , email='${value.email}' , adresse='${value.adresse}' , rc='${value.rc}' , nis='${value.nis}' , nif='${value.nif}'  WHERE  id=${value.id}  `,
+     UPDATE entreprise SET nom=? , telephone=? , email=? , adresse=? , rc=? , nis=? , nif=? , na=?  WHERE  id=?  `,
+[
+  value.nom ,
+  value.telephone, 
+  value.email , 
+  value.adresse , 
+  value.rc ,
+  value.nis , 
+  value.nif  ,
+  value.na  ,
+
+  value.id
+
+
+
+]
+     ,
         function (err) {
           if (err) mainWindow.webContents.send("entreprise:modifier", err);
           db.all("SELECT * FROM entreprise ", function (err, rows) {

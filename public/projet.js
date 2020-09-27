@@ -144,11 +144,13 @@ function Projet() {
                 value.date_projet,
                 value.maitreDouvrage_id,
                 value.tva,
+                value.tva,
                 "undo",
               ],
 
               function (err) {
                 if (err) mainWindow.webContents.send("projet:ajouter", err);
+               
                
                 //add phase de devis
                 const devis_id = this.lastID;

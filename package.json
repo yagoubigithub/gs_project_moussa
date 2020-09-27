@@ -1,9 +1,10 @@
 {
-  "name": "gs_project_moussa",
+  "name": "gs_project_atech_info",
   "version": "0.1.0",
+  "author" : "Yagoubi aek atech-info",
   "private": true,
   "build": {
-    "appId": "com.gs_project_moussa",
+    "appId": "com.gs_project_atech_info",
     "directories": {
       "buildResources": "public"
     },
@@ -20,7 +21,7 @@
         "to": "./"
       }
     ],
-    "productName": "Gestion projets Moussa Logeciel",
+    "productName": "Gestion des projets",
     "copyright": "yagoubi abdelkader"
   },
   "main": "public/electron.js",
