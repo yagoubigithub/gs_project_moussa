@@ -29,6 +29,7 @@ import {
 } from "../../store/actions/devisAction";
 import Page from "./Page";
 import PageContrat from "./PageContrat";
+import { DialogContent, DialogTitle } from "@material-ui/core";
 
 const head = [
   { access: "numero", value: "N°" },
@@ -220,24 +221,28 @@ class PrintDevis extends Component {
 
     return (
       <Dialog
-        fullScreen
+        
+        maxWidth="xl"
+        fullWidth
         open={this.state.open}
-        style={{ backgroundColor: "gray" }}
+      
       >
-        <div style={{ overflow: "hidden" }}>
-          <AppBar className="bg-dark">
-            <Toolbar
-              style={{ display: "flax", justifyContent: "space-between" }}
-            >
-              <Link to={`/${this.props.match.params.buttonReturn}/`}>
+        <div style={{overflow : "hidden"}} >
+        
+        <DialogTitle>
+       
+
+<div  style={{ display: "flax", justifyContent: "space-between", flexDirection : "column"  , border : "1px solid gray"}}>
+
+<Link style={{ border : "1px solid green"}} to={`/${this.props.match.params.buttonReturn}/`}>
                 <IconButton
                   onClick={this.handleClose}
-                  style={{ color: "white" }}
+                 
                 >
                   <ArrowBackIcon />
                 </IconButton>
               </Link>
-              <div>
+              <div style={{ display: "inline", border : "1px solid yellow"}}>
                 <Button
                   color="primary"
                   variant="contained"
@@ -261,6 +266,7 @@ class PrintDevis extends Component {
               <div
                 style={{
                   display: "inline",
+                  border : "1px solid gray"
                 }}
               >
                 <input
@@ -273,19 +279,22 @@ class PrintDevis extends Component {
                 />
                 /{this.state.pagesNumber}
               </div>
-            </Toolbar>
-          </AppBar>
-
-          <div
+            
+</div>
+        </DialogTitle>
+         
+<DialogContent>
+  
+<div
             style={{
               backgroundColor: "gray",
-              marginTop: 60,
               paddingTop: 70,
-              height: "80%",
+              paddingBottom: 70,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              overflowY: "auto",
+              overflow: "auto",
+              maxHeight : 500
             }}
           >
             {rows_to_print.map((row, index) => {
@@ -310,6 +319,10 @@ class PrintDevis extends Component {
               type="print"
             />
           </div>
+       
+</DialogContent>
+       
+       
         </div>
       </Dialog>
     );

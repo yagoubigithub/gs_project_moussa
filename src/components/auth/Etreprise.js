@@ -12,6 +12,7 @@ import {
 } from "../../store/actions/entrepriseAction";
 
 import LoadingComponent from "../../utils/loadingComponent";
+import TaskBar from "../TaskBar";
 
 //Mui
 import Grid from "@material-ui/core/Grid";
@@ -146,7 +147,9 @@ class Entreprise extends Component {
   };
   render() {
     return (
-      <div style={{ backgroundColor: "#f2f2f2", padding : 15 }}>
+      <div style={{ backgroundColor: "#f2f2f2"}}>
+      <TaskBar />
+      <br />
  <LoadingComponent loading={this.props.loading !== undefined ? this.props.loading : false} />
 <Dialog open={this.state.error !== "" && this.state.error !== null} onClose={this.closeAlert}>
           <DialogContent>
