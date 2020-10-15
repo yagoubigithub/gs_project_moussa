@@ -71,9 +71,10 @@ function PrintDevis() {
     
      
     }
-    .print-page-container table{
-      width : 100%;
-      border : 1px double black;
+    .print-page-container .print-page-content table {
+      width: 100%;
+      border: 1px solid rgba(0, 0, 0, 0.4);
+      border-collapse: collapse;
     }
     .print-page-container p {
       font-size: 14px;
@@ -109,37 +110,57 @@ function PrintDevis() {
     }
     
     
-    .print-page-container table td,th{
-      border-bottom: 1px solid rgba(0, 0, 0, 1);
-      text-align: left;
-      padding : 10px;
+    .print-page-container .print-page-content table thead {
+      font-weight: 700;
+      background-color: #eee;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+    }
+    .print-page-container .print-page-content table td,
+    th {
+      border-left: 1px solid rgba(0, 0, 0, 0.4);
+    
+      padding: 10px;
       max-height: 70px;
       max-width: 350px;
       text-align: center;
     }
-    .print-page-container table tbody td,th{
-      border-bottom: 1px solid rgba(0, 0, 0, 1);
-      text-align: left;
-      padding : 10px;
-      max-height: 70px;
-      max-width: 350px;
-      text-align: center;
-    }
-    .print-page-container table thead td,th{
-      border-bottom: 1px solid rgba(0, 0, 0, 1);
-      text-align: left;
-      padding : 10px;
-      max-height: 70px;
-      max-width: 350px;
-      text-align: center;
-    }
-    .print-page-container p,h1,h2,h3,h4,h5,h6{
+    .print-page-container p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
       margin: 5px;
       color: black;
       font-family: Arial, Helvetica, sans-serif;
     }
-    .pt-1{
-      padding-top : 10px;
+    .pt-1 {
+      padding-top: 10px;
+    }
+    
+    .print-page-container table b {
+      color: #000;
+    }
+    
+    .table-info-1 {
+      border: 1px solid rgba(0, 0, 0, 0.3);
+      background-color: #eee;
+      border-collapse: collapse;
+    }
+    .table-info-2 {
+      border-collapse: collapse;
+      border: 1px solid rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+    }
+    .table-info-2 tbody tr {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+    }
+    .table-info-1 tbody tr td {
+      padding: 5px;
+    }
+    .table-info-2 tbody tr td {
+      padding: 5px;
     }
     
    /****************************************************************/

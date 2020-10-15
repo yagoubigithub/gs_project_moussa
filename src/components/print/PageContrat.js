@@ -27,6 +27,11 @@ export default class PageContrat extends Component {
 
     return (
       <div className="print-page-container" id={`page-${this.props.id}`}>
+      
+      
+   
+
+        {this.props.rows_to_print.length > 0 && (
         <div className="print-page-head">
           <div className="page-row">
             <div className="page-col entreprise-info-1">
@@ -39,76 +44,136 @@ export default class PageContrat extends Component {
             <div className="page-col  entreprise-info-2">
               <img className="logo-entreprise-page" src={logo} />
               <div className="entreprise-fiscaux">
-                {info.rc !== "" ? <p>RC :{info.rc}</p> : null}
-                {info.nis !== "" ? <p>NIS : {info.nis}</p> : null}
-                {info.nif !== "" ? <p>NIF : {info.nif}</p> : null}
+                {info.na !== "" ? (
+                  <p>
+                    <small>Numéro d'agrément :{info.na}</small>
+                  </p>
+                ) : null}
+
+                {info.rc !== "" ? (
+                  <p>
+                    <small>RC :{info.rc}</small>
+                  </p>
+                ) : null}
+                {info.nis !== "" ? (
+                  <p>
+                    <small>NIS : {info.nis}</small>
+                  </p>
+                ) : null}
+                {info.nif !== "" ? (
+                  <p>
+                    <small>NIF : {info.nif}</small>
+                  </p>
+                ) : null}
               </div>
             </div>
           </div>
 
           <hr />
+          <div className="page-row">
+            <div className="page-col">
+              <h2>
+                Devis : N° {this.props.rows_to_print[0][0].devis.id} /{" "}
+                {new Date(this.props.rows_to_print[0][0].devis.date_devis).getFullYear()}
+              </h2>
+              <table className="table-info-1">
+                <tbody>
+                  <tr>
+                    <td>
+                      <b>Date </b>
+                    </td>
+                    <td>{this.props.rows_to_print[0][0].devis.date_devis.split("T")[0]}</td>
+                  </tr>
 
-          {this.props.rows_to_print.length > 0 && (
-            <div className="page-row">
-              <div className="page-col">
-                <h2>
-                  Devis : N° {this.props.rows_to_print[0][0].devis.id} /{" "}
-                  {new Date(
-                    this.props.rows_to_print[0][0].devis.date_devis
-                  ).getFullYear()}
-                </h2>
-                <p>
-                  Date :{" "}
-                  {
-                    this.props.rows_to_print[0][0].devis.date_devis.split(
-                      "T"
-                    )[0]
-                  }
-                </p>
-                <p>Par : {this.props.rows_to_print[0][0].devis.user_nom + " " + this.props.rows_to_print[0][0].devis.user_prenom}</p>
-                <p>Objet : {this.props.rows_to_print[0][0].devis.objet}</p>
-                <p>Projet : {this.props.rows_to_print[0][0].devis.nom}</p>
-              </div>
-              <div className="page-col">
-                <h5>
-                  Maitre d'ouvrage{" "}
-                  {this.props.rows_to_print[0][0].devis.maitre_douvrage_prenom}{" "}
-                  {this.props.rows_to_print[0][0].devis.maitre_douvrage_nom}
-                </h5>
+                  <tr>
+                    <td>
+                      <b>Par</b>
+                    </td>
+                    <td>
+                      {this.props.rows_to_print[0][0].devis.user_nom +
+                        " " +
+                        this.props.rows_to_print[0][0].devis.user_prenom}
+                    </td>
+                  </tr>
 
-                <p>
-                  raison social :{" "}
-                  {
-                    this.props.rows_to_print[0][0].devis
-                      .maitre_douvrage_raison_social
-                  }
-                </p>
-                <p>
-                  Adresse :{" "}
-                  {this.props.rows_to_print[0][0].devis.maitre_douvrage_adresse}
-                </p>
-                <p>
-                  numero de RC :{" "}
-                  {this.props.rows_to_print[0][0].devis.maitre_douvrage_rg}
-                </p>
-                <p>
-                  {" "}
-                  numero de tel :{" "}
-                  {
-                    this.props.rows_to_print[0][0].devis
-                      .maitre_douvrage_telephone
-                  }{" "}
-                </p>
-                <p>
-                  email :{" "}
-                  {this.props.rows_to_print[0][0].devis.maitre_douvrage_email}
-                </p>
-              </div>
+                  <tr>
+                    <td>
+                      <b>Objet </b>
+                    </td>
+                    <td>{this.props.rows_to_print[0][0].devis.objet}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <b>Projet </b>
+                    </td>
+
+                    <td>{this.props.rows_to_print[0][0].devis.nom}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-          )}
+            <div className="page-col">
+              <table className="table-info-2">
+                <tbody>
+                  <tr>
+                    <td>
+                      <b>Maitre d'ouvrage</b>
+                    </td>
+                    <td>
+                      {this.props.rows_to_print[0][0].devis.maitre_douvrage_prenom}{" "}
+                      {this.props.rows_to_print[0][0].devis.maitre_douvrage_nom}
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <b>Raison social</b>
+                    </td>
+
+                    <td>
+                      {this.props.rows_to_print[0][0].devis.maitre_douvrage_raison_social}
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <b>Adresse</b>
+                    </td>
+
+                    <td>{this.props.rows_to_print[0][0].devis.maitre_douvrage_adresse}</td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <b>Numero de RC ou agrément</b>
+                    </td>
+
+                    <td>{this.props.rows_to_print[0][0].devis.maitre_douvrage_rg}</td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <b>Numero de tel</b>
+                    </td>
+
+                    <td>{this.props.rows_to_print[0][0].devis.maitre_douvrage_telephone}</td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <b>Email </b>
+                    </td>
+
+                    <td>{this.props.rows_to_print[0][0].devis.maitre_douvrage_email}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
 
-        <div className="print-page-content" style={{height : this.props.type === "print"  ? "45%" : "133.65mm !important",minHeight :this.props.type === "print"  ? "45%" : "133.65mm !important" }}>
+        )}
+        <div className="print-page-content"  style={{height : this.props.type === "print"  ? "45%" : "133.65mm",minHeight :this.props.type === "print"  ? "45%" : "133.65mm" }}>
         
          
           <div>
@@ -274,7 +339,7 @@ export default class PageContrat extends Component {
             
          
         </div>
-        <div className="print-page-sign" style={{height :this.props.type === "print"  ? "18.33%" : "54.44mm !important" , minHeight :this.props.type === "print"  ? "18.33%" : "54.44mm !important"  }}>
+        <div className="print-page-sign" style={{height :this.props.type === "print"  ? "18.33%" : "54.44mm" , minHeight :this.props.type === "print"  ? "18.33%" : "54.44mm"  }}>
         <div className="sign">
                 <div className="sign-col">
                 Le maitre d’ouvrage

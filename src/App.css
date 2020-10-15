@@ -17,15 +17,13 @@
 
   /*size*/
 
-  --navbarWidth : 270px;
-  --MincenavbarWidth : -261px;
+  --navbarWidth: 270px;
+  --MincenavbarWidth: -261px;
 }
-.btn-taskbar{
-  border : 1px solid rgba(255,255,255,.4);
+.btn-taskbar {
+  border: 1px solid rgba(255, 255, 255, 0.4);
   margin: 1px;
   background-color: #333;
-
-  
 }
 
 .red {
@@ -34,11 +32,11 @@
 .black {
   color: var(--black);
 }
-.bg-green{
+.bg-green {
   background-color: forestgreen;
-  height : 100%;
+  height: 100%;
 }
-iframe{
+iframe {
   display: none;
 }
 /****************************************************************************/
@@ -51,9 +49,9 @@ iframe{
 }
 #root .container .nav {
   width: var(--navbarWidth);
-background-image: url('./images/bg.jpg');
-background-size: cover;
-background-repeat: no-repeat;
+  background-image: url("./images/bg.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
   position: fixed;
   height: 100%;
 
@@ -83,11 +81,11 @@ background-repeat: no-repeat;
   text-decoration: none;
   text-transform: capitalize;
   text-align: center;
- display: flex;
- justify-content: center;
- align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.nav-link-icon{
+.nav-link-icon {
   margin-right: 10px;
 }
 
@@ -105,28 +103,28 @@ background-repeat: no-repeat;
   color: var(--text-gray);
 }
 
-.btn-nav{
+.btn-nav {
   background-color: var(--accent);
-  color :  var(--white);
-  margin : 5px;
+  color: var(--white);
+  margin: 5px;
 }
-.btn{
+.btn {
   border: 0;
   padding: 6px 16px;
   font-size: 14px;
   min-width: 64px;
   box-sizing: border-box;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-    font-weight: 400;
-    line-height: 1.75;
-    border-radius: 4px;
-    letter-spacing: 0.02857em;
-    text-transform: none;
+  font-weight: 400;
+  line-height: 1.75;
+  border-radius: 4px;
+  letter-spacing: 0.02857em;
+  text-transform: none;
   cursor: pointer;
-  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.06), 0px 8px 10px 1px rgba(0, 0, 0, 0.042), 0px 3px 14px 2px rgba(0, 0, 0, 0.036);
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.06),
+    0px 8px 10px 1px rgba(0, 0, 0, 0.042), 0px 3px 14px 2px rgba(0, 0, 0, 0.036);
 
-  margin : 0.6rem;
-
+  margin: 0.6rem;
 }
 /*end of navbar styling*/
 /************************************************************************************/
@@ -164,45 +162,44 @@ background-repeat: no-repeat;
   border: 1px solid rgba(0, 0, 0, 0.4);
   width: 700px;
   padding: 20px;
-text-align: center;
+  text-align: center;
 }
 
 /******************************************************************************/
 /*sous-nav styling*/
 .sous-nav-container {
-    background: var(--primary);
-    color: var(--white);
-    align-items: center;
-    padding: 15px;
-    display: flex;
-    margin-bottom: 35px !important;
-  }
-  .sous-nav-link {
-    color: var(--white);
-    text-decoration: none;
-    text-align: center;
-    width: 80% !important;
-    display: block;
-    padding: 5px;
-    border-radius: 4px;
-    border: 1px solid var(--white);
-  }
-  .sous-nav-link:hover {
-    background: var(--sky);
-  }
-  /*end sounav styling*/
-  /********************************************************************/
-  
+  background: var(--primary);
+  color: var(--white);
+  align-items: center;
+  padding: 15px;
+  display: flex;
+  margin-bottom: 35px !important;
+}
+.sous-nav-link {
+  color: var(--white);
+  text-decoration: none;
+  text-align: center;
+  width: 80% !important;
+  display: block;
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid var(--white);
+}
+.sous-nav-link:hover {
+  background: var(--sky);
+}
+/*end sounav styling*/
+/********************************************************************/
 
-  /*table component*/
+/*table component*/
 .table {
   background: var(--white);
- 
+
   margin-top: 25px;
 }
-.ReactTable .rt-th, .ReactTable .rt-td{
-  padding:  0 !important;
- 
+.ReactTable .rt-th,
+.ReactTable .rt-td {
+  padding: 0 !important;
 }
 
 .search-form {
@@ -220,8 +217,6 @@ text-align: center;
   color: var(--white);
 }
 
-
-
 .ReactTable .cell {
   text-align: center;
   text-overflow: ellipsis;
@@ -230,16 +225,14 @@ text-align: center;
   word-break: break-word !important;
   margin: 0;
   max-height: 300px;
-  overflow-y :auto;
+  overflow-y: auto;
 }
 
 div[class^="react-tabs-css-module_content"] {
   padding: 0px !important;
   height: 600px !important;
- 
-  
 }
-.table-container{
+.table-container {
   overflow-x: auto;
 }
 
@@ -249,15 +242,14 @@ div[class^="react-tabs-css-module_content"] {
 
 /***********************************************************************************/
 /*tabs*/
-*{
+* {
   box-sizing: border-box;
 }
-.table-container{
+.table-container {
   margin-bottom: 10rem;
 }
 .MuiDialog-container .MuiPaper-root .tab-content {
- 
-  padding-bottom: 5rem;;
+  padding-bottom: 5rem;
   min-height: 700px;
   height: 700px;
   overflow: auto;
@@ -290,175 +282,159 @@ div[class^="react-tabs-css-module_content"] {
   overflow-x: auto;
 }
 
-
 /* end search in table*/
 /*****************************************************************/
 /*react select*/
 
-.react-select__multi-value{
- border : 1px solid gray !important;
+.react-select__multi-value {
+  border: 1px solid gray !important;
 }
-.react-select__multi-value__label{
+.react-select__multi-value__label {
   text-overflow: initial !important;
   white-space: initial !important;
   padding-left: 10px !important;
   padding-right: 10px !important;
 }
-.react-select__multi-value__remove{
+.react-select__multi-value__remove {
   background-color: #3f4954 !important;
 }
 
 /*****************************************************************/
-.print-page-container{
+.print-page-container {
   box-sizing: border-box;
   font-family: Arial, Helvetica, sans-serif;
-width: 210mm;
-min-height: 297mm;
-background-color: white;
-margin-bottom: 20px;
-padding : 5mm;
-
+  width: 210mm;
+  min-height: 297mm;
+  background-color: white;
+  margin-bottom: 20px;
+  padding: 5mm;
 }
-.print-page-head{
-height : 95.65mm;
-border : 1px solid red;
+.print-page-head {
+  height: 95.65mm;
 }
-.print-page-footer{
-  height : 9.55mm;
-  border : 1px solid blue;
- 
+.print-page-footer {
+  height: 9.55mm;
 }
 .print-page-content {
-  
-  height : 181.75mm;
-  border : 1px solid yellow;
-
+  height: 181.75mm;
 }
-*{
+* {
   box-sizing: border-box;
 }
-.page-row{
-  
-  width : 100%;
+.page-row {
+  width: 100%;
 }
-.page-col{
- float : left;
- max-width : 50%;
- width : 50%;
- 
+.page-col {
+  float: left;
+  max-width: 50%;
+  width: 50%;
 }
 
-
-.print-page-container  .print-page-content table{
-  width : 100%;
-  border : 1px solid rgba(0, 0, 0, 0.4);
+.print-page-container .print-page-content table {
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.4);
   border-collapse: collapse;
-
 }
 .print-page-container p {
   font-size: 14px;
   font-weight: 400;
 }
-.bureau-info{
-margin-top: 25px;
-}
-hr{
-  width : 100%;
-}
-.logo-entreprise-page{
-  max-width:  100px;
-  
- float: right;
-}
-.entreprise-fiscaux{
-  text-align: left;
- 
+.bureau-info {
   margin-top: 25px;
-  
+}
+hr {
+  width: 100%;
+}
+.logo-entreprise-page {
+  max-width: 100px;
+
+  float: right;
+}
+.entreprise-fiscaux {
+  text-align: left;
+
+  margin-top: 25px;
 }
 .entreprise-fiscaux p {
   font-weight: 700 !important;
-  margin : 10px !important;
-  
+  margin: 10px !important;
 }
 .entreprise-info-1 {
-  width :65%;
+  width: 65%;
 }
 .entreprise-info-2 {
-  width : 35%;
+  width: 35%;
 }
-.print-page-container .print-page-content table thead{
- 
+.print-page-container .print-page-content table thead {
   font-weight: 700;
   background-color: #eee;
-  border-bottom : 1px solid rgba(0, 0, 0, 0.4);
-
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
 }
-.print-page-container  .print-page-content table td,th{
- 
+.print-page-container .print-page-content table td,
+th {
   border-left: 1px solid rgba(0, 0, 0, 0.4);
 
-  padding : 10px;
+  padding: 10px;
   max-height: 70px;
   max-width: 350px;
   text-align: center;
 }
-.print-page-container p,h1,h2,h3,h4,h5,h6{
+.print-page-container p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: 5px;
   color: black;
   font-family: Arial, Helvetica, sans-serif;
 }
-.pt-1{
-  padding-top : 10px;
+.pt-1 {
+  padding-top: 10px;
 }
-
 
 .print-page-container table b {
-  color : #000;
+  color: #000;
 }
 
-.table-info-1{
-  border : 1px solid rgba(0, 0, 0, 0.3);
+.table-info-1 {
+  border: 1px solid rgba(0, 0, 0, 0.3);
   background-color: #eee;
   border-collapse: collapse;
-  
 }
-.table-info-2{
+.table-info-2 {
   border-collapse: collapse;
   border: 1px solid rgba(0, 0, 0, 0.3);
   border-radius: 10px;
 }
-.table-info-2 tbody tr{
-  
+.table-info-2 tbody tr {
   border-bottom: 1px solid rgba(0, 0, 0, 0.3);
 }
-.table-info-1 tbody tr td{ 
- padding : 5px;
+.table-info-1 tbody tr td {
+  padding: 5px;
 }
-.table-info-2 tbody tr td{ 
-  padding : 5px;
- }
+.table-info-2 tbody tr td {
+  padding: 5px;
+}
 
 /****************************************************************/
 
-
-.sign{
-display: grid;
-grid-template-columns: repeat(2,1fr);
-
+.sign {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
 }
-.sign .sign-col{
-
+.sign .sign-col {
   margin-top: 2rem;
   text-align: center;
 }
-.print-page-sign{
+.print-page-sign {
   font-weight: 800;
 }
 .nb {
-  width : 100%;
-  border : 1px solid black;
-  padding : 5px;
+  width: 100%;
+  border: 1px solid black;
+  padding: 5px;
   margin-bottom: 15px;
   text-align: center;
 }

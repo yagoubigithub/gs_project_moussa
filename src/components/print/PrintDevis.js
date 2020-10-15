@@ -316,7 +316,7 @@ class PrintDevis extends Component {
               entreprise={this.props.entreprise}
               user={this.state.user}
               id={rows_to_print.length + 1}
-              type="print"
+             
             />
           </div>
        
