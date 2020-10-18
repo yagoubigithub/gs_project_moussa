@@ -191,6 +191,8 @@ box-sizing : border-box;
     </style>
     </head>
     <body>`;
+ 
+ 
     value.pages.forEach((page, index) => {
       html = html + `<div id="page-${index}">${page.page}</div>`;
       id=page.id;

@@ -28,6 +28,7 @@ import {
 } from "../../store/actions/factureAction";
 
 import PageFacture from "./PageFacture";
+import { DialogContent, DialogTitle } from "@material-ui/core";
 
 const head = [
   { access: "numero", value: "N°" },
@@ -173,47 +174,29 @@ class PrintFacture extends Component {
 
     return (
       <Dialog
-        fullScreen
-        open={this.state.open}
-        style={{ backgroundColor: "gray" }}
-      >
+        maxWidth="xl" fullWidth open={this.state.open}>
         <div style={{ overflow: "hidden" }}>
-          <AppBar className="bg-dark">
-            <Toolbar
-              style={{ display: "flax", justifyContent: "space-between" }}
+        <DialogTitle style={{height : 60}}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                flexDirection: "row",
+                
+              }}
             >
-              <Link to={`/${this.props.match.params.buttonReturn}/`}>
-                <IconButton
-                  onClick={this.handleClose}
-                  style={{ color: "white" }}
-                >
+              <Link
+              
+                to={`/${this.props.match.params.buttonReturn}/`}
+              >
+                <IconButton onClick={this.handleClose}>
                   <ArrowBackIcon />
                 </IconButton>
               </Link>
-              <div>
-                <Button
-                  color="primary"
-                  variant="contained"
-                  onClick={this.print}
-                  style={{ margin: 4 }}
-                >
-                  <PrintIcon />
-                </Button>
-
-                <Button
-                  color="primary"
-                  variant="contained"
-                  onClick={this.printToPdf}
-                >
-                  <PictureAsPdfIcon />
-                </Button>
-
-                {/* <button onClick={this.searchInPage} >Search</button>  */}
-              </div>
-
-              <div
+                   <div
                 style={{
                   display: "inline",
+                  
                 }}
               >
                 <input
@@ -224,28 +207,40 @@ class PrintFacture extends Component {
                   defaultValue={1}
                   min={1}
                 />
-                /{this.state.pagesNumber}
+                /<small>{this.state.pagesNumber}</small>
               </div>
-            </Toolbar>
-          </AppBar>
+            
+            
+              <div style={{ display: "inline" }}>
+                <IconButton onClick={this.print} style={{ margin: 4 }}>
+                  <PrintIcon />
+                </IconButton>
 
-          <div
-            style={{
-              marginTop: 60,
-              overflowY: "scroll",
-              height: 622,
-              backgroundColor: "gray",
-            }}
-          >
+                <IconButton onClick={this.printToPdf}>
+                  <PictureAsPdfIcon />
+                </IconButton>
+
+                {/* <button onClick={this.searchInPage} >Search</button>  */}
+              </div>
+
+        
+
+            </div>
+          </DialogTitle>
+
+      
+          
+          <DialogContent>
             <div
               style={{
-                paddingTop: 70,
-                height: "100%",
+                backgroundColor: "gray",
+                paddingTop: 40,
+                paddingBottom: 40,
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                marginBottom: 100,
-                paddingBottom: 100,
+                overflow: "auto",
+                maxHeight: 500,
               }}
             >
               {rows_to_print.map((row, index) => {
@@ -262,8 +257,10 @@ class PrintFacture extends Component {
                 );
               })}
             </div>
+            </DialogContent>
           </div>
-        </div>
+        
+       
       </Dialog>
     );
   }

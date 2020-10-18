@@ -20,6 +20,7 @@ function PrintFacture(){
   
   ipcMain.on("printToPdf:facture", (event, value) => {
     let id = 0;
+ 
     let html = `
     <!DOCTYPE html>
 <html>
@@ -48,19 +49,20 @@ function PrintFacture(){
     .print-page-head{
     height : 77mm;
     min-height : 77mm;
+  
     
     }
     .print-page-footer{
       height : 10mm;
       min-height : 10mm;
-      
+    
      
     }
     .print-page-content {
       
       height : 190mm;
       min-height : 190mm;
-    
+      
     
     }
     
@@ -68,15 +70,18 @@ function PrintFacture(){
       
       width : 100%;
       justify-content: space-between;
+    
     }
     .page-col{
      float : left;
      width : 50%;
+    
      
     }
-    .print-page-container table{
-      width : 100%;
-      border : 1px double black;
+    .print-page-container .print-page-content table {
+      width: 100%;
+      border: 1px solid rgba(0, 0, 0, 0.4);
+      border-collapse: collapse;
     }
     .print-page-container p {
       font-size: 14px;
@@ -112,27 +117,91 @@ function PrintFacture(){
     }
     
     
-    .print-page-container table td,th{
-      border-bottom: 1px solid rgba(0, 0, 0, 1);
-      text-align: left;
-      padding : 10px;
+    .print-page-container .print-page-content table thead {
+      font-weight: 700;
+      background-color: #eee;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+    }
+    .print-page-container .print-page-content table td,
+    th {
+      border-left: 1px solid rgba(0, 0, 0, 0.4);
+    
+      padding: 10px;
       max-height: 70px;
       max-width: 350px;
       text-align: center;
     }
-    .print-page-container p,h1,h2,h3,h4,h5,h6{
+    .print-page-container p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
       margin: 5px;
       color: black;
       font-family: Arial, Helvetica, sans-serif;
     }
-    .pt-1{
-      padding-top : 10px;
+    .pt-1 {
+      padding-top: 10px;
     }
     
+    .print-page-container table b {
+      color: #000;
+    }
+    
+    .table-info-1 {
+      border: 1px solid rgba(0, 0, 0, 0.3);
+      background-color: #eee;
+      border-collapse: collapse;
+    }
+    .table-info-2 {
+      border-collapse: collapse;
+      border: 1px solid rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+    }
+    .table-info-2 tbody tr {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+    }
+    .table-info-1 tbody tr td {
+      padding: 5px;
+    }
+    .table-info-2 tbody tr td {
+      padding: 5px;
+    }
+    
+   /****************************************************************/
+
+
+.sign{
   
+
+box-sizing : border-box;
+}
+.sign .sign-col{
+  float : left;
+  width : 50%;
+  
+  margin-top: 25px;
+  text-align: center;
+}
+.print-page-sign{
+  font-weight: 800;
+}
+.nb {
+  width : 100%;
+  border : 1px solid black;
+  padding : 5px;
+  margin-bottom: 15px;
+  text-align: center;
+}
     </style>
     </head>
     <body>`;
+ 
+ 
+
+
     value.pages.forEach((page, index) => {
       html = html + `<div id="page-${index}">${page.page}</div>`;
       id=page.id;
@@ -229,7 +298,6 @@ function PrintFacture(){
   
   ipcMain.on("print:facture", (event , value)=>{
  
-
     let html = `
     <!DOCTYPE html>
 <html>
@@ -286,17 +354,28 @@ flex: 1;
 flex :19;
 
 }
+*{
+  box-sizing : border-box;
+}
+
 .page-row{
 display:  flex;
 width : 100%;
 justify-content: space-between;
+
+flex-wrap: nowrap;
+
 }
 .page-col{
-flex: 5;
+  flex-grow: 1;
+  
 }
-.print-page-container table{
-width : 100%;
-border : 1px double black;
+
+.print-page-container  .print-page-content table{
+  width : 100%;
+  border : 1px solid rgba(0, 0, 0, 0.4);
+  border-collapse: collapse;
+
 }
 .print-page-container p {
 font-size: 14px;
@@ -324,9 +403,31 @@ font-weight: 400;
 .entreprise-info-2 {
   width : 35%;
 }
+.print-page-container .print-page-content table thead{
+ 
+  font-weight: 700;
+  background-color: #ddd;
+  border-bottom : 1px solid rgba(0, 0, 0, 0.4);
 
-.print-page-container table td,th{
-  border-bottom: 1px solid rgba(0, 0, 0, 1);
+}
+.print-page-container .print-page-content table td,th{
+   border-left: 1px solid rgba(0, 0, 0, 0.4);
+  text-align: left;
+  padding : 10px;
+  max-height: 70px;
+  max-width: 350px;
+  text-align: center;
+}
+.print-page-container .print-page-content table tbody td,th{
+   border-left: 1px solid rgba(0, 0, 0, 0.4);
+  text-align: left;
+  padding : 10px;
+  max-height: 70px;
+  max-width: 350px;
+  text-align: center;
+}
+.print-page-container .print-page-content table thead td,th{
+   border-left: 1px solid rgba(0, 0, 0, 0.4);
   text-align: left;
   padding : 10px;
   max-height: 70px;
@@ -340,16 +441,46 @@ font-family: Arial, Helvetica, sans-serif;
 }
 .pt-1{
 padding-top : 10px;
-
-
+display : flex;
+}
+.print-page-container table {
+  border : 1px solid rgba(0, 0, 0, 0.3);
+  padding : 0.5rem;
+  border-radius: 0.1rem;
+}
+.print-page-container table b {
+  color : #000;
 }
 
-    
+/****************************************************************/
+
+
+.sign{
+display: grid;
+grid-template-columns: repeat(2,1fr);
+
+}
+.sign .sign-col{
+
+  margin-top: 2rem;
+  text-align: center;
+}
+.print-page-sign{
+  font-weight: 800;
+}
+.nb {
+  width : 100%;
+  border : 1px solid black;
+  padding : 5px;
+  margin-bottom: 15px;
+  text-align: center;
+
+}  
   
     </style>
     </head>
     <body>`;
-    value.pages.forEach((page, index) => {
+  value.pages.forEach((page, index) => {
       html = html + `<div id="page-${index}">${page.page}</div>`;
     });
     html =

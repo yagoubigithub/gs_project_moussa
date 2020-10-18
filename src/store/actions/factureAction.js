@@ -304,9 +304,7 @@ export const removeFactureEdited = () =>{
   
   export const print = (data) =>{
     return (dispatch ,getState)=>{
-      dispatch({
-        type : "LOADING_FACTURE"
-    })
+  
     ipcRenderer.send("print:facture", {...data});
   
     ipcRenderer.once('print:facture', function (event,data) {
@@ -331,9 +329,7 @@ export const removeFactureEdited = () =>{
 
   export const printToPdf = (data) =>{
     return (dispatch ,getState)=>{
-      dispatch({
-        type : "LOADING_FACTURE"
-    })
+    
     ipcRenderer.send("printToPdf:facture", {...data});
   
     ipcRenderer.once('printToPdf:facture', function (event,data) {

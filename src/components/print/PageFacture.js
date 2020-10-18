@@ -20,33 +20,40 @@ export default class PageFacture extends Component {
     },0)
     return (
       <div className="print-page-container" id={`page-${this.props.id}`}>
-        <div className="print-page-head">
+   
+   <div className="print-page-head">
           <div className="page-row">
             <div className="page-col entreprise-info-1">
-              <h4>Bureau d'etudes d'architecture  & d'urbanisme :  {info.nom}</h4>
+              <h4>Bureau d'etudes d'architecture & d'urbanisme {info.nom}</h4>
               <p>Adresse : {info.adresse}</p>
               <p>Télephpne : {info.telephone}</p>
               <p>Email : {info.email}</p>
-             
             </div>
 
             <div className="page-col  entreprise-info-2">
               <img className="logo-entreprise-page" src={logo} />
               <div className="entreprise-fiscaux">
-              {info.na !== "" ?   <p><small>Numéro d'agrément :{info.na}</small></p> : null}
+                {info.na !== "" ? (
+                  <p>
+                    <small>Numéro d'agrément :{info.na}</small>
+                  </p>
+                ) : null}
 
-              {info.rc !== "" ?   <p><small>RC :{info.rc}</small></p> : null}
-              {
-                info.nis !== "" ? 
-                <p><small>NIS : {info.nis}</small></p>
-                : null
-              }
-              {
-                info.nif !== "" ? 
-                <p><small>NIF : {info.nif }</small></p>
-                : null
-              }
-               
+                {info.rc !== "" ? (
+                  <p>
+                    <small>RC :{info.rc}</small>
+                  </p>
+                ) : null}
+                {info.nis !== "" ? (
+                  <p>
+                    <small>NIS : {info.nis}</small>
+                  </p>
+                ) : null}
+                {info.nif !== "" ? (
+                  <p>
+                    <small>NIF : {info.nif}</small>
+                  </p>
+                ) : null}
               </div>
             </div>
           </div>
@@ -54,26 +61,107 @@ export default class PageFacture extends Component {
           <hr />
           <div className="page-row">
             <div className="page-col">
-              <h2>Facture : N° {this.props.row[0].facture.id} / {new Date(this.props.row[0].facture.date_facture).getFullYear()}</h2>
-              <p>Date : {this.props.row[0].facture.date_facture.split('T')[0]}</p>
-              <p>Par : {this.props.row[0].facture.user_nom + " " + this.props.row[0].facture.user_prenom}</p>
-              <p>Objet :  {this.props.row[0].facture.objet}</p>
-              <p>Projet  : {this.props.row[0].facture.nom}</p>
+              <h2>
+                Facture : N° {this.props.row[0].facture.id} /{" "}
+                {new Date(this.props.row[0].facture.date_facture).getFullYear()}
+              </h2>
+              <table className="table-info-1">
+                <tbody>
+                  <tr>
+                    <td>
+                      <b>Date </b>
+                    </td>
+                    <td>{this.props.row[0].facture.date_facture.split("T")[0]}</td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <b>Par</b>
+                    </td>
+                    <td>
+                      {this.props.row[0].facture.user_nom +
+                        " " +
+                        this.props.row[0].facture.user_prenom}
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <b>Objet </b>
+                    </td>
+                    <td>{this.props.row[0].facture.objet}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <b>Projet </b>
+                    </td>
+
+                    <td>{this.props.row[0].facture.nom}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
             <div className="page-col">
-              <h5>Maitre d'ouvrage  {this.props.row[0].facture.maitre_douvrage_nom} {" "} {this.props.row[0].facture.maitre_douvrage_prenom}</h5>
-              
-              <p>Raison social  : {this.props.row[0].facture.maitre_douvrage_raison_social}</p>
-              <p>Adresse : {this.props.row[0].facture.maitre_douvrage_adresse}</p>
-              <p>Numero de  RC ou agrément : {this.props.row[0].facture.maitre_douvrage_rg}</p>
-             <p> Numero de tel : {this.props.row[0].facture.maitre_douvrage_telephone} </p>
-<p>Email : {this.props.row[0].facture.maitre_douvrage_email}</p>
+              <table className="table-info-2">
+                <tbody>
+                  <tr>
+                    <td>
+                      <b>Maitre d'ouvrage</b>
+                    </td>
+                    <td>
+                      {this.props.row[0].facture.maitre_douvrage_prenom}{" "}
+                      {this.props.row[0].facture.maitre_douvrage_nom}
+                    </td>
+                  </tr>
 
+                  <tr>
+                    <td>
+                      <b>Raison social</b>
+                    </td>
+
+                    <td>
+                      {this.props.row[0].facture.maitre_douvrage_raison_social}
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <b>Adresse</b>
+                    </td>
+
+                    <td>{this.props.row[0].facture.maitre_douvrage_adresse}</td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <b>Numero de RC ou agrément</b>
+                    </td>
+
+                    <td>{this.props.row[0].facture.maitre_douvrage_rg}</td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <b>Numero de tel</b>
+                    </td>
+
+                    <td>{this.props.row[0].facture.maitre_douvrage_telephone}</td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <b>Email </b>
+                    </td>
+
+                    <td>{this.props.row[0].facture.maitre_douvrage_email}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
 
-        <div className="print-page-content">
+       <div className="print-page-content">
           <table>
             <thead>
               <tr>
