@@ -393,7 +393,7 @@ font-weight: 400;
 .print-page-container .print-page-content table thead{
  
   font-weight: 700;
-  background-color: #eee;
+  background-color: #ddd;
   border-bottom : 1px solid rgba(0, 0, 0, 0.4);
 
 }

@@ -141,16 +141,18 @@ class PrintDevis extends Component {
         id: row[0].devis.id,
       });
     });
-    console.log(ReactDOMServer.renderToString(
-      <PageContrat
-        rows_to_print={[...this.state.rows_to_print]}
-        index={rows_to_print.length}
-        entreprise={this.props.entreprise}
-        user={this.state.user}
-        id={rows_to_print.length + 1}
-        type="pdf"
-      />
-    ))
+    console.log(
+      ReactDOMServer.renderToString(
+        <PageContrat
+          rows_to_print={[...this.state.rows_to_print]}
+          index={rows_to_print.length}
+          entreprise={this.props.entreprise}
+          user={this.state.user}
+          id={rows_to_print.length + 1}
+          type="pdf"
+        />
+      )
+    );
 
     pages.push({
       page: ReactDOMServer.renderToString(
@@ -220,53 +222,29 @@ class PrintDevis extends Component {
     const rows_to_print = [...this.state.rows_to_print];
 
     return (
-      <Dialog
-        
-        maxWidth="xl"
-        fullWidth
-        open={this.state.open}
-      
-      >
-        <div style={{overflow : "hidden"}} >
-        
-        <DialogTitle>
-       
-
-<div  style={{ display: "flax", justifyContent: "space-between", flexDirection : "column"  , border : "1px solid gray"}}>
-
-<Link style={{ border : "1px solid green"}} to={`/${this.props.match.params.buttonReturn}/`}>
-                <IconButton
-                  onClick={this.handleClose}
-                 
-                >
+      <Dialog maxWidth="xl" fullWidth open={this.state.open}>
+        <div style={{ overflow: "hidden" }}>
+          <DialogTitle style={{height : 60}}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                flexDirection: "row",
+                
+              }}
+            >
+              <Link
+              
+                to={`/${this.props.match.params.buttonReturn}/`}
+              >
+                <IconButton onClick={this.handleClose}>
                   <ArrowBackIcon />
                 </IconButton>
               </Link>
-              <div style={{ display: "inline", border : "1px solid yellow"}}>
-                <Button
-                  color="primary"
-                  variant="contained"
-                  onClick={this.print}
-                  style={{ margin: 4 }}
-                >
-                  <PrintIcon />
-                </Button>
-
-                <Button
-                  color="primary"
-                  variant="contained"
-                  onClick={this.printToPdf}
-                >
-                  <PictureAsPdfIcon />
-                </Button>
-
-                {/* <button onClick={this.searchInPage} >Search</button>  */}
-              </div>
-
-              <div
+                   <div
                 style={{
                   display: "inline",
-                  border : "1px solid gray"
+                  
                 }}
               >
                 <input
@@ -277,52 +255,62 @@ class PrintDevis extends Component {
                   defaultValue={1}
                   min={1}
                 />
-                /{this.state.pagesNumber}
+                /<small>{this.state.pagesNumber}</small>
               </div>
             
-</div>
-        </DialogTitle>
-         
-<DialogContent>
-  
-<div
-            style={{
-              backgroundColor: "gray",
-              paddingTop: 70,
-              paddingBottom: 70,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              overflow: "auto",
-              maxHeight : 500
-            }}
-          >
-            {rows_to_print.map((row, index) => {
-              return (
-                <Page
-                  head={head}
-                  row={row}
-                  index={index}
-                  id={index + 1}
-                  key={index}
-                  entreprise={this.props.entreprise}
-                  user={this.state.user}
-                />
-              );
-            })}
-            <PageContrat
-              rows_to_print={[...this.state.rows_to_print]}
-              index={rows_to_print.length}
-              entreprise={this.props.entreprise}
-              user={this.state.user}
-              id={rows_to_print.length + 1}
-             
-            />
-          </div>
-       
-</DialogContent>
-       
-       
+            
+              <div style={{ display: "inline" }}>
+                <IconButton onClick={this.print} style={{ margin: 4 }}>
+                  <PrintIcon />
+                </IconButton>
+
+                <IconButton onClick={this.printToPdf}>
+                  <PictureAsPdfIcon />
+                </IconButton>
+
+                {/* <button onClick={this.searchInPage} >Search</button>  */}
+              </div>
+
+        
+
+            </div>
+          </DialogTitle>
+
+          <DialogContent>
+            <div
+              style={{
+                backgroundColor: "gray",
+                paddingTop: 40,
+                paddingBottom: 40,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                overflow: "auto",
+                maxHeight: 500,
+              }}
+            >
+              {rows_to_print.map((row, index) => {
+                return (
+                  <Page
+                    head={head}
+                    row={row}
+                    index={index}
+                    id={index + 1}
+                    key={index}
+                    entreprise={this.props.entreprise}
+                    user={this.state.user}
+                  />
+                );
+              })}
+              <PageContrat
+                rows_to_print={[...this.state.rows_to_print]}
+                index={rows_to_print.length}
+                entreprise={this.props.entreprise}
+                user={this.state.user}
+                id={rows_to_print.length + 1}
+              />
+            </div>
+          </DialogContent>
         </div>
       </Dialog>
     );
