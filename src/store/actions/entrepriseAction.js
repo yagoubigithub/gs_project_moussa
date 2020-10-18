@@ -8,6 +8,34 @@ export const ajouterntreprise = (data) =>{
       dispatch({
         type : "LOADING_ENTREPRISE"
     })
+
+    
+
+      ipcRenderer.send("entreprise:ajouter", {...data});
+    
+      ipcRenderer.once('entreprise:ajouter', function (event,data) {
+       
+        dispatch({
+          type : "STOP_LOADING_ENTREPRISE"
+      });
+      if(data){
+        dispatch({
+            type : "AJOUTER_ENTREPRISE",
+            payload : data
+        });
+      }else{
+        dispatch({
+          type : "ERROR_ENTREPRISE",
+          payload : data
+      });
+      }
+  });
+ 
+
+/*
+      dispatch({
+        type : "LOADING_ENTREPRISE"
+    })
       const key = { key : data.key };
   
 
@@ -55,7 +83,7 @@ export const ajouterntreprise = (data) =>{
       })
 
        
-       
+       */
        
     }
 }

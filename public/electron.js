@@ -51,5 +51,8 @@ app.on("ready", () => {
   
   const Facture = require('./facture');
   const facture = new Facture();
+
+  const Key = require('./key');
+  const key = new Key();
   
 });

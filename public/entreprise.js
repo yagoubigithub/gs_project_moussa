@@ -10,7 +10,7 @@ const methode = Entreprise.prototype;
 function Entreprise() {
   //Entreprise
 
- //db.run('DROP TABLE entreprise');
+ db.run('DROP TABLE entreprise');
 
   db.run(`CREATE TABLE IF NOT EXISTS entreprise (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -52,6 +52,7 @@ function Entreprise() {
                ]
                , 
         function (err) {
+          if (err) mainWindow.webContents.send("entreprise:ajouter", err);
           db.run(
             `
                 INSERT INTO user(nom , prenom  , username ,  password , status  ) VALUES (?,?,?,? ,? ) `,
@@ -67,10 +68,30 @@ function Entreprise() {
                 ]
                 , 
             function (err) {
-              db.all("SELECT * FROM entreprise ", function (err, rows) {
+              if (err) mainWindow.webContents.send("entreprise:ajouter", err);
+
+
+              db.run(`
+              INSERT INTO key( key , date   ) VALUES (?,?) `,
+              [
+                "",
+                getCurrentDateTime(new Date().getTime())
+                ,
+              
+
+
+
+              ]
+              , 
+          function (err) {
+            if (err) mainWindow.webContents.send("entreprise:ajouter", err);
+             db.all("SELECT * FROM entreprise ", function (err, rows) {
                 if (err) mainWindow.webContents.send("entreprise:ajouter", err);
                 mainWindow.webContents.send("entreprise:ajouter", rows);
               });
+          })
+
+             
             }
           );
         }

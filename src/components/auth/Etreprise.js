@@ -8,8 +8,11 @@ import { connect } from "react-redux";
 import {
   ajouterntreprise,
   getEtreprise,
-  removeEntrepriseError
+  removeEntrepriseError,
 } from "../../store/actions/entrepriseAction";
+
+
+import {getKey} from '../../store/actions/keyAction'
 
 import LoadingComponent from "../../utils/loadingComponent";
 import TaskBar from "../TaskBar";
@@ -39,29 +42,28 @@ class Entreprise extends Component {
     nis: "",
     nif: "",
     rc: "",
-    na : "",
-    key : ""
+    na: "",
+    key: "",
   };
   componentWillMount() {
     this.props.getEtreprise();
   }
+
+  componentWillUnmount(){
+    this.props.getKey();
+  }
   componentWillReceiveProps(nextProps) {
     if (nextProps.entreprise) {
-    
-
       this.props.sendData(false);
     } else this.props.sendData(true);
 
-    if(nextProps.error ){
-
-      if(this.state.error !== nextProps.error){
-         console.log(nextProps.error)
-      this.setState({
-       error : nextProps.error 
-      })
+    if (nextProps.error) {
+      if (this.state.error !== nextProps.error) {
+        console.log(nextProps.error);
+        this.setState({
+          error: nextProps.error,
+        });
       }
-      
-     
     }
   }
   handleChange = (e) => {
@@ -111,14 +113,9 @@ class Entreprise extends Component {
     } else {
       this.setState({ error: "" });
     }
-    if (data.key === undefined || data.key.trim().length <= 0) {
-      this.setState({ error: "clé de licence obligatoire" });
-      return;
-    } else {
-      this.setState({ error: "" });
-    }
+    
     this.props.ajouterntreprise({
-      key : data.key,
+      
       entreprise: {
         nom: data.nom_agence,
         telephone: data.telephone,
@@ -127,7 +124,7 @@ class Entreprise extends Component {
         rc: data.rc,
         nif: data.nif,
         nis: data.nis,
-        na : data.na,
+        na: data.na,
       },
       user: {
         nom: data.nom,
@@ -139,19 +136,25 @@ class Entreprise extends Component {
   };
 
   closeAlert = () => {
-    this.props.removeEntrepriseError()
-   this.setState({
-     error : ""
-   })
-   
+    this.props.removeEntrepriseError();
+    this.setState({
+      error: "",
+    });
   };
   render() {
     return (
-      <div style={{ backgroundColor: "#f2f2f2"}}>
-      <TaskBar />
-      <br />
- <LoadingComponent loading={this.props.loading !== undefined ? this.props.loading : false} />
-<Dialog open={this.state.error !== "" && this.state.error !== null} onClose={this.closeAlert}>
+      <div style={{ backgroundColor: "#f2f2f2" }}>
+        <TaskBar />
+        <br />
+        <LoadingComponent
+          loading={
+            this.props.loading !== undefined ? this.props.loading : false
+          }
+        />
+        <Dialog
+          open={this.state.error !== "" && this.state.error !== null}
+          onClose={this.closeAlert}
+        >
           <DialogContent>
             <p>{this.state.error}</p>
           </DialogContent>
@@ -166,222 +169,198 @@ class Entreprise extends Component {
             </Button>
           </DialogActions>
         </Dialog>
-      <Paper>
-        <Grid container spacing={2}  style={{padding : 10}}>
-       
-          <Grid item xs={12}>
-            <h1>Informations de Bureau</h1>
-          </Grid>
-          <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}>Nom de l'agence *</h3>
-            <TextField
-              placeholder="Nom de l'agence *"
-              
-              value={this.state.nom_agence}
-              name="nom_agence"
-              variant="outlined"
-              onChange={this.handleChange}
-              fullWidth
-              margin="dense"
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}>Télephone *</h3>
-            <TextField
-              placeholder="Télephone *"
-              
-              value={this.state.telephone}
-              name="telephone"
-              variant="outlined"
-              onChange={this.handleChange}
-              fullWidth
-              margin="dense"
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}>Email *</h3>
-            <TextField
-              placeholder="Email * "
-              value={this.state.email}
-              
-              name="email"
-              variant="outlined"
-              onChange={this.handleChange}
-              fullWidth
-              margin="dense"
-            />
-          </Grid>
+        <Paper>
+          <Grid container spacing={2} style={{ padding: 10 }}>
+            <Grid item xs={12}>
+              <h1>Informations de Bureau</h1>
+            </Grid>
+            <Grid item xs={6}>
+              <h3 style={{ margin: 0 }}>Nom de l'agence *</h3>
+              <TextField
+                placeholder="Nom de l'agence *"
+                value={this.state.nom_agence}
+                name="nom_agence"
+                variant="outlined"
+                onChange={this.handleChange}
+                fullWidth
+                margin="dense"
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <h3 style={{ margin: 0 }}>Télephone *</h3>
+              <TextField
+                placeholder="Télephone *"
+                value={this.state.telephone}
+                name="telephone"
+                variant="outlined"
+                onChange={this.handleChange}
+                fullWidth
+                margin="dense"
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <h3 style={{ margin: 0 }}>Email *</h3>
+              <TextField
+                placeholder="Email * "
+                value={this.state.email}
+                name="email"
+                variant="outlined"
+                onChange={this.handleChange}
+                fullWidth
+                margin="dense"
+              />
+            </Grid>
 
-          <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}>Adresse *</h3>
-            <TextField
-              placeholder="Adresse *"
-              
-              value={this.state.adresse}
-              name="adresse"
-              variant="outlined"
-              onChange={this.handleChange}
-              fullWidth
-              margin="dense"
-            />
-          </Grid>
+            <Grid item xs={6}>
+              <h3 style={{ margin: 0 }}>Adresse *</h3>
+              <TextField
+                placeholder="Adresse *"
+                value={this.state.adresse}
+                name="adresse"
+                variant="outlined"
+                onChange={this.handleChange}
+                fullWidth
+                margin="dense"
+              />
+            </Grid>
 
-          <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}>NA (numéro d'agrément) </h3>
-            <TextField
-              placeholder="NA (numéro d'agrément) "
-              value={this.state.na}
-              name="na"
-              variant="outlined"
-              onChange={this.handleChange}
-              fullWidth
-              margin="dense"
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}>RC (Numero du registre de commerce) </h3>
-            <TextField
-              placeholder="RC (Numero du registre de commerce) "
-              value={this.state.rc}
-              name="rc"
-              variant="outlined"
-              onChange={this.handleChange}
-              fullWidth
-              margin="dense"
-            />
-          </Grid>
+            <Grid item xs={6}>
+              <h3 style={{ margin: 0 }}>NA (numéro d'agrément) </h3>
+              <TextField
+                placeholder="NA (numéro d'agrément) "
+                value={this.state.na}
+                name="na"
+                variant="outlined"
+                onChange={this.handleChange}
+                fullWidth
+                margin="dense"
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <h3 style={{ margin: 0 }}>
+                RC (Numero du registre de commerce){" "}
+              </h3>
+              <TextField
+                placeholder="RC (Numero du registre de commerce) "
+                value={this.state.rc}
+                name="rc"
+                variant="outlined"
+                onChange={this.handleChange}
+                fullWidth
+                margin="dense"
+              />
+            </Grid>
 
-          <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}>
-              NIS (Numéro d’Identification Statistique){" "}
-            </h3>
-            <TextField
-              placeholder="NIS (Numéro d’Identification Statistique) "
-              value={this.state.nis}
-              name="nis"
-              variant="outlined"
-              onChange={this.handleChange}
-              fullWidth
-              margin="dense"
-            />
-          </Grid>
+            <Grid item xs={6}>
+              <h3 style={{ margin: 0 }}>
+                NIS (Numéro d’Identification Statistique){" "}
+              </h3>
+              <TextField
+                placeholder="NIS (Numéro d’Identification Statistique) "
+                value={this.state.nis}
+                name="nis"
+                variant="outlined"
+                onChange={this.handleChange}
+                fullWidth
+                margin="dense"
+              />
+            </Grid>
 
-          <Grid item xs={6}>
-            <h3 style={{ margin: 0 }}>
-              NIF ( Numéro d'Immatriculation Fiscale){" "}
-            </h3>
-            <TextField
-              placeholder="NIF ( Numéro d'Immatriculation Fiscale) "
-              value={this.state.nif}
-              name="nif"
-              variant="outlined"
-              onChange={this.handleChange}
-              fullWidth
-              margin="dense"
-            />
-          </Grid>
-        
-          <Grid item xs={12}>
-            <Paper>
-              <Grid item xs={12}>
-                <h1>Informations de l'utilisateur</h1>
-              </Grid>
-              <Grid item xs={12}>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <h3 style={{ margin: 0 }}>Nom de l'admin *</h3>
-                    <TextField
-                      placeholder="Nom de l'admin *"
-                      value={this.state.nom}
-                      name="nom"
-                      variant="outlined"
-                      onChange={this.handleChange}
-                      fullWidth
-                      margin="dense"
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <h3 style={{ margin: 0 }}>Prénom de l'admin *</h3>
-                    <TextField
-                      placeholder="Prénom de l'admin *"
-                      value={this.state.prenom}
-                      name="prenom"
-                      variant="outlined"
-                      onChange={this.handleChange}
-                      fullWidth
-                      margin="dense"
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <h3 style={{ margin: 0 }}>Nom d'utilisateur de l'admin *</h3>
-                    <TextField
-                      placeholder="Nom d'utilisateur de l'admin *"
-                      value={this.state.username}
-                      name="username"
-                      variant="outlined"
-                      onChange={this.handleChange}
-                      fullWidth
-                      margin="dense"
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <h3 style={{ margin: 0 }}>Mot de passe </h3>
-                    <TextField
-                      placeholder="Mot de passe  "
-                      value={this.state.password}
-                      name="password"
-                      variant="outlined"
-                      onChange={this.handleChange}
-                      type="password"
-                      fullWidth
-                      margin="dense"
-                    />
+            <Grid item xs={6}>
+              <h3 style={{ margin: 0 }}>
+                NIF ( Numéro d'Immatriculation Fiscale){" "}
+              </h3>
+              <TextField
+                placeholder="NIF ( Numéro d'Immatriculation Fiscale) "
+                value={this.state.nif}
+                name="nif"
+                variant="outlined"
+                onChange={this.handleChange}
+                fullWidth
+                margin="dense"
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <Paper>
+                <Grid item xs={12}>
+                  <h1>Informations de l'utilisateur</h1>
+                </Grid>
+                <Grid item xs={12}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                      <h3 style={{ margin: 0 }}>Nom de l'admin *</h3>
+                      <TextField
+                        placeholder="Nom de l'admin *"
+                        value={this.state.nom}
+                        name="nom"
+                        variant="outlined"
+                        onChange={this.handleChange}
+                        fullWidth
+                        margin="dense"
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <h3 style={{ margin: 0 }}>Prénom de l'admin *</h3>
+                      <TextField
+                        placeholder="Prénom de l'admin *"
+                        value={this.state.prenom}
+                        name="prenom"
+                        variant="outlined"
+                        onChange={this.handleChange}
+                        fullWidth
+                        margin="dense"
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <h3 style={{ margin: 0 }}>
+                        Nom d'utilisateur de l'admin *
+                      </h3>
+                      <TextField
+                        placeholder="Nom d'utilisateur de l'admin *"
+                        value={this.state.username}
+                        name="username"
+                        variant="outlined"
+                        onChange={this.handleChange}
+                        fullWidth
+                        margin="dense"
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <h3 style={{ margin: 0 }}>Mot de passe </h3>
+                      <TextField
+                        placeholder="Mot de passe  "
+                        value={this.state.password}
+                        name="password"
+                        variant="outlined"
+                        onChange={this.handleChange}
+                        type="password"
+                        fullWidth
+                        margin="dense"
+                      />
+                    </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
-            </Paper>
-          </Grid>
-         
-         <Grid item xs={12}>
-
-  <Paper>
-              <Grid item xs={12}>
-                <h1>clé de licence</h1>
-              </Grid>
-              <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <TextField
-                      placeholder="XXXXXXXXXXXXXXX "
-                      value={this.state.key}
-                      name="key"
-                      variant="outlined"
-                      onChange={this.handleChange}
-                      fullWidth
-                      margin="dense"
-                    />
-                  </Grid>
-                  </Grid>
-
               </Paper>
-         </Grid>
-         
-         <Grid item xs={6}>
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              onClick={this.ajouter}
-            >
-              Enregistrer
-            </Button>
-          </Grid>
-        </Grid>
+            </Grid>
 
-        <LoadingComponent
-          loading={
-            this.props.loading !== undefined ? this.props.loading : false
-          }
-        />
+            <Grid item xs={6}>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={this.ajouter}
+              >
+                Enregistrer
+              </Button>
+            </Grid>
+          </Grid>
+
+          <LoadingComponent
+            loading={
+              this.props.loading !== undefined ? this.props.loading : false
+            }
+          />
         </Paper>
       </div>
     );
@@ -392,13 +371,14 @@ const mapActionToProps = (dispatch) => {
     ajouterntreprise: (data) => dispatch(ajouterntreprise(data)),
     getEtreprise: () => dispatch(getEtreprise()),
     removeEntrepriseError: () => dispatch(removeEntrepriseError()),
+    getKey : ()=> dispatch(getKey())
   };
 };
 const mapStateToProps = (state) => {
   return {
     entreprise: state.entreprise.info,
     loading: state.auth.loading || state.entreprise.loading,
-    error : state.entreprise.error
+    error: state.entreprise.error,
   };
 };
 

@@ -7,6 +7,7 @@ import projetReducer from './projetReducer';
 import pahsesProjetReducer from './pahsesProjetReducer';
 import devisReducer from './devisReducer';
 import factureReducer from './factureReducer';
+import keyReducer from './keyReducer';
 
 
 const rootReducer  = combineReducers({
@@ -18,6 +19,7 @@ const rootReducer  = combineReducers({
     phases_projet  : pahsesProjetReducer,
     devis : devisReducer,
     facture : factureReducer,
+    key : keyReducer
    
   
     

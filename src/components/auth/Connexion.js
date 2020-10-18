@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom';
 
 //redux
 import {connect} from "react-redux";
-import {connexion} from '../../store/actions/authAction'
+import {connexion} from '../../store/actions/authAction';
 
 
 
@@ -65,7 +65,7 @@ import Entreprise from './Etreprise';
 }
 const mapActionToProps = dispatch =>{
     return {
-        connexion  : (data) => dispatch(connexion(data))
+        connexion  : (data) => dispatch(connexion(data)),
     }
 }
 const mapStateToProps = state =>{
