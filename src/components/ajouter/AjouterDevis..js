@@ -78,7 +78,7 @@ class AjouterDevis extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.devisCreated) {
       this.setState({
-        message: "Devis a été ajouter",
+        message: "Devi a été ajouter",
         nom: "",
         objet: "",
         adresse: "",
@@ -383,7 +383,7 @@ class AjouterDevis extends Component {
           </Toolbar>
         </AppBar>
         <div style={{ marginTop: 50, padding: 15 }}></div>
-        <h1 style={{ textAlign: "center" }}>Créer une Devis</h1>
+        <h1 style={{ textAlign: "center" }}>Créer une Devi</h1>
 
         <Grid container spacing={2} style={{ padding: 25 }}>
           <Grid item xs={6}>

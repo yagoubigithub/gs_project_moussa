@@ -22,7 +22,11 @@ let mainWindow = new BrowserWindow({
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
   
+  if(!isDev){
+    mainWindow.removeMenu()
+  }
   
+ 
  
 mainWindow.on('close', (e)=>{
   app.quit()

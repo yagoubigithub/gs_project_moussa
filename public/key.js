@@ -6,7 +6,7 @@ const mainWindow = require('./mainWindow');
 const methode = Key.prototype;
 
 function Key(){
-db.run('DROP TABLE key');
+//db.run('DROP TABLE key');
 
     db.run(`CREATE TABLE IF NOT EXISTS key (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -29,6 +29,27 @@ db.run('DROP TABLE key');
           );
       
       });
+
+         //add key
+     ipcMain.on("key:ajouter", (event, value) => {
+       if(value.key){
+         db.run("    UPDATE `key` SET key=? WHERE id=1" , [
+           value.key
+         ],function(err){
+          if (err) mainWindow.webContents.send("key:ajouter", err);
+          db.all(
+            `SELECT * FROM key WHERE  id=1 `,
+            function(err, rows) {
+              if (err) mainWindow.webContents.send("key:ajouter", err);
+              mainWindow.webContents.send("key:ajouter", rows);
+            }
+          );
+         })
+       }
+       
+     
+    
+    });
 
 
 }

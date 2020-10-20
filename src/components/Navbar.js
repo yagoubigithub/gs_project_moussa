@@ -80,7 +80,7 @@ class Navbar extends Component {
             <span className="nav-link-icon">
               <AssignmentIcon />
             </span>
-            <span>Devis</span>
+            <span>Devi</span>
           </NavLink>
           <NavLink
             activeClassName="nav-active"

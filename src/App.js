@@ -54,7 +54,7 @@ class App extends Component {
     return (
       <Router>
        <Key />
-        <div className="container">
+        <div className="container"  style={{backgroundColor : "black"}}>
           {this.props.auth.user !== undefined ? (
             <Navbar />
           ) : (

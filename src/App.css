@@ -55,7 +55,7 @@ iframe {
   position: fixed;
   height: 100%;
 
-  top: 30px;
+ 
   left: 0;
 }
 
@@ -63,7 +63,7 @@ iframe {
   position: fixed;
   height: 100%;
   left: var(--navbarWidth);
-  top: 30px;
+  
   right: 0;
   bottom: 0;
   overflow: auto;

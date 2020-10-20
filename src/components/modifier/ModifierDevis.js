@@ -124,7 +124,7 @@ class ModifierDevis extends Component {
     if (nextProps.devisEdited) {
       this.setState({
         ...nextProps.devis,
-        message: "devis a été modifier",
+        message: "devi a été modifier",
      
       });
     }
@@ -397,7 +397,7 @@ class ModifierDevis extends Component {
           </Toolbar>
         </AppBar>
         <div style={{ marginTop: 50, padding: 15 }}></div>
-        <h1 style={{ textAlign: "center" }}>Modifier Devis</h1>
+        <h1 style={{ textAlign: "center" }}>Modifier Devi</h1>
         
         <Grid container spacing={2} style={{ padding: 25 }}>
           <Grid item xs={6}>

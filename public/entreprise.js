@@ -10,7 +10,7 @@ const methode = Entreprise.prototype;
 function Entreprise() {
   //Entreprise
 
- db.run('DROP TABLE entreprise');
+ //db.run('DROP TABLE entreprise');
 
   db.run(`CREATE TABLE IF NOT EXISTS entreprise (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
