@@ -144,8 +144,7 @@ class Entreprise extends Component {
   render() {
     return (
       <div style={{ backgroundColor: "#f2f2f2" }}>
-        <TaskBar />
-        <br />
+        
         <LoadingComponent
           loading={
             this.props.loading !== undefined ? this.props.loading : false

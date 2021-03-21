@@ -68,7 +68,7 @@ class ModifierDevis extends Component {
     prix_totale: 0,
 
     maitreDouvrages : [],
-    phasesProjetsSelected: [],
+    phasesProjetsSelected: []
     
   };
 
@@ -97,7 +97,7 @@ class ModifierDevis extends Component {
         
        
         this.setState({ phasesProjetsSelected : nextProps.devis.phases ?   nextProps.devis.phases :  nextProps.devis.phasesProjetsSelected}, () => {
-          if (this.state.phasesProjetsSelected !== null) {
+          if (this.state.phasesProjetsSelected !== null &&  this.state.phasesProjetsSelected !== undefined) {
             this.state.phasesProjetsSelected.map((phase) => {
               duree_phase =
                 Number.parseInt(duree_phase) + Number.parseInt(phase.duree);
@@ -317,7 +317,7 @@ class ModifierDevis extends Component {
    
    
     return (
-      <Dialog fullScreen open={this.state.open}>
+      <Dialog maxWidth="xl" fullWidth open={this.state.open}>
         <LoadingComponent
           loading={
             this.props.loading !== undefined ? this.props.loading : false
@@ -382,24 +382,20 @@ class ModifierDevis extends Component {
             Select
           </Button>
         </Dialog>
-
-        <AppBar className="bg-dark">
-          <Toolbar style={{ display: "flax", justifyContent: "space-between" }}>
-            <Link
+        <Link
               to={
               "/"  + this.state.buttonReturn 
               }
             >
-              <IconButton onClick={this.handleClose} style={{ color: "white" }}>
-                <ArrowBackIcon />
+              <IconButton onClick={this.handleClose}>
+                <CloseIcon />
               </IconButton>
             </Link>
-          </Toolbar>
-        </AppBar>
-        <div style={{ marginTop: 50, padding: 15 }}></div>
+
+
         <h1 style={{ textAlign: "center" }}>Modifier Devi</h1>
         
-        <Grid container spacing={2} style={{ padding: 25 }}>
+        <Grid container spacing={2} style={{ padding: 10 }}>
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}>Nom * </h3>
 
@@ -410,6 +406,7 @@ class ModifierDevis extends Component {
               variant="outlined"
               onChange={this.handleChange}
               fullWidth
+              margin="dense"
             />
           </Grid>
           <Grid item xs={6}>
@@ -421,6 +418,7 @@ class ModifierDevis extends Component {
               variant="outlined"
               onChange={this.handleChange}
               fullWidth
+              margin="dense"
             />
           </Grid>
 
@@ -433,6 +431,7 @@ class ModifierDevis extends Component {
               variant="outlined"
               onChange={this.handleChange}
               fullWidth
+              margin="dense"
             />
           </Grid>
           <Grid item xs={6}>
@@ -441,6 +440,7 @@ class ModifierDevis extends Component {
               color="primary"
               variant="contained"
               onClick={this.handleMaitreDouvrageClose}
+              margin="dense"
             >
               <AddIcon />
             </Button>
@@ -460,6 +460,7 @@ class ModifierDevis extends Component {
               color="primary"
               variant="contained"
               onClick={this.handlePhasesProjetOpenClose}
+              margin="dense"
             >
               <AddIcon />
             </Button>
@@ -477,24 +478,29 @@ class ModifierDevis extends Component {
                 </tr>
               </thead>
 
-              <tbody>{
+{
+  this.state.phasesProjetsSelected && 
 
-                this.state.phasesProjetsSelected.map((phasesProjet,index)=>{
-                 
-                return  (<tr key={index}>
-        <td>{index + 1}</td>
-        <td>{phasesProjet.titre}</td>
-        <td><input type="number" value={ this.state.phasesProjetsSelected[index].duree} onChange={(e)=>this.handlePhasesProjetDureeChange(e,index)} /></td>
-        <td><input type="number" value={ this.state.phasesProjetsSelected[index].prix} onChange={(e)=>this.handlePhasesProjetPrixChange(e,index)} /></td>
-        <td>
+  <tbody>{
 
-          <Button onClick={()=>this.removePhaseProjet(index)}>
-            <CloseIcon></CloseIcon>
-          </Button>
-        </td>
-      </tr>)
-                })
-              }</tbody>
+this.state.phasesProjetsSelected.map((phasesProjet,index)=>{
+ 
+return  (<tr key={index}>
+<td>{index + 1}</td>
+<td>{phasesProjet.titre}</td>
+<td><input type="number" value={ this.state.phasesProjetsSelected[index].duree} onChange={(e)=>this.handlePhasesProjetDureeChange(e,index)} /></td>
+<td><input type="number" value={ this.state.phasesProjetsSelected[index].prix} onChange={(e)=>this.handlePhasesProjetPrixChange(e,index)} /></td>
+<td>
+
+<Button onClick={()=>this.removePhaseProjet(index)}>
+<CloseIcon></CloseIcon>
+</Button>
+</td>
+</tr>)
+})
+}</tbody>
+}
+            
             </table>
             <br />
             </Paper>
@@ -526,6 +532,7 @@ class ModifierDevis extends Component {
                 variant="outlined"
                 onChange={this.handleChange}
                 fullWidth
+                margin="dense"
               />
             ) : (
               <TextField
@@ -537,12 +544,14 @@ class ModifierDevis extends Component {
                 onChange={this.handleChange}
                 fullWidth
                 InputProps={{ inputProps: { min: 0, step: 1, max: 100 } }}
+                margin="dense"
               />
             )}
 
             <MuiSelect
               value={this.state.unite_remise}
               onChange={this.handleUniteRemiseChange}
+              margin="dense"
             >
               <MenuItem value={"%"}>%</MenuItem>
               <MenuItem value={"DA"}>DA</MenuItem>
@@ -556,8 +565,8 @@ class ModifierDevis extends Component {
                 <FormControlLabel
                   control={
                     <Checkbox
-                      checked={this.state.ht}
-                      value={this.state.ht}
+                      checked={this.state.ht ? true : false}
+                      value={this.state.ht ? false : true}
                       onChange={this.handleChange}
                       name="ht"
                     />
@@ -572,11 +581,12 @@ class ModifierDevis extends Component {
                   name="tva"
                   value={this.state.tva}
                   onChange={this.handleChange}
-                  disabled={this.state.ht}
+                  disabled={this.state.ht ? true : false}
                   type="number"
                   variant="outlined"
                   fullWidth
                   InputProps={{ inputProps: { min: 0, step: 1, max: 100 } }}
+                  margin="dense"
                 />
               </div>
             </div>
@@ -586,7 +596,7 @@ class ModifierDevis extends Component {
 
           
           <Grid item xs={12}>
-            <br />
+           
             <Button
               color="primary"
               variant="contained"

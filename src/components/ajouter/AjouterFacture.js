@@ -44,7 +44,7 @@ import { getAllPhasesProjet } from "../../store/actions/pahsesProjetAction";
 //tables
 import MaitreDouvrageTable from "../tables/MaitreDouvrageTable";
 import PhasesProjetTable from '../tables/PhasesProjetTable'
-import { FormControlLabel, Checkbox } from "@material-ui/core";
+import { FormControlLabel, Checkbox, DialogTitle } from "@material-ui/core";
 
 class AjouterFacture extends Component {
   state = {
@@ -400,7 +400,7 @@ class AjouterFacture extends Component {
     }
 
     return (
-      <Dialog fullScreen open={this.state.open}>
+      <Dialog fullWidth maxWidth="xl" open={this.state.open}>
         <LoadingComponent
           loading={
             this.props.loading !== undefined ? this.props.loading : false
@@ -463,27 +463,25 @@ class AjouterFacture extends Component {
             Select
           </Button>
         </Dialog>
-
-        <AppBar className="bg-dark">
-          <Toolbar style={{ display: "flax", justifyContent: "space-between" }}>
-            <Link
+        <DialogTitle>
+          <Link
               to={
                 this.state.buttonReturn !== undefined
                   ? this.state.buttonReturn
                   : "/facture/"
               }
             >
-              <IconButton onClick={this.handleClose} style={{ color: "white" }}>
-                <ArrowBackIcon />
+              <IconButton onClick={this.handleClose} >
+                <CloseIcon />
               </IconButton>
             </Link>
-          </Toolbar>
-        </AppBar>
-        <div style={{ marginTop: 50, padding: 15 }}></div>
+        </DialogTitle>
+        
+       
         <h1 style={{ textAlign: "center" }}>Créer une facture</h1>
         <div className="alert message">{this.state.message} </div>
         <div className="alert message">{this.state.message} </div>
-        <Grid container spacing={2} style={{ padding: 25 }}>
+        <Grid container spacing={2} style={{ padding: 10 }}>
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}>Nom de projet * </h3>
 

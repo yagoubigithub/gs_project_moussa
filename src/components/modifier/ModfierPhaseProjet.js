@@ -4,8 +4,7 @@ import { Link } from "react-router-dom";
 
 //Mui
 import Dialog from "@material-ui/core/Dialog";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
+
 import IconButton from "@material-ui/core/IconButton";
 import Grid from "@material-ui/core/Grid";
 
@@ -17,7 +16,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 //icons
 
 import SaveIcon from "@material-ui/icons/Save";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import CloseIcon from "@material-ui/icons/Close";
 
 
 import LoadingComponent from "../../utils/loadingComponent";
@@ -26,6 +25,7 @@ import LoadingComponent from "../../utils/loadingComponent";
 //redux
 import { connect } from "react-redux";
 import { getPhasesProjet,modifierPhasesProjet ,removePhasesProjetEdited} from '../../store/actions/pahsesProjetAction'
+import { DialogTitle } from "@material-ui/core";
  class ModifierPhaseProjet extends Component {
   state = {
     open: true,
@@ -97,21 +97,15 @@ import { getPhasesProjet,modifierPhasesProjet ,removePhasesProjetEdited} from '.
   };
   render() {
     return (
-      <Dialog fullScreen open={this.state.open}>
+      <Dialog fullWidth maxWidth="xl" open={this.state.open}>
+
         <LoadingComponent
           loading={
             this.props.loading !== undefined ? this.props.loading : false
           }
         />
-        <AppBar className="bg-dark">
-          <Toolbar style={{ display: "flax", justifyContent: "space-between" }}>
-            <Link to="/phases_projet/">
-              <IconButton onClick={this.handleClose} style={{ color: "white" }}>
-                <ArrowBackIcon />
-              </IconButton>
-            </Link>
-          </Toolbar>
-        </AppBar>
+     
+    
         <Dialog open={this.state.message !== ""} onClose={this.closeAlert}>
           <DialogContent>
             <p>{this.state.message}</p>
@@ -127,10 +121,21 @@ import { getPhasesProjet,modifierPhasesProjet ,removePhasesProjetEdited} from '.
             </Button>
           </DialogActions>
         </Dialog>
-        <div style={{ marginTop: 50, padding: 15 }}></div>
+
+
+        <DialogTitle>
+            <Link to="/phases_projet/">
+              <IconButton onClick={this.handleClose} >
+                <CloseIcon />
+              </IconButton>
+            </Link>
+        </DialogTitle>
+
+        
+       
         <h1 style={{ textAlign: "center" }}>Modifier Phase du projet</h1>
         
-        <Grid container spacing={2} style={{ padding: 25 }}>
+        <Grid container spacing={2} style={{ padding: 10 }}>
      
         <Grid item xs={12}>
             <h3 style={{ margin: 0 }}>Désignation * </h3>
@@ -190,7 +195,7 @@ import { getPhasesProjet,modifierPhasesProjet ,removePhasesProjetEdited} from '.
 
  
     <Grid item xs={12}>
-            <br />
+         
             <Button
               color="primary"
               variant="contained"

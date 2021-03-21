@@ -7,8 +7,7 @@ import ReactDOMServer from "react-dom/server";
 
 //Mui
 import Dialog from "@material-ui/core/Dialog";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
+
 import IconButton from "@material-ui/core/IconButton";
 
 import Button from "@material-ui/core/Button";
@@ -16,7 +15,7 @@ import Button from "@material-ui/core/Button";
 //icons
 
 import PrintIcon from "@material-ui/icons/Print";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import CloseIcon from "@material-ui/icons/Close";
 import PictureAsPdfIcon from "@material-ui/icons/PictureAsPdf";
 
 //redux
@@ -52,7 +51,7 @@ class PrintFacture extends Component {
   }
   componentWillReceiveProps(nextProps) {
     if (nextProps.facture) {
-      console.log(nextProps.facture);
+      
       this.setState(
         {
           facture: { ...nextProps.facture },
@@ -190,7 +189,7 @@ class PrintFacture extends Component {
                 to={`/${this.props.match.params.buttonReturn}/`}
               >
                 <IconButton onClick={this.handleClose}>
-                  <ArrowBackIcon />
+                  <CloseIcon />
                 </IconButton>
               </Link>
                    <div

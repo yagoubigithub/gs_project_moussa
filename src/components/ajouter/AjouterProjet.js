@@ -361,7 +361,7 @@ class AjouterProjet extends Component {
   
 
     return (
-      <Dialog fullScreen open={this.state.open}>
+      <Dialog maxWidth="xl" fullWidth open={this.state.open}>
         <LoadingComponent
           loading={
             this.props.loading !== undefined ? this.props.loading : false
@@ -426,22 +426,18 @@ class AjouterProjet extends Component {
           </Button>
         </Dialog>
 
-        <AppBar className="bg-dark">
-          <Toolbar style={{ display: "flax", justifyContent: "space-between" }}>
-            <Link
+        <Link
               to={
                 this.state.buttonReturn !== undefined
                   ? this.state.buttonReturn
                   : "/projet/"
               }
             >
-              <IconButton onClick={this.handleClose} style={{ color: "white" }}>
-                <ArrowBackIcon />
+              <IconButton onClick={this.handleClose}>
+                <CloseIcon />
               </IconButton>
             </Link>
-          </Toolbar>
-        </AppBar>
-        <div style={{ marginTop: 50, padding: 15 }}></div>
+       
         <h1 style={{ textAlign: "center" }}>Ajouter Projet</h1>
         <Grid container spacing={1} style={{ padding: 10 }}>
           <Grid item xs={6}>

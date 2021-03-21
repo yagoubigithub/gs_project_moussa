@@ -18,7 +18,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 //icons
 
 import SaveIcon from "@material-ui/icons/Save";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import CloseIcon from "@material-ui/icons/Close";
 
 
 import LoadingComponent from "../../utils/loadingComponent";
@@ -27,6 +27,7 @@ import LoadingComponent from "../../utils/loadingComponent";
 //redux
 import { connect } from "react-redux";
 import {removePhasesProjetCreated,ajouterPahsesProjet} from '../../store/actions/pahsesProjetAction'
+import { DialogTitle } from "@material-ui/core";
  class AjouterPhaseProjet extends Component {
   state = {
     open: true,
@@ -85,21 +86,22 @@ import {removePhasesProjetCreated,ajouterPahsesProjet} from '../../store/actions
 
   render() {
     return (
-      <Dialog fullScreen open={this.state.open}>
+      <Dialog maxWidth="xl" fullWidth open={this.state.open}>
         <LoadingComponent
           loading={
             this.props.loading !== undefined ? this.props.loading : false
           }
         />
-        <AppBar className="bg-dark">
-          <Toolbar style={{ display: "flax", justifyContent: "space-between" }}>
-            <Link to="/phases_projet/">
-              <IconButton onClick={this.handleClose} style={{ color: "white" }}>
-                <ArrowBackIcon />
+       
+
+       <DialogTitle>
+
+       <Link to="/phases_projet/">
+              <IconButton onClick={this.handleClose} >
+                <CloseIcon />
               </IconButton>
             </Link>
-          </Toolbar>
-        </AppBar>
+       </DialogTitle>
 
         <Dialog open={this.state.message !== ""} onClose={this.closeAlert}>
           <DialogContent>
@@ -116,10 +118,10 @@ import {removePhasesProjetCreated,ajouterPahsesProjet} from '../../store/actions
             </Button>
           </DialogActions>
         </Dialog>
-        <div style={{ marginTop: 30, padding: 15 }}></div>
+       
         <h1 style={{ textAlign: "center" }}>Ajouter Une Phase du projet</h1>
       
-        <Grid container spacing={2} style={{ padding: 25 }}>
+        <Grid container spacing={2} style={{ padding: 10 }}>
           <Grid item xs={12}>
             <h3 style={{ margin: 0 }}>Désignation * </h3>
 
@@ -177,7 +179,7 @@ import {removePhasesProjetCreated,ajouterPahsesProjet} from '../../store/actions
        
 
           <Grid item xs={12}>
-            <br />
+           
             <Button
               color="primary"
               variant="contained"

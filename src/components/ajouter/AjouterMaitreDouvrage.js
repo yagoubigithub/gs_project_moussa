@@ -18,7 +18,7 @@ import TextField from "@material-ui/core/TextField";
 //icons
 
 import SaveIcon from "@material-ui/icons/Save";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import CloseIcon from "@material-ui/icons/Close";
 import PhotoCameraIcon from "@material-ui/icons/PhotoCamera";
 
 import LoadingComponent from "../../utils/loadingComponent";
@@ -27,6 +27,7 @@ import LoadingComponent from "../../utils/loadingComponent";
 //redux
 import { connect } from "react-redux";
 import {removeMaitreDouvrageCreated,ajouterMaitreDouvrage} from '../../store/actions/maitreDouvrageAction'
+import { DialogTitle } from "@material-ui/core";
  class AjouterMaitreDouvrage extends Component {
   state = {
     open: true,
@@ -101,7 +102,7 @@ import {removeMaitreDouvrageCreated,ajouterMaitreDouvrage} from '../../store/act
   };
   render() {
     return (
-      <Dialog fullScreen open={this.state.open}>
+      <Dialog maxWidth="xl" fullWidth open={this.state.open}>
         <LoadingComponent
           loading={
             this.props.loading !== undefined ? this.props.loading : false
@@ -122,19 +123,25 @@ import {removeMaitreDouvrageCreated,ajouterMaitreDouvrage} from '../../store/act
             </Button>
           </DialogActions>
         </Dialog>
-        <AppBar className="bg-dark">
-          <Toolbar style={{ display: "flax", justifyContent: "space-between" }}>
-            <Link to="/maitre_douvrage/">
-              <IconButton onClick={this.handleClose} style={{ color: "white" }}>
-                <ArrowBackIcon />
+
+
+
+<DialogTitle>
+
+<Link to="/maitre_douvrage/">
+              <IconButton onClick={this.handleClose}>
+                <CloseIcon />
               </IconButton>
             </Link>
-          </Toolbar>
-        </AppBar>
-        <div style={{ marginTop: 50, padding: 15 }}></div>
+
+</DialogTitle>
+      
+
+
+     
         <h1 style={{ textAlign: "center" }}>Ajouter Maître d'ouvrage</h1>
       
-        <Grid container spacing={2} style={{ padding: 25 }}>
+        <Grid container spacing={2} style={{ padding: 10 }}>
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}>Nom * </h3>
 

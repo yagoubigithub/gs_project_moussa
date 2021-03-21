@@ -43,7 +43,7 @@ import { getAllPhasesProjet } from "../../store/actions/pahsesProjetAction";
 //tables
 import MaitreDouvrageTable from "../tables/MaitreDouvrageTable";
 import PhasesProjetTable from "../tables/PhasesProjetTable";
-import { FormControlLabel, Checkbox } from "@material-ui/core";
+import { FormControlLabel, Checkbox, DialogTitle } from "@material-ui/core";
 
 class AjouterDevis extends Component {
   state = {
@@ -151,7 +151,12 @@ class AjouterDevis extends Component {
       this.setState({ message: "le champ Remise et superieur de 100%" });
       return;
     }
-    const remise = this.calculRemise(d.prix_totale,d.tva ,d.remise, d.unite_remise);
+    const remise = this.calculRemise(
+      d.prix_totale,
+      d.tva,
+      d.remise,
+      d.unite_remise
+    );
     const data = {
       projet_id: 0,
       nom: d.nom,
@@ -166,28 +171,27 @@ class AjouterDevis extends Component {
       remise: remise,
       unite_remise: d.unite_remise,
       tva: d.tva,
-      ht : d.ht,
+      ht: d.ht,
       date_devis: getCurrentDateTime(new Date().getTime()),
     };
 
     this.props.ajouterDevis(data);
   };
-  calculRemise = (total_net, tva,remise, unite_remise) =>{
-
-    if(unite_remise === "%"){
-      return parseFloat(remise*(total_net  + parseFloat(tva*total_net/100))/100)
-    }else{
-
-      return remise
+  calculRemise = (total_net, tva, remise, unite_remise) => {
+    if (unite_remise === "%") {
+      return parseFloat(
+        (remise * (total_net + parseFloat((tva * total_net) / 100))) / 100
+      );
+    } else {
+      return remise;
     }
-
-  }
+  };
 
   handleChange = (e) => {
-    if(e.target.name === "ht"){
+    if (e.target.name === "ht") {
       this.setState({
         [e.target.name]: e.target.value === "true" ? false : true,
-        tva : 0
+        tva: 0,
       });
       return;
     }
@@ -303,7 +307,7 @@ class AjouterDevis extends Component {
 
   render() {
     return (
-      <Dialog fullScreen open={this.state.open}>
+      <Dialog fullWidth maxWidth="xl" open={this.state.open}>
         <LoadingComponent
           loading={
             this.props.loading !== undefined ? this.props.loading : false
@@ -367,25 +371,23 @@ class AjouterDevis extends Component {
           </Button>
         </Dialog>
 
-        <AppBar className="bg-dark">
-          <Toolbar style={{ display: "flax", justifyContent: "space-between" }}>
-            <Link
-              to={
-                this.state.buttonReturn !== undefined
-                  ? this.state.buttonReturn
-                  : "/projet/"
-              }
-            >
-              <IconButton onClick={this.handleClose} style={{ color: "white" }}>
-                <ArrowBackIcon />
-              </IconButton>
-            </Link>
-          </Toolbar>
-        </AppBar>
-        <div style={{ marginTop: 50, padding: 15 }}></div>
+        <DialogTitle>
+          <Link
+            to={
+              this.state.buttonReturn !== undefined
+                ? this.state.buttonReturn
+                : "/projet/"
+            }
+          >
+            <IconButton onClick={this.handleClose}>
+              <CloseIcon />
+            </IconButton>
+          </Link>
+        </DialogTitle>
+
         <h1 style={{ textAlign: "center" }}>Créer une Devi</h1>
 
-        <Grid container spacing={2} style={{ padding: 25 }}>
+        <Grid container spacing={2} style={{ padding: 10 }}>
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}>Nom de projet * </h3>
 
@@ -396,6 +398,7 @@ class AjouterDevis extends Component {
               variant="outlined"
               onChange={this.handleChange}
               fullWidth
+              margin="dense"
             />
           </Grid>
           <Grid item xs={6}>
@@ -407,6 +410,7 @@ class AjouterDevis extends Component {
               variant="outlined"
               onChange={this.handleChange}
               fullWidth
+              margin="dense"
             />
           </Grid>
 
@@ -419,6 +423,7 @@ class AjouterDevis extends Component {
               variant="outlined"
               onChange={this.handleChange}
               fullWidth
+              margin="dense"
             />
           </Grid>
 
@@ -446,6 +451,7 @@ class AjouterDevis extends Component {
               color="primary"
               variant="contained"
               onClick={this.handlePhasesProjetOpenClose}
+              margin="dense"
             >
               <AddIcon />
             </Button>
@@ -531,6 +537,7 @@ class AjouterDevis extends Component {
                 variant="outlined"
                 onChange={this.handleChange}
                 fullWidth
+                margin="dense"
               />
             ) : (
               <TextField
@@ -542,6 +549,7 @@ class AjouterDevis extends Component {
                 onChange={this.handleChange}
                 fullWidth
                 InputProps={{ inputProps: { min: 0, step: 1, max: 100 } }}
+                margin="dense"
               />
             )}
 
@@ -549,6 +557,7 @@ class AjouterDevis extends Component {
               value={this.state.unite_remise}
               name="unite_remise"
               onChange={this.handleChange}
+              margin="dense"
             >
               <MenuItem value={"%"}>%</MenuItem>
               <MenuItem value={"DA"}>DA</MenuItem>
@@ -572,7 +581,12 @@ class AjouterDevis extends Component {
                 />
               </div>
               <div style={{ flex: 2 }}>
-                <h3 style={{ margin: 0 , color : this.state.ht ? "gray" : "black" }}> TVA (%)</h3>
+                <h3
+                  style={{ margin: 0, color: this.state.ht ? "gray" : "black" }}
+                >
+                  {" "}
+                  TVA (%)
+                </h3>
 
                 <TextField
                   name="tva"
@@ -583,6 +597,7 @@ class AjouterDevis extends Component {
                   variant="outlined"
                   fullWidth
                   InputProps={{ inputProps: { min: 0, step: 1, max: 100 } }}
+                  margin="dense"
                 />
               </div>
             </div>

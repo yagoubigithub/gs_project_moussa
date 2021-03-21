@@ -47,7 +47,7 @@ import { getAllPhasesProjet } from "../../store/actions/pahsesProjetAction";
 //tables
 import MaitreDouvrageTable from "../tables/MaitreDouvrageTable";
 import PhasesProjetTable from '../tables/PhasesProjetTable'
-import { FormControlLabel, Checkbox } from "@material-ui/core";
+import { FormControlLabel, Checkbox, DialogTitle } from "@material-ui/core";
 
 class ModifierFacture extends Component {
   state = {
@@ -380,7 +380,7 @@ class ModifierFacture extends Component {
     
 
     return (
-      <Dialog fullScreen open={this.state.open}>
+      <Dialog maxWidth="xl" fullWidth open={this.state.open}>
         <LoadingComponent
           loading={
             this.props.loading !== undefined ? this.props.loading : false
@@ -443,26 +443,27 @@ class ModifierFacture extends Component {
           </Button>
         </Dialog>
 
-        <AppBar className="bg-dark">
-          <Toolbar style={{ display: "flax", justifyContent: "space-between" }}>
-            <Link
+
+<DialogTitle>
+<Link
               to={
                 this.state.buttonReturn !== undefined
                   ? this.state.buttonReturn
                   : "/facture/"
               }
             >
-              <IconButton onClick={this.handleClose} style={{ color: "white" }}>
-                <ArrowBackIcon />
+              <IconButton onClick={this.handleClose} >
+                <CloseIcon />
               </IconButton>
             </Link>
-          </Toolbar>
-        </AppBar>
-        <div style={{ marginTop: 50, padding: 15 }}></div>
+</DialogTitle>
+
+      
+        
         <h1 style={{ textAlign: "center" }}>Modfier une facture</h1>
         <div className="alert message">{this.state.message} </div>
         <div className="alert success">{this.state.success} </div>
-        <Grid container spacing={2} style={{ padding: 25 }}>
+        <Grid container spacing={2} style={{ padding: 10 }}>
           <Grid item xs={6}>
             <h3 style={{ margin: 0 }}>Nom de projet * </h3>
 
@@ -484,6 +485,7 @@ class ModifierFacture extends Component {
               variant="outlined"
               onChange={this.handleChange}
               fullWidth
+              margin="dense"
             />
           </Grid>
 
@@ -496,6 +498,7 @@ class ModifierFacture extends Component {
               variant="outlined"
               onChange={this.handleChange}
               fullWidth
+              margin="dense"
             />
           </Grid>
 
@@ -523,6 +526,7 @@ class ModifierFacture extends Component {
               color="primary"
               variant="contained"
               onClick={this.handlePhasesProjetOpenClose}
+              margin="dense"
             >
               <AddIcon />
             </Button>
@@ -578,6 +582,7 @@ class ModifierFacture extends Component {
               variant="outlined"
               onChange={this.handleChange}
               fullWidth
+              margin="dense"
             />
               :   <TextField
               type="number"
@@ -588,6 +593,7 @@ class ModifierFacture extends Component {
               onChange={this.handleChange}
               fullWidth
               InputProps={{inputProps : {min  : 0, step : 1, max : 100 }}}
+              margin="dense"
             />
             }
             
@@ -610,6 +616,7 @@ class ModifierFacture extends Component {
               variant="outlined"
               fullWidth
               InputProps={{ inputProps: { min: 0, step: 1 } }}
+              margin="dense"
             />
           </Grid>
           <Grid item xs={6}>
@@ -620,6 +627,7 @@ class ModifierFacture extends Component {
               type="date"
               name="date_debut"
               onChange={this.handleChange}
+              margin="dense"
               value={
                 this.state.date_debut === ""
                   ? getCurrentDateTime(new Date().getTime()).split("T")[0]
@@ -666,6 +674,7 @@ class ModifierFacture extends Component {
                   variant="outlined"
                   fullWidth
                   InputProps={{ inputProps: { min: 0, step: 1, max: 100 } }}
+                  margin="dense"
                 />
               </div>
             </div>
@@ -675,7 +684,7 @@ class ModifierFacture extends Component {
 
     
           <Grid item xs={12}>
-            <br />
+          
             <Button
               color="primary"
               variant="contained"
