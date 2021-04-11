@@ -12,6 +12,8 @@ let mainWindow = new BrowserWindow({
     webPreferences: {
       nodeIntegration : true,
       nativeWindowOpen : true,
+      contextIsolation : false,
+      enableRemoteModule: true,
      
     },
     icon: `${path.join(__dirname, "./logo512.png")}`

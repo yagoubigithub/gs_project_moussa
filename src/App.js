@@ -29,7 +29,7 @@ import Key from "./components/Key";
 
 class App extends Component {
   componentDidMount(){
-    const {remote} = window.require('electron')
+    const remote = window.require('electron').remote
     const {Menu, MenuItem} = remote
 
     const menu = new Menu()
